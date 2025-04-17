@@ -133,6 +133,30 @@ public final class Constants {
             moduleTranslations);
   }
 
+  public final class ElevatorConstants {
+
+    public static final DCMotor motorGearbox = DCMotor.getNeo550(1);
+
+    public static final double motorToWheelRatio = 48.0; // TODO: recheck this value
+
+    public static final double kMaxVelocity = 5e-9;
+    public static final double kMaxAcceleration = 0.0001;
+
+    public static final double kP = 0.5;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+
+    public static final double kHomeLength = 0.0;
+
+    public static final double kLevel1Length = 0.0;
+    public static final double kLevel2Length = 0.3;
+    public static final double kLevel3Length = 0.68;
+    public static final double kLevel4Length = 1.19;
+    public static final double kCoralStationLength = 0.03;
+
+    public static final double kSecondStageTrip = 0.75;
+  }
+
   public final class WristConsants {
 
     public static final DCMotor motorGearbox = DCMotor.getNeo550(1);

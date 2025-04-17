@@ -22,8 +22,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.WristConsants;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.drive.Drive;
@@ -32,6 +34,10 @@ import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOReal;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
@@ -54,6 +60,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Intake intake;
   private final Wrist wrist;
+  private final Elevator elevator;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -76,6 +83,7 @@ public class RobotContainer {
             );
         intake = new Intake(new IntakeIOReal());
         wrist = new Wrist(new WristIOReal());
+        elevator = new Elevator(new ElevatorIOReal());
         break;
 
       case SIM:
@@ -90,6 +98,7 @@ public class RobotContainer {
             );
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
+        elevator = new Elevator(new ElevatorIOSim());
         break;
 
       default:
@@ -104,6 +113,7 @@ public class RobotContainer {
             );
         intake = new Intake(new IntakeIO() {});
         wrist = new Wrist(new WristIO() {});
+        elevator = new Elevator(new ElevatorIO() {});
         break;
     }
 
@@ -137,6 +147,8 @@ public class RobotContainer {
     intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> 0.0));
 
     wrist.setDefaultCommand(WristCommands.wristToHome(wrist));
+
+    elevator.setDefaultCommand(ElevatorCommands.wristToHome(elevator));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -175,6 +187,10 @@ public class RobotContainer {
 
     controller.leftBumper().whileTrue(
         WristCommands.wristToTarget(wrist, WristConsants.kLevel4Angle)
+    );
+
+    controller.rightBumper().whileTrue(
+        ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel4Length)
     );
   }
 
