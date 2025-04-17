@@ -52,8 +52,4 @@ public class WristIOSim implements WristIO {
     appliedVolts = volts;
   }
 
-  @Override
-  public double getCurrentPosition() {
-    return this.m_wristMotor.getAngularPositionRad();
-  }
 }
