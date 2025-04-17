@@ -23,10 +23,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.WristConsants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.PivotCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -42,6 +44,10 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pivot.PivotIO;
+import frc.robot.subsystems.pivot.PivotIOReal;
+import frc.robot.subsystems.pivot.PivotIOSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIO;
 import frc.robot.subsystems.wrist.WristIOReal;
@@ -61,6 +67,7 @@ public class RobotContainer {
   private final Intake intake;
   private final Wrist wrist;
   private final Elevator elevator;
+  private final Pivot pivot;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -84,6 +91,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOReal());
         wrist = new Wrist(new WristIOReal());
         elevator = new Elevator(new ElevatorIOReal());
+        pivot = new Pivot(new PivotIOReal());
         break;
 
       case SIM:
@@ -99,6 +107,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
         elevator = new Elevator(new ElevatorIOSim());
+        pivot = new Pivot(new PivotIOSim());
         break;
 
       default:
@@ -114,6 +123,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIO() {});
         wrist = new Wrist(new WristIO() {});
         elevator = new Elevator(new ElevatorIO() {});
+        pivot = new Pivot(new PivotIO() {});
         break;
     }
 
@@ -149,6 +159,8 @@ public class RobotContainer {
     wrist.setDefaultCommand(WristCommands.wristToHome(wrist));
 
     elevator.setDefaultCommand(ElevatorCommands.wristToHome(elevator));
+
+    pivot.setDefaultCommand(PivotCommands.pivotToHome(pivot));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -191,6 +203,10 @@ public class RobotContainer {
 
     controller.rightBumper().whileTrue(
         ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel4Length)
+    );
+
+    controller.y().whileTrue(
+        PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel4Angle)
     );
   }
 

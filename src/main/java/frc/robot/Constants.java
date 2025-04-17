@@ -133,16 +133,41 @@ public final class Constants {
             moduleTranslations);
   }
 
+  public final class PivotConstants {
+
+    public static final DCMotor motorGearbox = DCMotor.getNeo550(1);
+
+    public static final double motorToWheelRatio = 12.0; // TODO: recheck this value
+
+    public static final double kMaxVelocity = 0.05;
+    public static final double kMaxAcceleration = 0.01;
+
+    public static final double kP = 0.1;
+    public static final double kI = 0.0;
+    public static final double kD = 0.05;
+
+    public static final double kHomeAngle = Math.toRadians(30.0);
+
+    public static double kLevel1Angle = Math.toRadians(0.0);
+    public static double kLevel2Angle = Math.toRadians(62.0);
+    public static double kLevel3Angle = Math.toRadians(75.0);
+    public static double kLevel4Angle = Math.toRadians(82.0);
+    public static double kCoralStationAngle = Math.toRadians(74.0);
+
+    public static double kUpperAlgeaRemove = Math.toRadians(67.0);
+    public static double kLowerAlgeaRemove = Math.toRadians(59.0);
+  }
+
   public final class ElevatorConstants {
 
     public static final DCMotor motorGearbox = DCMotor.getNeo550(1);
 
-    public static final double motorToWheelRatio = 48.0; // TODO: recheck this value
+    public static final double motorToWheelRatio = 5.0; // TODO: recheck this value
 
     public static final double kMaxVelocity = 5e-9;
     public static final double kMaxAcceleration = 0.0001;
 
-    public static final double kP = 0.5;
+    public static final double kP = 0.1;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
 
