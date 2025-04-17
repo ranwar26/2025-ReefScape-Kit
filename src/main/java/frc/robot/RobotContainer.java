@@ -22,8 +22,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.WristConsants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -31,8 +33,14 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristIO;
+import frc.robot.subsystems.wrist.WristIOReal;
+import frc.robot.subsystems.wrist.WristIOSim;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -45,6 +53,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Intake intake;
+  private final Wrist wrist;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -63,8 +72,10 @@ public class RobotContainer {
                 new ModuleIOSpark(0),
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
-                new ModuleIOSpark(3));
+                new ModuleIOSpark(3)
+            );
         intake = new Intake(new IntakeIOReal());
+        wrist = new Wrist(new WristIOReal());
         break;
 
       case SIM:
@@ -75,8 +86,10 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
-                new ModuleIOSim());
+                new ModuleIOSim()
+            );
         intake = new Intake(new IntakeIOSim());
+        wrist = new Wrist(new WristIOSim());
         break;
 
       default:
@@ -87,8 +100,10 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
-        intake = new Intake(null);
+                new ModuleIO() {}
+            );
+        intake = new Intake(new IntakeIO() {});
+        wrist = new Wrist(new WristIO() {});
         break;
     }
 
@@ -111,6 +126,18 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    // Default command, normal field-relative drive
+    drive.setDefaultCommand(DriveCommands.joystickDrive(
+            drive,
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
+            () -> -controller.getRightX()
+    ));
+
+    intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> 0.0));
+
+    wrist.setDefaultCommand(WristCommands.wristToHome(wrist));
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -122,43 +149,33 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
+
+    // Lock to 0° when A button is held
+    controller.a().whileTrue(DriveCommands.joystickDriveAtAngle(
             drive,
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
-
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+            () -> new Rotation2d()
+    ));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    controller.b().onTrue(Commands.runOnce(
+            () -> drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+            drive
+    ).ignoringDisable(true));
 
-    intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> 0.0));
+    controller.leftTrigger(0.1).onTrue(IntakeCommands.intakeRun(
+        intake,
+        () -> controller.getLeftTriggerAxis()
+    ));
 
-    controller
-        .leftTrigger(0.1)
-        .onTrue(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
+    controller.leftBumper().whileTrue(
+        WristCommands.wristToTarget(wrist, WristConsants.kLevel4Angle)
+    );
   }
 
   /**

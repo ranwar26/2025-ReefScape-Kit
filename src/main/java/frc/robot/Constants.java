@@ -133,9 +133,34 @@ public final class Constants {
             moduleTranslations);
   }
 
+  public final class WristConsants {
+
+    public static final DCMotor motorGearbox = DCMotor.getNeo550(1);
+
+    public static final double motorToWheelRatio = 48.0; // TODO: recheck this value
+
+    public static final double kMaxVelocity = 0.0005;
+    public static final double kMaxAcceleration = 0.0001;
+
+    public static final double kP = 0.4;
+    public static final double kI = 0.001;
+    public static final double kD = 0.0;
+
+    public static final double kHomeAngle = Math.toRadians(0.0);
+
+    public static double kLevel1Angle = Math.toRadians(90.0);
+    public static double kLevel2Angle = Math.toRadians(166.0);
+    public static double kLevel3Angle = Math.toRadians(182.0);
+    public static double kLevel4Angle = Math.toRadians(175.0);
+    public static double kCoralStationAngle = Math.toRadians(30.0);
+
+    public static double kUpperAlgeaRemove = Math.toRadians(157.0);
+    public static double kLowerAlgeaRemove = Math.toRadians(155.0);
+  }
+
   public final class IntakeConsants {
 
-    public static final DCMotor gearbox = DCMotor.getNEO(1);
+    public static final DCMotor motorGearbox = DCMotor.getNEO(1);
 
     public static final double motorToWheelRatio = 3.0;
   }

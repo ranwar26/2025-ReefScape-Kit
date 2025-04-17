@@ -19,8 +19,8 @@ public class IntakeIOSim implements IntakeIO {
     this.m_intakeMotor =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                IntakeConsants.gearbox, 0.025, IntakeConsants.motorToWheelRatio),
-            IntakeConsants.gearbox);
+                IntakeConsants.motorGearbox, 0.025, IntakeConsants.motorToWheelRatio),
+            IntakeConsants.motorGearbox);
   }
 
   @Override
