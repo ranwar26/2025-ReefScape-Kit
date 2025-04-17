@@ -39,10 +39,10 @@ public class ElevatorIOReal implements ElevatorIO {
         inputs.rightCurrentAmps = this.m_rightMotor.getOutputCurrent();
     }
 
+    @Override
     public void setElevatorVolts(double volts) {
         this.m_leftMotor.setVoltage(volts);
         this.m_rightMotor.setVoltage(-volts);
     }
-
 
 }
