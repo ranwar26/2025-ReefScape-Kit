@@ -133,6 +133,93 @@ public final class Constants {
             moduleTranslations);
   }
 
+  public final class PivotConstants {
+
+    public static final DCMotor motorGearbox = DCMotor.getNEO(1);
+
+    public static final double motorToWheelRatio = 12.0; // TODO: recheck this value
+
+    public static final double kMaxVelocity = 0.05;
+    public static final double kMaxAcceleration = 0.01;
+
+    public static final double kP = 0.5;
+    public static final double kI = 0.0;
+    public static final double kD = 0.4;
+
+    public static final double kHomeAngle = Math.toRadians(30.0);
+
+    public static final double kLevel1Angle = Math.toRadians(0.0);
+    public static final double kLevel2Angle = Math.toRadians(62.0);
+    public static final double kLevel3Angle = Math.toRadians(75.0);
+    public static final double kLevel4Angle = Math.toRadians(82.0);
+    public static final double kCoralStationAngle = Math.toRadians(74.0);
+
+    public static final double kUpperAlgaeRemove = Math.toRadians(67.0);
+    public static final double kLowerAlgaeRemove = Math.toRadians(59.0);
+
+    public static final double kAngleErrorAllowed = 0.1;
+  }
+
+  public final class ElevatorConstants {
+
+    public static final DCMotor motorGearbox = DCMotor.getNEO(1);
+
+    public static final double motorToWheelRatio = 5.0; // TODO: recheck this value
+
+    public static final double kMaxVelocity = 5e-9;
+    public static final double kMaxAcceleration = 0.0001;
+
+    public static final double kP = 0.5;
+    public static final double kI = 0.0;
+    public static final double kD = 0.3;
+
+    public static final double kHomeLength = 0.0;
+
+    public static final double kLevel1Length = 0.0;
+    public static final double kLevel2Length = 0.3;
+    public static final double kLevel3Length = 0.68;
+    public static final double kLevel4Length = 1.19;
+    public static final double kCoralStationLength = 0.03;
+
+    public static final double kSecondStageTrip = 0.75;
+
+    public static final double kLengthErrorAllowed = 0.1;
+  }
+
+  public final class WristConstants {
+
+    public static final DCMotor motorGearbox = DCMotor.getNEO(1);
+
+    public static final double motorToWheelRatio = 48.0; // TODO: recheck this value
+
+    public static final double kMaxVelocity = 0.0005;
+    public static final double kMaxAcceleration = 0.0001;
+
+    public static final double kP = 0.4;
+    public static final double kI = 0.001;
+    public static final double kD = 0.0;
+
+    public static final double kHomeAngle = Math.toRadians(0.0);
+
+    public static final double kLevel1Angle = Math.toRadians(90.0);
+    public static final double kLevel2Angle = Math.toRadians(166.0);
+    public static final double kLevel3Angle = Math.toRadians(182.0);
+    public static final double kLevel4Angle = Math.toRadians(175.0);
+    public static final double kCoralStationAngle = Math.toRadians(30.0);
+
+    public static final double kUpperAlgaeRemove = Math.toRadians(157.0);
+    public static final double kLowerAlgaeRemove = Math.toRadians(155.0);
+
+    public static final double kAngleErrorAllowed = 0.1;
+  }
+
+  public final class IntakeConstants {
+
+    public static final DCMotor motorGearbox = DCMotor.getNEO(1);
+
+    public static final double motorToWheelRatio = 3.0;
+  }
+
   public final class OIConstants {
 
     public static final double kDriveDeadband = 0.05;

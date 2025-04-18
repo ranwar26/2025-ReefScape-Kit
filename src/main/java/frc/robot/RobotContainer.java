@@ -19,16 +19,43 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.WristConstants;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ElevatorCommands;
+import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.MechanismCommands;
+import frc.robot.commands.PivotCommands;
+import frc.robot.commands.ReefLevelsCommandGroups;
+import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOReal;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pivot.PivotIO;
+import frc.robot.subsystems.pivot.PivotIOReal;
+import frc.robot.subsystems.pivot.PivotIOSim;
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristIO;
+import frc.robot.subsystems.wrist.WristIOReal;
+import frc.robot.subsystems.wrist.WristIOSim;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -40,6 +67,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Intake intake;
+  private final Wrist wrist;
+  private final Elevator elevator;
+  private final Pivot pivot;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -58,7 +89,12 @@ public class RobotContainer {
                 new ModuleIOSpark(0),
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
-                new ModuleIOSpark(3));
+                new ModuleIOSpark(3)
+            );
+        intake = new Intake(new IntakeIOReal());
+        wrist = new Wrist(new WristIOReal());
+        elevator = new Elevator(new ElevatorIOReal());
+        pivot = new Pivot(new PivotIOReal());
         break;
 
       case SIM:
@@ -69,7 +105,12 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
-                new ModuleIOSim());
+                new ModuleIOSim()
+            );
+        intake = new Intake(new IntakeIOSim());
+        wrist = new Wrist(new WristIOSim());
+        elevator = new Elevator(new ElevatorIOSim());
+        pivot = new Pivot(new PivotIOSim());
         break;
 
       default:
@@ -80,7 +121,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {}
+            );
+        intake = new Intake(new IntakeIO() {});
+        wrist = new Wrist(new WristIO() {});
+        elevator = new Elevator(new ElevatorIO() {});
+        pivot = new Pivot(new PivotIO() {});
         break;
     }
 
@@ -102,6 +148,22 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    // Default command, normal field-relative drive
+    drive.setDefaultCommand(DriveCommands.joystickDrive(
+            drive,
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
+            () -> -controller.getRightX()
+    ));
+
+    intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> 0.0));
+
+    wrist.setDefaultCommand(WristCommands.wristToHome(wrist));
+
+    elevator.setDefaultCommand(ElevatorCommands.wristToHome(elevator));
+
+    pivot.setDefaultCommand(PivotCommands.pivotToHome(pivot));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -127,15 +189,31 @@ public class RobotContainer {
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    controller.b().onTrue(Commands.runOnce(
+            () -> drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+            drive
+    ).ignoringDisable(true));
+
+    controller.leftTrigger().onTrue(IntakeCommands.intakeRun(
+        intake,
+        () -> controller.getLeftTriggerAxis()
+    ));
+
+    controller.leftBumper().whileTrue(
+        ReefLevelsCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, intake)
+    );
+
+    controller.rightBumper().whileTrue(
+        ReefLevelsCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, intake)
+    );
+
+    controller.y().whileTrue(
+        ReefLevelsCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, intake)
+    );
+
+    controller.povUp().onTrue(MechanismCommands.mechanismRun(pivot, elevator, wrist, intake));
+
   }
 
   /**
