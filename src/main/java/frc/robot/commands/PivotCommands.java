@@ -5,23 +5,37 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.pivot.Pivot;
 
 /** Add your docs here. */
 public class PivotCommands {
 
-    public static Command pivotToTarget(Pivot pivot, double targetAngle) {
-    return Commands.run(
+  public static Command pivotToTarget(Pivot pivot, double targetAngle, boolean allowEndCondition) {
+    if(allowEndCondition) {
+      return new FunctionalCommand(
+        () -> {},
         () -> {
           pivot.setTargetAngle(targetAngle);
         },
-        pivot
-        );
+        interrupted -> {},
+        () -> Math.abs(pivot.getCurrentAngle() - targetAngle) < PivotConstants.kAngleErrorAllowed,
+        pivot);
+
+    } else {
+      return new FunctionalCommand(
+        () -> {},
+        () -> {
+          pivot.setTargetAngle(targetAngle);
+        },
+        interrupted -> {},
+        () -> false,
+        pivot);
+    }
   }
 
   public static Command pivotToHome(Pivot pivot) {
-    return pivotToTarget(pivot, PivotConstants.kHomeAngle);
+    return pivotToTarget(pivot, PivotConstants.kHomeAngle, true);
   }
 }

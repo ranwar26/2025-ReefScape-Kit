@@ -44,4 +44,9 @@ public class PivotIOReal implements PivotIO {
         this.m_leftMotor.setVoltage(volts);
         this.m_rightMotor.setVoltage(-volts);
     }
+
+    @Override
+    public double getCurrentAngle() {
+        return this.m_leftEncoder.getPosition();
+    }
 }

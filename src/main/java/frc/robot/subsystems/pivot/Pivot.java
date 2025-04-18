@@ -48,4 +48,8 @@ public class Pivot extends SubsystemBase {
 
     this.io.setPivotVolts(MathUtil.clamp(targetSpeed, -1.0, 1.0) * 12.0);
   }
+
+  public double getCurrentAngle() {
+    return this.io.getCurrentAngle();
+  }
 }

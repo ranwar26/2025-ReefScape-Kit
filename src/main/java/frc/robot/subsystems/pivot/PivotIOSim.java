@@ -4,10 +4,6 @@
 
 package frc.robot.subsystems.pivot;
 
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
-import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
-
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants.PivotConstants;
@@ -21,21 +17,17 @@ public class PivotIOSim implements PivotIO {
     private double appliedVoltsLeft;
     private double appliedVoltsRight;
 
-    private LoggedMechanism2d mechanism = new LoggedMechanism2d(6, 3);
-    private LoggedMechanismLigament2d elevator = new LoggedMechanismLigament2d("elevator", 1.0, 0.0);
-
     public PivotIOSim() {
 
         this.m_leftMotor = new DCMotorSim(
                 LinearSystemId.createDCMotorSystem(
-                        PivotConstants.motorGearbox, 0.8, PivotConstants.motorToWheelRatio),
+                        PivotConstants.motorGearbox, 5.0, PivotConstants.motorToWheelRatio),
                 PivotConstants.motorGearbox);
         this.m_rightMotor = new DCMotorSim(
                 LinearSystemId.createDCMotorSystem(
-                        PivotConstants.motorGearbox, 0.8, PivotConstants.motorToWheelRatio),
+                        PivotConstants.motorGearbox, 5.0, PivotConstants.motorToWheelRatio),
                 PivotConstants.motorGearbox);
 
-        this.mechanism.getRoot("root", 3.0, 1.5).append(elevator);
     }
 
     @Override
@@ -55,15 +47,17 @@ public class PivotIOSim implements PivotIO {
         inputs.rightVelocity = this.m_rightMotor.getAngularVelocityRadPerSec();
         inputs.rightAppliedVolts = appliedVoltsRight;
         inputs.rightCurrentAmps = this.m_rightMotor.getCurrentDrawAmps();
-
-        elevator.setAngle(Math.toDegrees(inputs.leftPosition));
-        Logger.recordOutput("pivot", mechanism);
     }
 
     @Override
     public void setPivotVolts(double volts) {
         appliedVoltsLeft = volts;
         appliedVoltsRight = -volts;
+    }
+
+    @Override
+    public double getCurrentAngle() {
+        return this.m_leftMotor.getAngularPositionRad();
     }
 
 }

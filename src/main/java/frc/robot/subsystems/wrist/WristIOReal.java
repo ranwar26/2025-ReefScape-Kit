@@ -33,4 +33,9 @@ public class WristIOReal implements WristIO {
     this.m_wristMotor.setVoltage(volts);
   }
 
+  @Override
+  public double getCurrentAngle() {
+    return this.m_encoder.getPosition();
+  }
+
 }

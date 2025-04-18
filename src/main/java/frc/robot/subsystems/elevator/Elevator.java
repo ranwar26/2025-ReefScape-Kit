@@ -48,4 +48,8 @@ public class Elevator extends SubsystemBase {
 
     this.io.setElevatorVolts(MathUtil.clamp(targetSpeed, -1.0, 1.0) * 12.0);
   }
+
+  public double getCurrentLength() {
+    return this.io.getCurrentLength();
+  }
 }

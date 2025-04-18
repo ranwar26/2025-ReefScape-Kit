@@ -6,7 +6,7 @@ package frc.robot.subsystems.intake;
 
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.Constants.IntakeConsants;
+import frc.robot.Constants.IntakeConstants;
 
 public class IntakeIOSim implements IntakeIO {
 
@@ -19,8 +19,8 @@ public class IntakeIOSim implements IntakeIO {
     this.m_intakeMotor =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                IntakeConsants.motorGearbox, 0.025, IntakeConsants.motorToWheelRatio),
-            IntakeConsants.motorGearbox);
+                IntakeConstants.motorGearbox, 0.025, IntakeConstants.motorToWheelRatio),
+            IntakeConstants.motorGearbox);
   }
 
   @Override
@@ -37,5 +37,10 @@ public class IntakeIOSim implements IntakeIO {
   @Override
   public void setIntakeVolts(double volts) {
     appliedVolts = volts;
+  }
+
+  @Override
+  public double getCurrentAngle() {
+    return this.m_intakeMotor.getAngularPositionRad();
   }
 }

@@ -33,4 +33,9 @@ public class IntakeIOReal implements IntakeIO {
   public void setIntakeVolts(double volts) {
     this.m_intakeMotor.setVoltage(volts);
   }
+
+  @Override
+  public double getCurrentAngle() {
+    return this.m_encoder.getPosition();
+  }
 }

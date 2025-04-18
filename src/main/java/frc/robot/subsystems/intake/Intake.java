@@ -28,4 +28,8 @@ public class Intake extends SubsystemBase {
   public void setOutput(double percentage) {
     this.io.setIntakeVolts(MathUtil.clamp(percentage, -1.0, 1.0) * 12.0);
   }
+
+  public double getCurrentAngle() {
+    return this.io.getCurrentAngle();
+  }
 }

@@ -19,16 +19,19 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.PivotConstants;
-import frc.robot.Constants.WristConsants;
+import frc.robot.Constants.WristConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.MechanismCommands;
 import frc.robot.commands.PivotCommands;
+import frc.robot.commands.ReefLevelsCommandGroups;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -192,22 +195,25 @@ public class RobotContainer {
             drive
     ).ignoringDisable(true));
 
-    controller.leftTrigger(0.1).onTrue(IntakeCommands.intakeRun(
+    controller.leftTrigger().onTrue(IntakeCommands.intakeRun(
         intake,
         () -> controller.getLeftTriggerAxis()
     ));
 
     controller.leftBumper().whileTrue(
-        WristCommands.wristToTarget(wrist, WristConsants.kLevel4Angle)
+        ReefLevelsCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, intake)
     );
 
     controller.rightBumper().whileTrue(
-        ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel4Length)
+        ReefLevelsCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, intake)
     );
 
     controller.y().whileTrue(
-        PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel4Angle)
+        ReefLevelsCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, intake)
     );
+
+    controller.povUp().onTrue(MechanismCommands.mechanismRun(pivot, elevator, wrist, intake));
+
   }
 
   /**

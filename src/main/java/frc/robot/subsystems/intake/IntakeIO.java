@@ -20,4 +20,6 @@ public interface IntakeIO {
   public default void updateInputs(IntakeIOInputs inputs) {}
 
   public default void setIntakeVolts(double volts) {}
+
+  public default double getCurrentAngle() {return 0.0;};
 }

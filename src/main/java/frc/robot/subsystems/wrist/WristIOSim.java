@@ -4,21 +4,14 @@
 
 package frc.robot.subsystems.wrist;
 
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
-import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
-
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.Constants.WristConsants;
+import frc.robot.Constants.WristConstants;
 
 /** Add your docs here. */
 public class WristIOSim implements WristIO {
 
   private DCMotorSim m_wristMotor;
-
-  private LoggedMechanism2d mechanism = new LoggedMechanism2d(6, 3);
-  private LoggedMechanismLigament2d gripper = new LoggedMechanismLigament2d("gripper", 0.2, 0.0);
 
   private double appliedVolts;
 
@@ -27,10 +20,9 @@ public class WristIOSim implements WristIO {
     this.m_wristMotor =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                WristConsants.motorGearbox, 0.205, WristConsants.motorToWheelRatio),
-            WristConsants.motorGearbox);
+                WristConstants.motorGearbox, 0.205, WristConstants.motorToWheelRatio),
+            WristConstants.motorGearbox);
 
-    this.mechanism.getRoot("root", 3.0, 1.5).append(gripper);
   }
 
   @Override
@@ -43,13 +35,16 @@ public class WristIOSim implements WristIO {
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = this.m_wristMotor.getCurrentDrawAmps();
 
-    gripper.setAngle(Math.toDegrees(inputs.position));
-    Logger.recordOutput("MyMechanism", mechanism);
   }
 
   @Override
   public void setWristVolts(double volts) {
     appliedVolts = volts;
+  }
+
+  @Override
+  public double getCurrentAngle() {
+    return this.m_wristMotor.getAngularPositionRad();
   }
 
 }

@@ -21,4 +21,6 @@ public interface WristIO {
 
   public default void setWristVolts(double volts) {}
 
+  public default double getCurrentAngle() {return 0.0;};
+
 }

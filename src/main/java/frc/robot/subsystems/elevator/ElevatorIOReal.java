@@ -45,4 +45,9 @@ public class ElevatorIOReal implements ElevatorIO {
         this.m_rightMotor.setVoltage(-volts);
     }
 
+    @Override
+    public double getCurrentLength() {
+        return this.m_leftEncoder.getPosition();
+    }
+
 }
