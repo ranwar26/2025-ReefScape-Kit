@@ -55,7 +55,8 @@ public final class Constants {
           new Translation2d(-trackWidth / 2.0, -wheelBase / 2.0)
         };
 
-    // Zeroed rotation values for each module, see setup instructions //TODO: get these values and implement them
+    // Zeroed rotation values for each module, see setup instructions //TODO: get these values and
+    // implement them
     public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0.0);
     public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.0);
     public static final Rotation2d backLeftZeroRotation = new Rotation2d(0.0);
@@ -115,7 +116,7 @@ public final class Constants {
     public static final double turnPIDMaxInput = 2 * Math.PI; // Radians
 
     // PathPlanner configuration
-    public static final double robotMassKg = 56.699; //TODO: recalculate Mass and MOI
+    public static final double robotMassKg = 56.699; // TODO: recalculate Mass and MOI
     public static final double robotMOI = 3.968;
     public static final double wheelCOF = 1.190;
     public static final RobotConfig ppConfig =
@@ -130,5 +131,10 @@ public final class Constants {
                 driveMotorCurrentLimit,
                 1),
             moduleTranslations);
+  }
+
+  public final class OIConstants {
+
+    public static final double kDriveDeadband = 0.05;
   }
 }
