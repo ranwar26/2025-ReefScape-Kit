@@ -150,12 +150,13 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(DriveCommands.joystickDrive(
+    drive.setDefaultCommand(
+        DriveCommands.joystickDriveAtAngle(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()
-    ));
+            () -> controller.getLeftY(),
+            () -> controller.getLeftX(),
+            () -> -controller.getRightX(),
+            () -> controller.getRightY()));
 
     intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> 0.0));
 
@@ -176,14 +177,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDriveAtAngle(
-            drive,
-            () -> controller.getLeftY(),
-            () -> controller.getLeftX(),
-            () -> -controller.getRightX(),
-            () -> controller.getRightY()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

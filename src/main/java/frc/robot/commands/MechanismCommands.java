@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
@@ -21,13 +20,13 @@ import frc.robot.subsystems.wrist.Wrist;
 /** Add your docs here. */
 public class MechanismCommands {
 
-    private static LoggedMechanism2d mechanism = new LoggedMechanism2d(11.0, 4.0);
-    private static LoggedMechanismLigament2d elevatorPart = new LoggedMechanismLigament2d("elevator", 2.0, 0);
+    private static LoggedMechanism2d mechanism = new LoggedMechanism2d(5, 5.0);
+    private static LoggedMechanismLigament2d elevatorPart = new LoggedMechanismLigament2d("elevator", 0.0, 0);
     private static LoggedMechanismLigament2d gripperPart = new LoggedMechanismLigament2d("gripper", 0.4, 0);
     private static LoggedMechanismLigament2d intakePart = new LoggedMechanismLigament2d("intake", 0.05, 0);
 
     static {
-        mechanism.getRoot("root", 5.5, 0.0).append(elevatorPart).append(gripperPart).append(intakePart);
+        mechanism.getRoot("root", 2.5-0.3, 0.2).append(elevatorPart).append(gripperPart).append(intakePart);
 
         elevatorPart.setColor(new Color8Bit(0, 255, 0));
         gripperPart.setColor(new Color8Bit(0, 0, 255));
@@ -38,7 +37,7 @@ public class MechanismCommands {
     return Commands.run(
         () -> {
             elevatorPart.setAngle(Math.toDegrees(pivot.getCurrentAngle()));
-            elevatorPart.setLength(2.0 + elevator.getCurrentLength());
+            elevatorPart.setLength(0.5 + elevator.getCurrentLength());
 
             gripperPart.setAngle(Math.toDegrees(-wrist.getCurrentAngle()) + 90.0);
 
