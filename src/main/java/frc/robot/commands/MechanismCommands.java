@@ -30,6 +30,7 @@ public class MechanismCommands {
 
         elevatorPart.setColor(new Color8Bit(0, 255, 0));
         gripperPart.setColor(new Color8Bit(0, 0, 255));
+        intakePart.setColor(new Color8Bit(255, 0, 0));
     }
 
     public static Command mechanismRun(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {

@@ -13,12 +13,22 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
+
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.GyroSimulation;
+import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
+
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.util.Units.*;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -108,10 +118,10 @@ public final class Constants {
     public static final double turnEncoderVelocityFactor = (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
 
     // Turn PID configuration
-    public static final double turnKp = 2.0;
-    public static final double turnKd = 0.0;
+    public static final double turnKp = 8.0;
+    public static final double turnKd = 0.2;
     public static final double turnSimP = 8.0;
-    public static final double turnSimD = 0.0;
+    public static final double turnSimD = 0.2;
     public static final double turnPIDMinInput = 0; // Radians
     public static final double turnPIDMaxInput = 2 * Math.PI; // Radians
 
@@ -131,6 +141,21 @@ public final class Constants {
                 driveMotorCurrentLimit,
                 1),
             moduleTranslations);
+
+    public static final DriveTrainSimulationConfig mapleSimConfig = DriveTrainSimulationConfig.Default()
+            .withCustomModuleTranslations(moduleTranslations)
+            .withRobotMass(Kilogram.of(robotMassKg))
+            .withGyro(COTS.ofNav2X())
+            .withSwerveModule(() -> new SwerveModuleSimulation(new SwerveModuleSimulationConfig(
+                    driveGearbox,
+                    turnGearbox,
+                    driveMotorReduction,
+                    turnMotorReduction,
+                    Volts.of(0.1),
+                    Volts.of(0.1),
+                    Meters.of(wheelRadiusMeters),
+                    KilogramSquareMeters.of(0.02),
+                    wheelCOF)));
   }
 
   public final class PivotConstants {

@@ -132,8 +132,7 @@ public class DriveCommands {
                   getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
               Rotation2d rotation =
-                  new Rotation2d(xAngleSupplier.getAsDouble(), yAngleSupplier.getAsDouble())
-                      .plus(new Rotation2d(Math.toRadians(90.0)));
+                  new Rotation2d(xAngleSupplier.getAsDouble(), yAngleSupplier.getAsDouble());
 
               // Calculate angular speed
               double omega =
