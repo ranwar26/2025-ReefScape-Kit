@@ -53,6 +53,7 @@ public final class Constants {
 
   public final class DriveConstants {
     public static final double maxSpeedMetersPerSec = 4.8;
+    public static final double maxAngularSpeed = 2 * Math.PI;
     public static final double odometryFrequency = 100.0; // Hz
     public static final double trackWidth = Units.inchesToMeters(29.0);
     public static final double wheelBase = Units.inchesToMeters(29.0);
@@ -126,8 +127,8 @@ public final class Constants {
     public static final double turnPIDMaxInput = 2 * Math.PI; // Radians
 
     // PathPlanner configuration
-    public static final double robotMassKg = 56.699; // TODO: recalculate Mass and MOI
-    public static final double robotMOI = 3.968;
+    public static final double robotMassKg = 47.62; // TODO: recalculate Mass and MOI
+    public static final double robotMOI = 4.306;
     public static final double wheelCOF = 1.190;
     public static final RobotConfig ppConfig =
         new RobotConfig(

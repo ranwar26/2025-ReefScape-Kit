@@ -300,13 +300,4 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         poseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
     }
 
-    /** Returns the maximum linear speed in meters per sec. */
-    public double getMaxLinearSpeedMetersPerSec() {
-        return DriveConstants.maxSpeedMetersPerSec;
-    }
-
-    /** Returns the maximum angular speed in radians per sec. */
-    public double getMaxAngularSpeedRadPerSec() {
-        return DriveConstants.maxSpeedMetersPerSec / DriveConstants.driveBaseRadius;
-    }
 }
