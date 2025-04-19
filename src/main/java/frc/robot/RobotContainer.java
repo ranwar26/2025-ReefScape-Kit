@@ -267,13 +267,13 @@ public class RobotContainer {
 
         controller.povUp().onTrue(MechanismCommands.mechanismRun(pivot, elevator, wrist, intake));
 
-        controller.a().whileTrue(new RunCommand(
+        controller.a().whileTrue(Commands.runOnce(
                 () -> {
                     ReefscapeCoralOnField coral = new ReefscapeCoralOnField(new Pose2d(3.0, 4.0, new Rotation2d()));
                     SimulatedArena.getInstance().addGamePiece(coral);
                 },
                 drive));
-        controller.b().whileTrue(new RunCommand(
+        controller.b().whileTrue(Commands.runOnce(
                 () -> {
                     ReefscapeAlgaeOnField algae = new ReefscapeAlgaeOnField(new Translation2d(3.0, 5.0));
                     SimulatedArena.getInstance().addGamePiece(algae);
