@@ -20,7 +20,7 @@ public class PivotCommands {
           pivot.setTargetAngle(targetAngle);
         },
         interrupted -> {},
-        () -> Math.abs(pivot.getCurrentAngle() - targetAngle) < PivotConstants.kAngleErrorAllowed,
+        () -> Math.abs(pivot.getCurrentAngle("Left") - targetAngle) < PivotConstants.kAngleErrorAllowed,
         pivot);
 
     } else {

@@ -50,6 +50,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getCurrentLength() {
-    return this.io.getCurrentLength();
+    return this.getCurrentLength("Right");
+  }
+
+  public double getCurrentLength(String side) {
+    return this.io.getCurrentLength(side);
   }
 }

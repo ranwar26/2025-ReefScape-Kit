@@ -20,30 +20,53 @@ import frc.robot.subsystems.wrist.Wrist;
 /** Add your docs here. */
 public class MechanismCommands {
 
-    private static LoggedMechanism2d mechanism = new LoggedMechanism2d(5, 5.0);
-    private static LoggedMechanismLigament2d elevatorPart = new LoggedMechanismLigament2d("elevator", 0.0, 0);
-    private static LoggedMechanismLigament2d gripperPart = new LoggedMechanismLigament2d("gripper", 0.4, 0);
-    private static LoggedMechanismLigament2d intakePart = new LoggedMechanismLigament2d("intake", 0.05, 0);
+    private static LoggedMechanism2d mechanismLeft = new LoggedMechanism2d(5, 5.0);
+    private static LoggedMechanismLigament2d elevatorPartLeft = new LoggedMechanismLigament2d("elevator", 0.0, 0);
+    private static LoggedMechanismLigament2d gripperPartLeft = new LoggedMechanismLigament2d("gripper", 0.4, 0);
+    private static LoggedMechanismLigament2d intakePartLeft = new LoggedMechanismLigament2d("intake", 0.05, 0);
+
+    private static LoggedMechanism2d mechanismRight = new LoggedMechanism2d(5, 5.0);
+    private static LoggedMechanismLigament2d elevatorPartRight = new LoggedMechanismLigament2d("elevator", 0.0, 0);
+    private static LoggedMechanismLigament2d gripperPartRight = new LoggedMechanismLigament2d("gripper", 0.4, 0);
+    private static LoggedMechanismLigament2d intakePartRight = new LoggedMechanismLigament2d("intake", 0.05, 0);
 
     static {
-        mechanism.getRoot("root", 2.5-0.3, 0.2).append(elevatorPart).append(gripperPart).append(intakePart);
+        mechanismLeft.getRoot("root", 2.5-0.3, 0.2).append(elevatorPartLeft).append(gripperPartLeft).append(intakePartLeft);
 
-        elevatorPart.setColor(new Color8Bit(0, 255, 0));
-        gripperPart.setColor(new Color8Bit(0, 0, 255));
+        elevatorPartLeft.setColor(new Color8Bit(255, 0, 0));
+        gripperPartLeft.setColor(new Color8Bit(255, 0, 0));
+        intakePartLeft.setColor(new Color8Bit(255, 0, 0));
+
+        mechanismRight.getRoot("root", 2.5-0.3, 0.2).append(elevatorPartRight).append(gripperPartRight).append(intakePartRight);
+
+        elevatorPartRight.setColor(new Color8Bit(0, 0, 255));
+        gripperPartRight.setColor(new Color8Bit(0, 0, 255));
+        intakePartRight.setColor(new Color8Bit(0, 0, 255));
     }
 
     public static Command mechanismRun(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
 
     return Commands.run(
         () -> {
-            elevatorPart.setAngle(Math.toDegrees(pivot.getCurrentAngle()));
-            elevatorPart.setLength(0.5 + elevator.getCurrentLength());
+            elevatorPartLeft.setAngle(Math.toDegrees(pivot.getCurrentAngle("Left")));
+            elevatorPartLeft.setLength(0.5 + elevator.getCurrentLength("Left"));
 
-            gripperPart.setAngle(Math.toDegrees(-wrist.getCurrentAngle()) + 90.0);
+            gripperPartLeft.setAngle(Math.toDegrees(-wrist.getCurrentAngle()) + 90.0);
 
-            intakePart.setAngle(Math.toDegrees(intake.getCurrentAngle()));
+            intakePartLeft.setAngle(Math.toDegrees(intake.getCurrentAngle()));
 
-            Logger.recordOutput("Arm System", mechanism);
+            Logger.recordOutput("Arm System/Left", mechanismLeft);
+
+            elevatorPartRight.setAngle(Math.toDegrees(-pivot.getCurrentAngle("Right")));
+            elevatorPartRight.setLength(0.5 + -elevator.getCurrentLength("Right"));
+
+            gripperPartRight.setAngle(Math.toDegrees(-wrist.getCurrentAngle()) + 90.0);
+
+            intakePartRight.setAngle(Math.toDegrees(intake.getCurrentAngle()));
+
+            Logger.recordOutput("Arm System/Right", mechanismRight);
+
+            
         },
         new Subsystem[] {}).ignoringDisable(true);
     }

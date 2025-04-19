@@ -50,6 +50,10 @@ public class Pivot extends SubsystemBase {
   }
 
   public double getCurrentAngle() {
-    return this.io.getCurrentAngle();
+    return this.getCurrentAngle("Right");
+  }
+
+  public double getCurrentAngle(String side) {
+    return this.io.getCurrentAngle(side);
   }
 }

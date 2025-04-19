@@ -26,5 +26,5 @@ public interface PivotIO {
 
     public default void setPivotVolts(double volts) {}
 
-    public default double getCurrentAngle() {return 0.0;};
+    public default double getCurrentAngle(String side) {return 0.0;};
 }

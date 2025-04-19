@@ -46,7 +46,13 @@ public class PivotIOReal implements PivotIO {
     }
 
     @Override
-    public double getCurrentAngle() {
-        return this.m_leftEncoder.getPosition();
+    public double getCurrentAngle(String side) {
+        switch (side) {
+            case "Right":
+                return this.m_rightEncoder.getPosition();
+        
+            default:
+                return this.m_leftEncoder.getPosition();
+        }
     }
 }

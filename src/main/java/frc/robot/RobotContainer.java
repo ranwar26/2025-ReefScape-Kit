@@ -149,6 +149,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+        CommandScheduler.getInstance().schedule(MechanismCommands.mechanismRun(pivot, elevator, wrist, intake));
+
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDriveAtAngle(
@@ -204,8 +206,6 @@ public class RobotContainer {
     controller.y().whileTrue(
         ReefLevelsCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, intake)
     );
-
-    controller.povUp().onTrue(MechanismCommands.mechanismRun(pivot, elevator, wrist, intake));
 
   }
 

@@ -46,8 +46,14 @@ public class ElevatorIOReal implements ElevatorIO {
     }
 
     @Override
-    public double getCurrentLength() {
-        return this.m_leftEncoder.getPosition();
+    public double getCurrentLength(String side) {
+        switch (side) {
+            case "Right":
+                return this.m_rightEncoder.getPosition();
+        
+            default:
+                return this.m_leftEncoder.getPosition();
+        }
     }
 
 }

@@ -57,8 +57,14 @@ public class ElevatorIOSim implements ElevatorIO {
   }
 
   @Override
-  public double getCurrentLength() {
-    return this.m_leftMotor.getAngularPositionRad();
+  public double getCurrentLength(String side) {
+    switch (side) {
+      case "Right":
+          return this.m_rightMotor.getAngularPositionRad();
+  
+      default:
+          return this.m_leftMotor.getAngularPositionRad();
+  }
   }
 
 }

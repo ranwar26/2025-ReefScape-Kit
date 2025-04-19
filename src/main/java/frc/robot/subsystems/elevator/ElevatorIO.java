@@ -26,6 +26,6 @@ public interface ElevatorIO {
 
     public default void setElevatorVolts(double volts) {}
 
-    public default double getCurrentLength() {return 0.0;};
+    public default double getCurrentLength(String side) {return 0.0;};
 
 }

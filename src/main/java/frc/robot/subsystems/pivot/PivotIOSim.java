@@ -56,8 +56,14 @@ public class PivotIOSim implements PivotIO {
     }
 
     @Override
-    public double getCurrentAngle() {
-        return this.m_leftMotor.getAngularPositionRad();
+    public double getCurrentAngle(String side) {
+        switch (side) {
+            case "Right":
+                return this.m_rightMotor.getAngularPositionRad();
+        
+            default:
+                return this.m_leftMotor.getAngularPositionRad();
+        }
     }
 
 }

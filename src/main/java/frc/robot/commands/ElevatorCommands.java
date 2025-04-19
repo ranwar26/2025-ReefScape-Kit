@@ -20,7 +20,7 @@ public class ElevatorCommands {
           elevator.setTargetLength(targetLength);
         },
         interrupted -> {},
-        () -> Math.abs(elevator.getCurrentLength() - targetLength) < ElevatorConstants.kLengthErrorAllowed,
+        () -> Math.abs(elevator.getCurrentLength("Left") - targetLength) < ElevatorConstants.kLengthErrorAllowed,
         elevator);
 
     } else {
