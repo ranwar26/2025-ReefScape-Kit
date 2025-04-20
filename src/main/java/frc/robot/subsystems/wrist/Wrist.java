@@ -4,12 +4,13 @@
 
 package frc.robot.subsystems.wrist;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.WristConstants;
-import org.littletonrobotics.junction.Logger;
 
 public class Wrist extends SubsystemBase {
 
@@ -23,13 +24,12 @@ public class Wrist extends SubsystemBase {
 
     this.io = io;
 
-    this.m_wristPIDControllor =
-        new ProfiledPIDController(
-            WristConstants.kP,
-            WristConstants.kI,
-            WristConstants.kD,
-            new TrapezoidProfile.Constraints(
-                WristConstants.kMaxVelocity, WristConstants.kMaxAcceleration));
+    this.m_wristPIDControllor = new ProfiledPIDController(
+        WristConstants.kP,
+        WristConstants.kI,
+        WristConstants.kD,
+        new TrapezoidProfile.Constraints(
+            WristConstants.kMaxVelocity, WristConstants.kMaxAcceleration));
   }
 
   @Override
@@ -38,6 +38,11 @@ public class Wrist extends SubsystemBase {
     Logger.processInputs("Wrist", inputs);
   }
 
+  /**
+   * Tell the pivot to move to the target length
+   * 
+   * @param angle - the target angle
+   */
   public void setTargetAngle(double angle) {
 
     double deltaAngle = inputs.position - angle;
@@ -47,6 +52,11 @@ public class Wrist extends SubsystemBase {
     this.io.setWristVolts(MathUtil.clamp(targetSpeed, -1.0, 1.0) * 12.0);
   }
 
+  /**
+   * get the current angle of the pivot
+   * 
+   * @return - the current angle of the side picked
+   */
   public double getCurrentAngle() {
     return this.io.getCurrentAngle();
   }

@@ -12,6 +12,14 @@ import frc.robot.subsystems.elevator.Elevator;
 /** Add your docs here. */
 public class ElevatorCommands {
 
+  /**
+   * Gives the elevator subsystem a target length
+   * 
+   * @param elevator - the elevator subsystem
+   * @param targetLength - the length to be achieved
+   * @param allowEndCondition - whether the end condition of the command is to be
+   * @return - the command with the logic
+   */
   public static Command elevatorToTarget(Elevator elevator, double targetLength, boolean allowEndCondition) {
     if(allowEndCondition) {
       return new FunctionalCommand(
@@ -35,6 +43,12 @@ public class ElevatorCommands {
     }
   }
 
+  /**
+   * Sends the elevator home
+   * 
+   * @param elevator - the elevator subsystem
+   * @return - the command with the logic
+   */
   public static Command wristToHome(Elevator elevator) {
     return elevatorToTarget(elevator, ElevatorConstants.kHomeLength, false);
   }

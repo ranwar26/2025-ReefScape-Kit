@@ -19,14 +19,23 @@ import frc.robot.subsystems.wrist.Wrist;
 /** Add your docs here. */
 public class ReefLevelsCommandGroups {
 
+  /**
+   * Sequents commands for the arm to score on level 2 of the reef
+   * 
+   * @param pivot - the pivot subsystem
+   * @param elevator the elevator subsystem
+   * @param wrist - the wrist subsystem
+   * @param intake - the intake subsystem
+   * @return - the command with the given logic
+   */
   public static Command Level2UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
 
     return new SequentialCommandGroup(
 
-        PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel2Angle, true),
+        PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel2Angle, true), // Command group waits on this
 
         new ParallelDeadlineGroup(
-              ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel2Length, true),
+              ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel2Length, true), // Command group waits on this
             PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel2Angle, false)
         ),
 
@@ -38,14 +47,23 @@ public class ReefLevelsCommandGroups {
     );
   }
 
+  /**
+   * Sequents commands for the arm to score on level 3 of the reef
+   * 
+   * @param pivot - the pivot subsystem
+   * @param elevator the elevator subsystem
+   * @param wrist - the wrist subsystem
+   * @param intake - the intake subsystem
+   * @return - the command with the given logic
+   */
   public static Command Level3UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
 
     return new SequentialCommandGroup(
 
-        PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel3Angle, true),
+        PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel3Angle, true), // Command group waits on this
 
         new ParallelDeadlineGroup(
-              ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel3Length, true),
+              ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel3Length, true), // Command group waits on this
             PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel3Angle, false)
         ),
 
@@ -57,14 +75,23 @@ public class ReefLevelsCommandGroups {
     );
   }
 
+  /**
+   * Sequents commands for the arm to score on level 4 of the reef
+   * 
+   * @param pivot - the pivot subsystem
+   * @param elevator the elevator subsystem
+   * @param wrist - the wrist subsystem
+   * @param intake - the intake subsystem
+   * @return - the command with the given logic
+   */
   public static Command Level4UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
 
     return new SequentialCommandGroup(
 
-        PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel4Angle, true),
+        PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel4Angle, true), // Command group waits on this
 
         new ParallelDeadlineGroup(
-              ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel4Length, true),
+              ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel4Length, true), // Command group waits on this
             PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel4Angle, false)
         ),
 

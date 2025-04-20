@@ -13,7 +13,6 @@
 
 package frc.robot;
 
-
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeAlgaeOnField;
@@ -122,8 +121,10 @@ public class RobotContainer {
                 break;
             case SIM:
                 // create a maple-sim swerve drive simulation instance
-                this.driveSimulation = new SwerveDriveSimulation(DriveConstants.mapleSimConfig,
-                        new Pose2d(3, 3, new Rotation2d()));
+                this.driveSimulation = new SwerveDriveSimulation(
+                    DriveConstants.mapleSimConfig,
+                    new Pose2d(3, 3, new Rotation2d())
+                );
                 // add the simulated drivetrain to the simulation field
                 SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
                 // Sim robot, instantiate physics sim IO implementations
@@ -142,10 +143,10 @@ public class RobotContainer {
 
                 vision = new Vision(
                         drive,
-                        new VisionIOPhotonVisionSim(
+                        new VisionIOPhotonVisionSim(// Front camera
                                 VisionConstants.camera0Name, VisionConstants.robotToCamera0,
                                 driveSimulation::getSimulatedDriveTrainPose),
-                        new VisionIOPhotonVisionSim(
+                        new VisionIOPhotonVisionSim(// Back camera
                                 VisionConstants.camera1Name, VisionConstants.robotToCamera1,
                                 driveSimulation::getSimulatedDriveTrainPose));
 
@@ -153,33 +154,22 @@ public class RobotContainer {
             default:
                 // Replayed robot, disable IO implementations
                 drive = new Drive(
-                        new GyroIO() {
-                        },
-                        new ModuleIO() {
-                        },
-                        new ModuleIO() {
-                        },
-                        new ModuleIO() {
-                        },
-                        new ModuleIO() {
-                        },
-                        (pose) -> {
-                        });
+                        new GyroIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {},
+                        (pose) -> {});
 
-                pivot = new Pivot(new PivotIO() {
-                });
-                elevator = new Elevator(new ElevatorIO() {
-                });
-                wrist = new Wrist(new WristIO() {
-                });
-                intake = new Intake(new IntakeIO() {
-                });
+                pivot = new Pivot(new PivotIO() {});
+                elevator = new Elevator(new ElevatorIO() {});
+                wrist = new Wrist(new WristIO() { });
+                intake = new Intake(new IntakeIO() {});
                 vision = new Vision(
                         drive,
-                        new VisionIO() {
-                        },
-                        new VisionIO() {
-                        });
+                        new VisionIO() {},
+                        new VisionIO() {}
+                );
 
                 break;
         }
@@ -210,8 +200,10 @@ public class RobotContainer {
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
                 () -> -controller.getRightY(),
-                () -> -controller.getRightX()));
+                () -> -controller.getRightX()
+        ));
 
+        // Default command for each subsystem
         intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> 0.0));
 
         wrist.setDefaultCommand(WristCommands.wristToHome(wrist));
@@ -239,41 +231,41 @@ public class RobotContainer {
 
         // Reset gyro / odometry
         final Runnable resetGyro = Constants.currentMode == Constants.Mode.SIM
-                ? () -> drive.resetOdometry(driveSimulation.getSimulatedDriveTrainPose()) // reset odometry to actual
-                                                                                          // robot pose during
-                                                                                          // simulation
-                : () -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero
-                                                                                                             // gyro
+                // reset odometry to actual robot pose during simulation
+                ? () -> drive.resetOdometry(driveSimulation.getSimulatedDriveTrainPose())
+                // zero gyro
+                : () -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
 
         controller.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
         controller.leftTrigger().onTrue(IntakeCommands.intakeRun(
                 intake,
-                () -> controller.getLeftTriggerAxis()));
+                () -> controller.getLeftTriggerAxis()
+        ));
 
-        controller.leftBumper().whileTrue(
-                ReefLevelsCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, intake));
+        // Testing Levels on controller (move to button box).
+        controller.leftBumper().whileTrue(ReefLevelsCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, intake));
+        controller.rightBumper().whileTrue(ReefLevelsCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, intake));
+        controller.y().whileTrue(ReefLevelsCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, intake));
 
-        controller.rightBumper().whileTrue(
-                ReefLevelsCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, intake));
-
-        controller.y().whileTrue(
-                ReefLevelsCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, intake));
-
+        // Starts the arm mechanism for sim and comp matches
         CommandScheduler.getInstance().schedule(MechanismCommands.mechanismRun(pivot, elevator, wrist, intake));
 
+        // Spawning game piece in sim (Remove before comp)
         controller.a().whileTrue(Commands.runOnce(
                 () -> {
                     ReefscapeCoralOnField coral = new ReefscapeCoralOnField(new Pose2d(3.0, 4.0, new Rotation2d()));
                     SimulatedArena.getInstance().addGamePiece(coral);
                 },
-                drive));
+                drive
+        ));
         controller.b().whileTrue(Commands.runOnce(
                 () -> {
                     ReefscapeAlgaeOnField algae = new ReefscapeAlgaeOnField(new Translation2d(3.0, 5.0));
                     SimulatedArena.getInstance().addGamePiece(algae);
                 },
-                drive));
+                drive
+        ));
 
     }
 

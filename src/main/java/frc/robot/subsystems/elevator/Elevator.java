@@ -40,6 +40,11 @@ public class Elevator extends SubsystemBase {
     Logger.processInputs("Elevator", inputs);
   }
 
+  /**
+   * Tell the elevator to move to the target length
+   * 
+   * @param length - the target length
+   */
   public void setTargetLength(double length) {
 
     double deltaLength = inputs.leftPosition - length;
@@ -49,10 +54,21 @@ public class Elevator extends SubsystemBase {
     this.io.setElevatorVolts(MathUtil.clamp(targetSpeed, -1.0, 1.0) * 12.0);
   }
 
+  /**
+   * get the current Length of the elevator (Right encoder if none is given)
+   * 
+   * @return - the current length of the side picked
+   */
   public double getCurrentLength() {
     return this.getCurrentLength("Right");
   }
 
+  /**
+   * get the current Length of the elevator
+   * 
+   * @param side - the side to grab data from
+   * @return - the current length of the side picked
+   */
   public double getCurrentLength(String side) {
     return this.io.getCurrentLength(side);
   }

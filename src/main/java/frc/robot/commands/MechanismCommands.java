@@ -20,11 +20,13 @@ import frc.robot.subsystems.wrist.Wrist;
 /** Add your docs here. */
 public class MechanismCommands {
 
+    //Part for the left side
     private static LoggedMechanism2d mechanismLeft = new LoggedMechanism2d(5, 5.0);
     private static LoggedMechanismLigament2d elevatorPartLeft = new LoggedMechanismLigament2d("elevator", 0.0, 0);
     private static LoggedMechanismLigament2d gripperPartLeft = new LoggedMechanismLigament2d("gripper", 0.3, 0);
     private static LoggedMechanismLigament2d intakePartLeft = new LoggedMechanismLigament2d("intake", 0.05, 0);
 
+    //Part for the right side
     private static LoggedMechanism2d mechanismRight = new LoggedMechanism2d(5, 5.0);
     private static LoggedMechanismLigament2d elevatorPartRight = new LoggedMechanismLigament2d("elevator", 0.0, 0);
     private static LoggedMechanismLigament2d gripperPartRight = new LoggedMechanismLigament2d("gripper", 0.3, 0);
@@ -52,6 +54,15 @@ public class MechanismCommands {
         intakePartRight.setLineWeight(4.0);
     }
 
+    /**
+     * Updates the arm mechanism's position and rotation
+     * 
+     * @param pivot - the pivot subsystem
+     * @param elevator - the elevator subsystem
+     * @param wrist - the wrist subsystem
+     * @param intake - the intake subsystem
+     * @return the command with the Logic
+     */
     public static Command mechanismRun(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
 
     return Commands.run(

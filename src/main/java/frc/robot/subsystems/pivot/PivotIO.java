@@ -22,9 +22,29 @@ public interface PivotIO {
         public double rightCurrentAmps = 0.0;
     }
 
-    public default void updateInputs(PivotIOInputs inputs) {}
+    /**
+     * Updates the inputs of the pivot subsystem
+     * 
+     * @param inputs - the class to be updated
+     */
+    public default void updateInputs(PivotIOInputs inputs) {
+    }
 
-    public default void setPivotVolts(double volts) {}
+    /**
+     * Sets the motors at the given voltage
+     * 
+     * @param volts - the number of volt
+     */
+    public default void setPivotVolts(double volts) {
+    }
 
-    public default double getCurrentAngle(String side) {return 0.0;};
+    /**
+     * get the current angle of the pivot
+     * 
+     * @param side - the side to grab data from
+     * @return - the current length of the side picked
+     */
+    public default double getCurrentAngle(String side) {
+        return 0.0;
+    };
 }

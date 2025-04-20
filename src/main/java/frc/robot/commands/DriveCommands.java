@@ -21,11 +21,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -49,7 +46,7 @@ public class DriveCommands {
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
-  // Create PID controller
+  // Turning PID controller
   private static final ProfiledPIDController angleController = new ProfiledPIDController(
       ANGLE_KP,
       0.0,
@@ -59,6 +56,13 @@ public class DriveCommands {
   private DriveCommands() {
   }
 
+  /**
+   * Turns the position of a joystick into a x, y velocity
+   *
+   * @param x - x position of the joystick
+   * @param y - y position of the joystick
+   * @return x, y velocity
+   */
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
     // Apply deadband
     double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DEADBAND);
@@ -73,13 +77,22 @@ public class DriveCommands {
         .getTranslation();
   }
 
+  /**
+   * Turns the position of a joystick into a a rotational speed
+   * 
+   * @param x - x position of the joystick
+   * @param y - y position of the joystick
+   * @param rawGyroAngle - Current gyro angle in degrees
+   * @return - the rotational speed in radians
+   */
   private static Rotation2d getAngularSpeedFromJoysticks(double x, double y, double rawGyroAngle) {
 
+    //Checks if any rotation input is being given
     if (Math.abs(x) < OIConstants.kDriveDeadband && Math.abs(y) < OIConstants.kDriveDeadband) {
-
       return new Rotation2d(0.0);
     }
 
+    //put angle between 0 and 359 degrees
     double currentAngle = Math.abs(rawGyroAngle % 360);
     if (rawGyroAngle < 0) {
       currentAngle = 360 - currentAngle;
@@ -111,9 +124,14 @@ public class DriveCommands {
   /**
    * Field relative drive command using joystick for linear control and PID for
    * angular control.
-   * Possible use cases include snapping to an angle, aiming at a vision target,
-   * or controlling
-   * absolute rotation with a joystick.
+   * 
+   * @param drive - the drive subsystem
+   * @param throttleSupplier - the throttle of the robot speed
+   * @param xSupplier - x speed of the robot
+   * @param ySupplier - y speed of the robot
+   * @param xAngleSupplier - x component of the angle
+   * @param yAngleSupplier - y component of the angle
+   * @return - the command with the logic of this method
    */
   public static Command joystickDriveAtAngle(
       Drive drive,

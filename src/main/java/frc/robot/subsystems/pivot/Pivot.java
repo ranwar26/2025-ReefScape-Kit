@@ -24,14 +24,12 @@ public class Pivot extends SubsystemBase {
 
     this.io = io;
 
-    this.m_pivotPidController =
-      new ProfiledPIDController(
+    this.m_pivotPidController = new ProfiledPIDController(
         PivotConstants.kP,
         PivotConstants.kI,
         PivotConstants.kD,
         new TrapezoidProfile.Constraints(
-          PivotConstants.kMaxVelocity, PivotConstants.kMaxAcceleration
-    ));
+            PivotConstants.kMaxVelocity, PivotConstants.kMaxAcceleration));
   }
 
   @Override
@@ -40,6 +38,11 @@ public class Pivot extends SubsystemBase {
     Logger.processInputs("Pivot", inputs);
   }
 
+  /**
+   * Tell the pivot to move to the target length
+   * 
+   * @param angle - the target angle
+   */
   public void setTargetAngle(double angle) {
 
     double deltaAngle = inputs.leftPosition - angle;
@@ -49,10 +52,21 @@ public class Pivot extends SubsystemBase {
     this.io.setPivotVolts(MathUtil.clamp(targetSpeed, -1.0, 1.0) * 12.0);
   }
 
+  /**
+   * get the current angle of the pivot (Right encoder if none is given)
+   * 
+   * @return - the current length of the side picked
+   */
   public double getCurrentAngle() {
     return this.getCurrentAngle("Right");
   }
 
+  /**
+   * get the current angle of the pivot
+   * 
+   * @param side - the side to grab data from
+   * @return - the current angle of the side picked
+   */
   public double getCurrentAngle(String side) {
     return this.io.getCurrentAngle(side);
   }

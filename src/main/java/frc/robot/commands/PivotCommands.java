@@ -12,6 +12,14 @@ import frc.robot.subsystems.pivot.Pivot;
 /** Add your docs here. */
 public class PivotCommands {
 
+  /**
+   * Gives the pivot subsystem a target angle
+   * 
+   * @param pivot - the pivot subsystem
+   * @param targetAngle - the angle to achieve
+   * @param allowEndCondition - whether the end condition is used
+   * @return - Command with the given logic
+   */
   public static Command pivotToTarget(Pivot pivot, double targetAngle, boolean allowEndCondition) {
     if(allowEndCondition) {
       return new FunctionalCommand(
@@ -35,6 +43,12 @@ public class PivotCommands {
     }
   }
 
+  /**
+   * Send the pivot back to home
+   * 
+   * @param pivot - the pivot subsystem
+   * @return - Command with the given logic
+   */
   public static Command pivotToHome(Pivot pivot) {
     return pivotToTarget(pivot, PivotConstants.kHomeAngle, true);
   }

@@ -68,5 +68,14 @@
   },
   "[java]": {
     "editor.defaultFormatter": "redhat.java"
-  }
+  },
+  "cSpell.words": [
+    "Megatag",
+    "Quasistatic",
+    "teleop",
+    "Uncomitted",
+    "URCL",
+    "wpilibj",
+    "WPILOG"
+  ]
 }

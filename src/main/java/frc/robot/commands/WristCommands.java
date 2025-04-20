@@ -12,6 +12,14 @@ import frc.robot.subsystems.wrist.Wrist;
 /** Add your docs here. */
 public class WristCommands {
 
+  /**
+   * Gives the wrist subsystem a target angle
+   * 
+   * @param wrist - the wrist subsystem
+   * @param targetAngle - the angle to be achieved
+   * @param allowEndCondition
+   * @return - the command with the given logic
+   */
   public static Command wristToTarget(Wrist wrist, double targetAngle, boolean allowEndCondition) {
     if(allowEndCondition) {
       return new FunctionalCommand(
@@ -35,6 +43,12 @@ public class WristCommands {
     }
   }
 
+  /**
+   * Sends the wrist back to home
+   * 
+   * @param wrist - the wrist subsystem
+   * @return - the command with the given logic
+   */
   public static Command wristToHome(Wrist wrist) {
     return wristToTarget(wrist, WristConstants.kHomeAngle, false);
   }

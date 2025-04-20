@@ -25,10 +25,21 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
   }
 
-  public void setOutput(double percentage) {
+  /**
+   * Set the intake target speed
+   * 
+   * @param percentage - the percentage of intake's speed
+   */
+  public void setIntakePercentage(double percentage) {
     this.io.setIntakeVolts(MathUtil.clamp(percentage, -1.0, 1.0) * 12.0);
   }
 
+  /**
+   * Gets the current angle of the intake
+   * (Not very useful, but useful for see if the intake is moving)
+   * 
+   * @return - the current angle of the intake
+   */
   public double getCurrentAngle() {
     return this.io.getCurrentAngle();
   }

@@ -22,10 +22,30 @@ public interface ElevatorIO {
         public double rightCurrentAmps = 0.0;
     }
 
-    public default void updateInputs(ElevatorIOInputs inputs) {}
+    /**
+     * Updates the inputs of the elevator subsystem
+     * 
+     * @param inputs - the class to be updated
+     */
+    public default void updateInputs(ElevatorIOInputs inputs) {
+    }
 
-    public default void setElevatorVolts(double volts) {}
+    /**
+     * Sets the motors at the given voltage
+     * 
+     * @param volts - the number of volt
+     */
+    public default void setElevatorVolts(double volts) {
+    }
 
-    public default double getCurrentLength(String side) {return 0.0;};
+    /**
+     * get the current length of the elevator
+     * 
+     * @param side - the side to grab data from
+     * @return - the current length of the side picked
+     */
+    public default double getCurrentLength(String side) {
+        return 0.0;
+    };
 
 }

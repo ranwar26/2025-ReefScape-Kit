@@ -13,10 +13,12 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Kilogram;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Volts;
 
 import org.ironmaple.simulation.drivesims.COTS;
-import org.ironmaple.simulation.drivesims.GyroSimulation;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
@@ -32,7 +34,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.math.util.Units.*;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -210,6 +211,7 @@ public final class Constants {
     public static final double kI = 0.0;
     public static final double kD = 0.4;
 
+    // Target angle in degrees converted to radians
     public static final double kHomeAngle = Math.toRadians(30.0);
 
     public static final double kLevel1Angle = Math.toRadians(0.0);
@@ -221,6 +223,7 @@ public final class Constants {
     public static final double kUpperAlgaeRemove = Math.toRadians(67.0);
     public static final double kLowerAlgaeRemove = Math.toRadians(59.0);
 
+    // The error limit before a command will end.
     public static final double kAngleErrorAllowed = 0.1;
   }
 
@@ -237,6 +240,7 @@ public final class Constants {
     public static final double kI = 0.0;
     public static final double kD = 0.3;
 
+    // Target length in meters
     public static final double kHomeLength = 0.0;
 
     public static final double kLevel1Length = 0.0;
@@ -245,8 +249,10 @@ public final class Constants {
     public static final double kLevel4Length = 1.19;
     public static final double kCoralStationLength = 0.03;
 
+    // The number of meter the elevator has to move to active the second stage.
     public static final double kSecondStageTrip = 0.75;
 
+    // The error limit before a command will end.
     public static final double kLengthErrorAllowed = 0.1;
   }
 
@@ -263,6 +269,7 @@ public final class Constants {
     public static final double kI = 0.001;
     public static final double kD = 0.0;
 
+    // Target angle in degrees converted to radians
     public static final double kHomeAngle = Math.toRadians(0.0);
 
     public static final double kLevel1Angle = Math.toRadians(90.0);
@@ -274,6 +281,7 @@ public final class Constants {
     public static final double kUpperAlgaeRemove = Math.toRadians(157.0);
     public static final double kLowerAlgaeRemove = Math.toRadians(155.0);
 
+    // The error limit before a command will end.
     public static final double kAngleErrorAllowed = 0.1;
   }
 

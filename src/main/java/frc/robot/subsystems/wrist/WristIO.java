@@ -17,10 +17,29 @@ public interface WristIO {
     public double currentAmps = 0.0;
   }
 
-  public default void updateInputs(WristIOInputs inputs) {}
+  /**
+   * Updates the inputs of the wrist subsystem
+   * 
+   * @param inputs - the class to be updated
+   */
+  public default void updateInputs(WristIOInputs inputs) {
+  }
 
-  public default void setWristVolts(double volts) {}
+  /**
+   * Sets the motors at the given voltage
+   * 
+   * @param volts - the number of volt
+   */
+  public default void setWristVolts(double volts) {
+  }
 
-  public default double getCurrentAngle() {return 0.0;};
+  /**
+   * get the current angle of the wrist
+   * 
+   * @return - the current angle of the side picked
+   */
+  public default double getCurrentAngle() {
+    return 0.0;
+  };
 
 }

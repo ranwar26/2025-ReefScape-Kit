@@ -17,9 +17,29 @@ public interface IntakeIO {
     public double currentAmps = 0.0;
   }
 
-  public default void updateInputs(IntakeIOInputs inputs) {}
+  /**
+   * Updates the inputs of the intake subsystem
+   * 
+   * @param inputs - the class to be updated
+   */
+  public default void updateInputs(IntakeIOInputs inputs) {
+  }
 
-  public default void setIntakeVolts(double volts) {}
+  /**
+   * Sets the motors at the given voltage
+   * 
+   * @param volts - the number of volt
+   */
+  public default void setIntakeVolts(double volts) {
+  }
 
-  public default double getCurrentAngle() {return 0.0;};
+  /**
+   * get the current Length of the elevator
+   * 
+   * @param side - the side to grab data from
+   * @return - the current length of the side picked
+   */
+  public default double getCurrentAngle() {
+    return 0.0;
+  };
 }

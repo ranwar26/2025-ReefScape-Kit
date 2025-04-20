@@ -12,11 +12,18 @@ import java.util.function.DoubleSupplier;
 /** Add your docs here. */
 public class IntakeCommands {
 
+  /**
+   * Runs the intake a speed percentage
+   * 
+   * @param intake - the intake subsystem
+   * @param speedPercentage - the percentage the intake should run at
+   * @return - the command with the logic
+   */
   public static Command intakeRun(Intake intake, DoubleSupplier speedPercentage) {
 
     return Commands.run(
         () -> {
-          intake.setOutput(speedPercentage.getAsDouble());
+          intake.setIntakePercentage(speedPercentage.getAsDouble());
         },
         intake);
   }
