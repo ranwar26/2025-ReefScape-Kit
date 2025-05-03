@@ -26,7 +26,7 @@ public class ReefLevelsCommandGroups {
    * @param elevator the elevator subsystem
    * @param wrist - the wrist subsystem
    * @param intake - the intake subsystem
-   * @return - the command with the given logic
+   * @return sequentialCommandGroup - the command with the given logic
    */
   public static Command Level2UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
 
@@ -54,7 +54,7 @@ public class ReefLevelsCommandGroups {
    * @param elevator the elevator subsystem
    * @param wrist - the wrist subsystem
    * @param intake - the intake subsystem
-   * @return - the command with the given logic
+   * @return sequentialCommandGroup - the command with the given logic
    */
   public static Command Level3UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
 
@@ -82,7 +82,7 @@ public class ReefLevelsCommandGroups {
    * @param elevator the elevator subsystem
    * @param wrist - the wrist subsystem
    * @param intake - the intake subsystem
-   * @return - the command with the given logic
+   * @return sequentialCommandGroup - the command with the given logic
    */
   public static Command Level4UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
 
