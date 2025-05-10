@@ -70,6 +70,8 @@
     "editor.defaultFormatter": "redhat.java"
   },
   "cSpell.words": [
+    "debouncers",
+    "dtheta",
     "Megatag",
     "Quasistatic",
     "servoing",
