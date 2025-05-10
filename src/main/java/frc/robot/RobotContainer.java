@@ -16,6 +16,7 @@ package frc.robot;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.MathUtil;
@@ -205,6 +206,8 @@ public class RobotContainer {
 				configureREALButtonBindings();
 				break;
 		}
+
+		PathfindingCommand.warmupCommand().schedule();
 	}
 
 	/**
