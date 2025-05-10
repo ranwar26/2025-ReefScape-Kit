@@ -16,7 +16,9 @@ package frc.robot;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -26,11 +28,13 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.MechanismCommands;
+import frc.robot.commands.PathplannerOnFlyCommands;
 import frc.robot.commands.PivotCommands;
 import frc.robot.commands.ReefLevelsCommandGroups;
 import frc.robot.commands.WristCommands;
@@ -173,11 +177,11 @@ public class RobotContainer {
 		// Default command, normal field-relative drive
 		drive.setDefaultCommand(DriveCommands.joystickDriveAtAngle(
 				drive,
-				() -> controller.getRightTriggerAxis(),
-				() -> -controller.getLeftY(),
-				() -> -controller.getLeftX(),
-				() -> -controller.getRightY(),
-				() -> -controller.getRightX()));
+				() -> MathUtil.applyDeadband(controller.getRightTriggerAxis(), OIConstants.kDriveDeadband),
+				() -> MathUtil.applyDeadband(-controller.getLeftY(), OIConstants.kDriveDeadband),
+				() -> MathUtil.applyDeadband(-controller.getLeftX(), OIConstants.kDriveDeadband),
+				() -> MathUtil.applyDeadband(-controller.getRightY(), OIConstants.kDriveDeadband),
+				() -> MathUtil.applyDeadband(-controller.getRightX(), OIConstants.kDriveDeadband)));
 
 		// Default command for each subsystem
 		intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> 0.0));
@@ -228,6 +232,15 @@ public class RobotContainer {
 		controller.leftBumper().whileTrue(ReefLevelsCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, intake));
 		controller.rightBumper().whileTrue(ReefLevelsCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, intake));
 		controller.y().whileTrue(ReefLevelsCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, intake));
+
+		controller.povDown().whileTrue(PathplannerOnFlyCommands.pathFindToBranch(1,null));
+		controller.povDownLeft().whileTrue(PathplannerOnFlyCommands.pathFindToBranch(2,null));
+		controller.povLeft().whileTrue(PathplannerOnFlyCommands.pathFindToBranch(2,null));
+		controller.povDownRight().whileTrue(PathplannerOnFlyCommands.pathFindToBranch(3, null));
+		controller.povRight().whileTrue(PathplannerOnFlyCommands.pathFindToBranch(3, null));
+		controller.povUp().whileTrue(PathplannerOnFlyCommands.pathFindToBranch(4, null));
+		controller.povUpLeft().whileTrue(PathplannerOnFlyCommands.pathFindToBranch(5, null));
+		controller.povUpRight().whileTrue(PathplannerOnFlyCommands.pathFindToBranch(6, null));
 
 	}
 
