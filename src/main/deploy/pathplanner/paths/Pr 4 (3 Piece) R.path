@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.790632458233891,
+        "y": 2.7789081145584724
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.195548619011332,
+        "y": 1.2239240484206944
+      },
+      "isLocked": false,
+      "linkedName": "Red Wall (Part 3 to 4)"
+    },
+    {
+      "anchor": {
+        "x": 1.654474940334129,
+        "y": 0.7055787589498812
+      },
+      "prevControl": {
+        "x": 2.9469429668558123,
+        "y": 2.007620865916984
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Red Wall (Part 4 to 5)"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 54.0
+  },
+  "reversed": false,
+  "folder": "Right Side Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 59.99999999999999
+  },
+  "useDefaultConstraints": true
+}
