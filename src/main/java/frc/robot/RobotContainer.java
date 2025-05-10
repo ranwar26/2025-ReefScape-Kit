@@ -13,18 +13,12 @@
 
 package frc.robot;
 
-import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeAlgaeOnField;
-import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
@@ -44,7 +37,6 @@ import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
-import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
@@ -80,12 +72,11 @@ import frc.robot.subsystems.wrist.WristIOSim;
 public class RobotContainer {
 	// Subsystems
 	private final Drive drive;
+	private final Vision vision;
 	private final Pivot pivot;
 	private final Elevator elevator;
 	private final Wrist wrist;
 	private final Intake intake;
-	private final Vision vision;
-	private SwerveDriveSimulation driveSimulation = null;
 
 	// Controller
 	private final CommandXboxController controller = new CommandXboxController(0);
@@ -105,83 +96,57 @@ public class RobotContainer {
 						new ModuleIOSpark(0),
 						new ModuleIOSpark(1),
 						new ModuleIOSpark(2),
-						new ModuleIOSpark(3),
-						(pose) -> {
-						});
+						new ModuleIOSpark(3));
+				vision = new Vision(
+					drive::addVisionMeasurement,
+					new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+					new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+
 				pivot = new Pivot(new PivotIOReal());
 				elevator = new Elevator(new ElevatorIOReal());
 				wrist = new Wrist(new WristIOReal());
 				intake = new Intake(new IntakeIOReal());
 
-				this.vision = new Vision(
-						drive,
-						new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-						new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
-
 				break;
 
 			case SIM:
-				// create a maple-sim swerve drive simulation instance
-				this.driveSimulation = new SwerveDriveSimulation(
-						DriveConstants.mapleSimConfig,
-						new Pose2d(3, 3, new Rotation2d()));
-				// add the simulated drivetrain to the simulation field
-				SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
 				// Sim robot, instantiate physics sim IO implementations
 				drive = new Drive(
-						new GyroIOSim(driveSimulation.getGyroSimulation()),
-						new ModuleIOSim(driveSimulation.getModules()[0]),
-						new ModuleIOSim(driveSimulation.getModules()[1]),
-						new ModuleIOSim(driveSimulation.getModules()[2]),
-						new ModuleIOSim(driveSimulation.getModules()[3]),
-						driveSimulation::setSimulationWorldPose);
+						new GyroIO() {},
+						new ModuleIOSim(),
+						new ModuleIOSim(),
+						new ModuleIOSim(),
+						new ModuleIOSim());
+				// vision = new Vision(drive::addVisionMeasurement,
+				// new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+				// new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
+				vision = new Vision(drive::addVisionMeasurement,
+				new VisionIO() {},
+				new VisionIO() {});
 
 				pivot = new Pivot(new PivotIOSim());
 				elevator = new Elevator(new ElevatorIOSim());
 				wrist = new Wrist(new WristIOSim());
 				intake = new Intake(new IntakeIOSim());
 
-				vision = new Vision(
-						drive,
-						new VisionIOPhotonVisionSim(// Front camera
-								VisionConstants.camera0Name, VisionConstants.robotToCamera0,
-								driveSimulation::getSimulatedDriveTrainPose),
-						new VisionIOPhotonVisionSim(// Back camera
-								VisionConstants.camera1Name, VisionConstants.robotToCamera1,
-								driveSimulation::getSimulatedDriveTrainPose));
-
 				break;
 
 			default:
 				// Replayed robot, disable IO implementations
 				drive = new Drive(
-						new GyroIO() {
-						},
-						new ModuleIO() {
-						},
-						new ModuleIO() {
-						},
-						new ModuleIO() {
-						},
-						new ModuleIO() {
-						},
-						(pose) -> {
-						});
+						new GyroIO() {},
+						new ModuleIO() {},
+						new ModuleIO() {},
+						new ModuleIO() {},
+						new ModuleIO() {});
+				vision = new Vision(drive::addVisionMeasurement,
+				new VisionIO() {},
+				new VisionIO() {});
 
-				pivot = new Pivot(new PivotIO() {
-				});
-				elevator = new Elevator(new ElevatorIO() {
-				});
-				wrist = new Wrist(new WristIO() {
-				});
-				intake = new Intake(new IntakeIO() {
-				});
-				vision = new Vision(
-						drive,
-						new VisionIO() {
-						},
-						new VisionIO() {
-						});
+				pivot = new Pivot(new PivotIO() {});
+				elevator = new Elevator(new ElevatorIO() {});
+				wrist = new Wrist(new WristIO() {});
+				intake = new Intake(new IntakeIO() {});
 
 				break;
 		}
@@ -268,23 +233,6 @@ public class RobotContainer {
 
 	public void configureSIMButtonBindings() {
 
-		controller.start().onTrue(Commands.runOnce(
-				() -> drive.resetOdometry(driveSimulation.getSimulatedDriveTrainPose()),
-				drive).ignoringDisable(true));
-
-		// Spawning game piece in sim (Remove before comp)
-		controller.a().whileTrue(Commands.runOnce(
-				() -> {
-					ReefscapeCoralOnField coral = new ReefscapeCoralOnField(new Pose2d(3.0, 4.0, new Rotation2d()));
-					SimulatedArena.getInstance().addGamePiece(coral);
-				},
-				drive));
-		controller.b().whileTrue(Commands.runOnce(
-				() -> {
-					ReefscapeAlgaeOnField algae = new ReefscapeAlgaeOnField(new Translation2d(3.0, 5.0));
-					SimulatedArena.getInstance().addGamePiece(algae);
-				},
-				drive));
 	}
 
 	/**
@@ -296,25 +244,4 @@ public class RobotContainer {
 		return autoChooser.get();
 	}
 
-	public void resetSimulationField() {
-		if (Constants.currentMode != Constants.Mode.SIM)
-			return;
-
-		drive.resetOdometry(new Pose2d(3, 3, new Rotation2d()));
-		SimulatedArena.getInstance().resetFieldForAuto();
-	}
-
-	public void updateSimulation() {
-		if (Constants.currentMode != Constants.Mode.SIM)
-			return;
-
-		SimulatedArena.getInstance().simulationPeriodic();
-		Logger.recordOutput("FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
-		Logger.recordOutput(
-				"FieldSimulation/Coral",
-				SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
-		Logger.recordOutput(
-				"FieldSimulation/Algae",
-				SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
-	}
 }

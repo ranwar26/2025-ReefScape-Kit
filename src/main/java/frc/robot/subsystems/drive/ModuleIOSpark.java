@@ -72,7 +72,7 @@ public class ModuleIOSpark implements ModuleIO {
             case 2 -> DriveConstants.backLeftZeroRotation;
             case 3 -> DriveConstants.backRightZeroRotation;
             default -> new Rotation2d();};
-        driveSpark = new SparkFlex(
+        driveSpark = new SparkMax(
                 switch (module) {
                     case 0 -> DriveConstants.frontLeftDriveCanId;
                     case 1 -> DriveConstants.frontRightDriveCanId;
@@ -96,7 +96,7 @@ public class ModuleIOSpark implements ModuleIO {
         turnController = turnSpark.getClosedLoopController();
 
         // Configure drive motor
-        var driveConfig = new SparkFlexConfig();
+        var driveConfig = new SparkMaxConfig();
         driveConfig
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(DriveConstants.driveMotorCurrentLimit)
