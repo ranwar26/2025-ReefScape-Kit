@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
@@ -51,6 +52,10 @@ import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotIO;
 import frc.robot.subsystems.pivot.PivotIOReal;
 import frc.robot.subsystems.pivot.PivotIOSim;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIO;
 import frc.robot.subsystems.wrist.WristIOReal;
@@ -67,6 +72,7 @@ import frc.robot.subsystems.wrist.WristIOSim;
 public class RobotContainer {
 	// Subsystems
 	private final Drive drive;
+	private final Vision vision;
 	private final Pivot pivot;
 	private final Elevator elevator;
 	private final Wrist wrist;
@@ -91,6 +97,11 @@ public class RobotContainer {
 						new ModuleIOSpark(1),
 						new ModuleIOSpark(2),
 						new ModuleIOSpark(3));
+				vision = new Vision(
+					drive::addVisionMeasurement,
+					new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+					new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+
 				pivot = new Pivot(new PivotIOReal());
 				elevator = new Elevator(new ElevatorIOReal());
 				wrist = new Wrist(new WristIOReal());
@@ -106,6 +117,12 @@ public class RobotContainer {
 						new ModuleIOSim(),
 						new ModuleIOSim(),
 						new ModuleIOSim());
+				// vision = new Vision(drive::addVisionMeasurement,
+				// new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+				// new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
+				vision = new Vision(drive::addVisionMeasurement,
+				new VisionIO() {},
+				new VisionIO() {});
 
 				pivot = new Pivot(new PivotIOSim());
 				elevator = new Elevator(new ElevatorIOSim());
@@ -122,6 +139,9 @@ public class RobotContainer {
 						new ModuleIO() {},
 						new ModuleIO() {},
 						new ModuleIO() {});
+				vision = new Vision(drive::addVisionMeasurement,
+				new VisionIO() {},
+				new VisionIO() {});
 
 				pivot = new Pivot(new PivotIO() {});
 				elevator = new Elevator(new ElevatorIO() {});
