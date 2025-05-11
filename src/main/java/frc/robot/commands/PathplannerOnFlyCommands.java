@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
@@ -15,18 +17,22 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 
 /** Add your docs here. */
 public class PathplannerOnFlyCommands {
 
-    public static Command pathFindToPose(Pose2d targetPose, PathConstraints constraints, double targetEndVelocity) {
+    public static Command pathFindToPose(Supplier<Pose2d> targetPose, PathConstraints constraints, double targetEndVelocity) {
+
+        if(constraints == null) {
+            constraints = new PathConstraints(DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxAngularSpeed, DriveConstants.maxAngularSpeed);
+        }
+
         return AutoBuilder.pathfindToPose(
-            targetPose,
+            targetPose.get(),
             constraints,
             targetEndVelocity
             );
@@ -44,7 +50,7 @@ public class PathplannerOnFlyCommands {
      * @param constraints
      * @return
      */
-    public static Command pathFindToBranch(int faceOfReef, PathConstraints constraints) {
+    public static Command pathFindToReef(int faceOfReef, PathConstraints constraints) {
 
         if(constraints == null) {
             constraints = new PathConstraints(DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxAngularSpeed, DriveConstants.maxAngularSpeed);
@@ -76,21 +82,44 @@ public class PathplannerOnFlyCommands {
             break;
         }
 
+        PathConstraints approachConstraints = new PathConstraints(0.5, 1.0, Math.PI / 2.0, Math.PI / 2.0);
+
+        return new SequentialCommandGroup(
+            AutoBuilder.pathfindToPose(
+            targetPose.transformBy(new Transform2d(-1.0, 0.0, new Rotation2d())),
+            constraints
+            ),
+            AutoBuilder.pathfindToPose(
+            targetPose,
+            approachConstraints
+            )
+        );
+    }
+
+    public static Command pathFindToCoralStation(boolean leftStation, PathConstraints constraints) {
+
+        if(constraints == null) {
+            constraints = new PathConstraints(DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxAngularSpeed, DriveConstants.maxAngularSpeed);
+        }
+
+        Pose2d targetPose  = leftStation ? CoralPositions.leftCoralRobotPosition : CoralPositions.rightCoralRobotPosition;
+
         return AutoBuilder.pathfindToPose(
             targetPose,
-            constraints
-            );
+            constraints,
+            0.0
+        );
     }
 
     private final class ReefPositions {
 
         private static final AprilTagFieldLayout aprilTagLayout = VisionConstants.aprilTagLayout;
 
-        private static final boolean isOnBlueAlliance = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
+        private static final boolean isOnBlueAlliance = (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue);
 
-        private static final Transform2d positionFromTagOffset = new Transform2d(0.8, 0, new Rotation2d(Math.PI));
+        private static final Transform2d positionFromTagOffset = new Transform2d(0.5, 0, new Rotation2d(Math.PI));
 
-        //These are based on view from the reef facing the driver station of the same team
+        //These are based on the view of the reef from the driver station of the same team
         private static final Pose2d frontReefTag =       isOnBlueAlliance ? aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d() : aprilTagLayout.getTagPose(7).orElse(new Pose3d()).toPose2d();
         private static final Pose2d frontLeftReefTag =   isOnBlueAlliance ? aprilTagLayout.getTagPose(19).orElse(new Pose3d()).toPose2d() : aprilTagLayout.getTagPose(6).orElse(new Pose3d()).toPose2d();
         private static final Pose2d frontRightReefTag =  isOnBlueAlliance ? aprilTagLayout.getTagPose(17).orElse(new Pose3d()).toPose2d() : aprilTagLayout.getTagPose(8).orElse(new Pose3d()).toPose2d();
@@ -105,5 +134,39 @@ public class PathplannerOnFlyCommands {
         public static final Pose2d backLeftReefRobotPosition = backLeftReefTag.transformBy(positionFromTagOffset);
         public static final Pose2d backRightReefRobotPosition = backRightReefTag.transformBy(positionFromTagOffset);
 
+    }
+
+    private final class CoralPositions {
+
+        private static final AprilTagFieldLayout aprilTagLayout = VisionConstants.aprilTagLayout;
+
+        private static final boolean isOnBlueAlliance = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
+
+        private static final Transform2d positionFromTagOffset = new Transform2d(0.5, 0, new Rotation2d());
+
+        //These are based on the view of the coral station from the driver station of the same team
+        private static final Pose2d leftCoralTag =  isOnBlueAlliance ? aprilTagLayout.getTagPose(13).orElse(new Pose3d()).toPose2d() : aprilTagLayout.getTagPose(1).orElse(new Pose3d()).toPose2d();
+        private static final Pose2d rightCoralTag = isOnBlueAlliance ? aprilTagLayout.getTagPose(12).orElse(new Pose3d()).toPose2d() : aprilTagLayout.getTagPose(2).orElse(new Pose3d()).toPose2d();
+
+        public static final Pose2d leftCoralRobotPosition = leftCoralTag.transformBy(positionFromTagOffset);
+        public static final Pose2d rightCoralRobotPosition = rightCoralTag.transformBy(positionFromTagOffset);
+
+    }
+
+    // For Demoing use only
+    public static Command randomlyMove() {
+    
+        SequentialCommandGroup primaryCommand = new SequentialCommandGroup(pathFindToReef(4, null));
+
+        for(int i = 0; i < 50; i++) {
+            primaryCommand.addCommands(pathFindToCoralStation(Math.random() < 0.5, null));
+
+            primaryCommand.addCommands(new WaitCommand(1.0));
+
+            primaryCommand.addCommands(pathFindToReef((int) (Math.random() * 6) + 1, null));
+            
+        }
+
+        return primaryCommand;
     }
 }
