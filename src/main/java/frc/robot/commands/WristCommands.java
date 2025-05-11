@@ -52,4 +52,14 @@ public class WristCommands {
   public static Command wristToHome(Wrist wrist) {
     return wristToTarget(wrist, WristConstants.kHomeAngle, false);
   }
+
+  /**
+   * Hold the wrist at current angle
+   * 
+   * @param wrist - the wrist subsystem
+   * @return - the command with the given logic
+   */
+  public static Command wristHold(Wrist wrist) {
+    return wristToTarget(wrist, wrist.getCurrentAngle(), false);
+  }
 }

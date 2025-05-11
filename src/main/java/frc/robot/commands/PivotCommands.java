@@ -52,4 +52,14 @@ public class PivotCommands {
   public static Command pivotToHome(Pivot pivot) {
     return pivotToTarget(pivot, PivotConstants.kHomeAngle, true);
   }
+
+  /**
+   * Hold the pivot at current angle
+   * 
+   * @param pivot - the pivot subsystem
+   * @return - Command with the given logic
+   */
+  public static Command pivotHold(Pivot pivot) {
+    return pivotToTarget(pivot, pivot.getCurrentAngle(), true);
+  }
 }

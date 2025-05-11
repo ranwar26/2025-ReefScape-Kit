@@ -39,7 +39,7 @@ import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.MechanismCommands;
 import frc.robot.commands.PathplannerOnFlyCommands;
 import frc.robot.commands.PivotCommands;
-import frc.robot.commands.ReefLevelsCommandGroups;
+import frc.robot.commands.ArmControlCommandGroups;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -191,7 +191,7 @@ public class RobotContainer {
 
 		wrist.setDefaultCommand(WristCommands.wristToHome(wrist));
 
-		elevator.setDefaultCommand(ElevatorCommands.wristToHome(elevator));
+		elevator.setDefaultCommand(ElevatorCommands.elevatorToHome(elevator));
 
 		pivot.setDefaultCommand(PivotCommands.pivotToHome(pivot));
 
@@ -231,9 +231,9 @@ public class RobotContainer {
 
 		controller.leftTrigger().onTrue(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
 
-		controller.a().whileTrue(ReefLevelsCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, intake));
-		controller.b().whileTrue(ReefLevelsCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, intake));
-		controller.y().whileTrue(ReefLevelsCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, intake));
+		controller.a().whileTrue(ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist));
+		controller.b().whileTrue(ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist));
+		controller.y().whileTrue(ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist));
 
 		controller.leftBumper().onTrue(PathplannerOnFlyCommands.pathFindToCoralStation(true, null));
 		controller.rightBumper().onTrue(PathplannerOnFlyCommands.pathFindToCoralStation(false, null));

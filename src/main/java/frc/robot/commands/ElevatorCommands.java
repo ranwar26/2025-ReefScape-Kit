@@ -49,7 +49,17 @@ public class ElevatorCommands {
    * @param elevator - the elevator subsystem
    * @return - the command with the logic
    */
-  public static Command wristToHome(Elevator elevator) {
+  public static Command elevatorToHome(Elevator elevator) {
     return elevatorToTarget(elevator, ElevatorConstants.kHomeLength, false);
+  }
+
+  /**
+   * Hold the elevator at the current length
+   * 
+   * @param elevator - the elevator subsystem
+   * @return - the command with the logic
+   */
+  public static Command elevatorHold(Elevator elevator) {
+    return elevatorToTarget(elevator, elevator.getCurrentLength(), false);
   }
 }

@@ -12,23 +12,21 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.wrist.Wrist;
 
 /** Add your docs here. */
-public class ReefLevelsCommandGroups {
+public class ArmControlCommandGroups {
 
   /**
-   * Sequents commands for the arm to score on level 2 of the reef
+   * Sequential commands for the arm to score on level 2 of the reef
    * 
    * @param pivot - the pivot subsystem
    * @param elevator the elevator subsystem
    * @param wrist - the wrist subsystem
-   * @param intake - the intake subsystem
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command Level2UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
+  public static Command Level2UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
 
     return new SequentialCommandGroup(
 
@@ -48,15 +46,14 @@ public class ReefLevelsCommandGroups {
   }
 
   /**
-   * Sequents commands for the arm to score on level 3 of the reef
+   * Sequential commands for the arm to score on level 3 of the reef
    * 
    * @param pivot - the pivot subsystem
    * @param elevator the elevator subsystem
    * @param wrist - the wrist subsystem
-   * @param intake - the intake subsystem
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command Level3UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
+  public static Command Level3UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
 
     return new SequentialCommandGroup(
 
@@ -76,15 +73,14 @@ public class ReefLevelsCommandGroups {
   }
 
   /**
-   * Sequents commands for the arm to score on level 4 of the reef
+   * Sequential commands for the arm to score on level 4 of the reef
    * 
    * @param pivot - the pivot subsystem
    * @param elevator the elevator subsystem
    * @param wrist - the wrist subsystem
-   * @param intake - the intake subsystem
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command Level4UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
+  public static Command Level4UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
 
     return new SequentialCommandGroup(
 
@@ -103,4 +99,57 @@ public class ReefLevelsCommandGroups {
     );
   }
 
+  /**
+   * Sequential commands for the arm to grab from the coral station
+   * 
+   * @param pivot - the pivot subsystem
+   * @param elevator the elevator subsystem
+   * @param wrist - the wrist subsystem
+   * @return sequentialCommandGroup - the command with the given logic
+   */
+  public static Command coralStationUpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+
+    return new SequentialCommandGroup(
+
+        PivotCommands.pivotToTarget(pivot, PivotConstants.kCoralStationAngle, true), // Command group waits on this
+
+        new ParallelDeadlineGroup(
+              ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kCoralStationLength, true), // Command group waits on this
+            PivotCommands.pivotToTarget(pivot, PivotConstants.kCoralStationAngle, false)
+        ),
+
+        new ParallelCommandGroup(
+          WristCommands.wristToTarget(wrist, WristConstants.kCoralStationAngle, false),
+          ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kCoralStationLength, false),
+          PivotCommands.pivotToTarget(pivot, PivotConstants.kCoralStationAngle, false)
+        )
+    );
+  }
+
+  /**
+   * Sequential commands for the arm to retract safely
+   * 
+   * @param pivot - the pivot subsystem
+   * @param elevator the elevator subsystem
+   * @param wrist - the wrist subsystem
+   * @return sequentialCommandGroup - the command with the given logic
+   */
+  public static Command retractCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+
+    return new SequentialCommandGroup(
+
+        new ParallelDeadlineGroup(
+          WristCommands.wristToHome(wrist), // Command group waits on this
+          ElevatorCommands.elevatorHold(elevator),
+          PivotCommands.pivotHold(pivot)
+        ),
+
+        new ParallelDeadlineGroup(
+          ElevatorCommands.elevatorToHome(elevator), // Command group waits on this
+          PivotCommands.pivotHold(pivot)
+        ),
+
+        PivotCommands.pivotToHome(pivot) // Command group waits on this
+    );
+  }
 }
