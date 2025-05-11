@@ -35,6 +35,15 @@ public class Intake extends SubsystemBase {
   }
 
   /**
+   * Returns the current Volts
+   * 
+   * @return double - the volts
+   */
+  public double getCurrentVolts() {
+    return this.io.getCurrentVolts();
+  }
+
+  /**
    * Gets the current angle of the intake
    * (Not very useful, but useful for see if the intake is moving)
    * 

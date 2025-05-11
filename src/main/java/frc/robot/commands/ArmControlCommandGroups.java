@@ -24,11 +24,12 @@ public class ArmControlCommandGroups {
    * @param pivot - the pivot subsystem
    * @param elevator the elevator subsystem
    * @param wrist - the wrist subsystem
+   * @param allowEndCondition - whether the command will stop after all set points are hit
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command Level2UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+  public static Command Level2UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, boolean allowEndCondition) {
 
-    return new SequentialCommandGroup(
+    SequentialCommandGroup commandGroup = new SequentialCommandGroup(
 
         PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel2Angle, true), // Command group waits on this
 
@@ -37,12 +38,18 @@ public class ArmControlCommandGroups {
             PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel2Angle, false)
         ),
 
-        new ParallelCommandGroup(
-          WristCommands.wristToTarget(wrist, WristConstants.kLevel2Angle, false),
+        new ParallelDeadlineGroup(
+          WristCommands.wristToTarget(wrist, WristConstants.kLevel2Angle, true), // Command group waits on this
           ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel2Length, false),
           PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel2Angle, false)
         )
     );
+
+    if(!allowEndCondition) {
+      commandGroup.addCommands(holdCommandGroup(pivot, elevator, wrist));
+    }
+
+    return commandGroup;
   }
 
   /**
@@ -51,11 +58,12 @@ public class ArmControlCommandGroups {
    * @param pivot - the pivot subsystem
    * @param elevator the elevator subsystem
    * @param wrist - the wrist subsystem
+   * @param allowEndCondition - whether the command will stop after all set points are hit
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command Level3UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+  public static Command Level3UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, boolean allowEndCondition) {
 
-    return new SequentialCommandGroup(
+    SequentialCommandGroup commandGroup = new SequentialCommandGroup(
 
         PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel3Angle, true), // Command group waits on this
 
@@ -64,12 +72,18 @@ public class ArmControlCommandGroups {
             PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel3Angle, false)
         ),
 
-        new ParallelCommandGroup(
-          WristCommands.wristToTarget(wrist, WristConstants.kLevel3Angle, false),
+        new ParallelDeadlineGroup(
+          WristCommands.wristToTarget(wrist, WristConstants.kLevel3Angle, true), // Command group waits on this
           ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel3Length, false),
           PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel3Angle, false)
         )
     );
+
+    if(!allowEndCondition) {
+      commandGroup.addCommands(holdCommandGroup(pivot, elevator, wrist));
+    }
+
+    return commandGroup;
   }
 
   /**
@@ -78,11 +92,12 @@ public class ArmControlCommandGroups {
    * @param pivot - the pivot subsystem
    * @param elevator the elevator subsystem
    * @param wrist - the wrist subsystem
+   * @param allowEndCondition - whether the command will stop after all set points are hit
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command Level4UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+  public static Command Level4UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, boolean allowEndCondition) {
 
-    return new SequentialCommandGroup(
+    SequentialCommandGroup commandGroup = new SequentialCommandGroup(
 
         PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel4Angle, true), // Command group waits on this
 
@@ -91,12 +106,18 @@ public class ArmControlCommandGroups {
             PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel4Angle, false)
         ),
 
-        new ParallelCommandGroup(
-          WristCommands.wristToTarget(wrist, WristConstants.kLevel4Angle, false),
+        new ParallelDeadlineGroup(
+          WristCommands.wristToTarget(wrist, WristConstants.kLevel4Angle, true), // Command group waits on this
           ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel4Length, false),
           PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel4Angle, false)
         )
     );
+
+    if(!allowEndCondition) {
+      commandGroup.addCommands(holdCommandGroup(pivot, elevator, wrist));
+    }
+
+    return commandGroup;
   }
 
   /**
@@ -105,11 +126,12 @@ public class ArmControlCommandGroups {
    * @param pivot - the pivot subsystem
    * @param elevator the elevator subsystem
    * @param wrist - the wrist subsystem
+   * @param allowEndCondition - whether the command will stop after all set points are hit
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command coralStationUpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+  public static Command coralStationUpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, boolean allowEndCondition) {
 
-    return new SequentialCommandGroup(
+    SequentialCommandGroup commandGroup = new SequentialCommandGroup(
 
         PivotCommands.pivotToTarget(pivot, PivotConstants.kCoralStationAngle, true), // Command group waits on this
 
@@ -118,12 +140,19 @@ public class ArmControlCommandGroups {
             PivotCommands.pivotToTarget(pivot, PivotConstants.kCoralStationAngle, false)
         ),
 
-        new ParallelCommandGroup(
-          WristCommands.wristToTarget(wrist, WristConstants.kCoralStationAngle, false),
+        new ParallelDeadlineGroup(
+          WristCommands.wristToTarget(wrist, WristConstants.kCoralStationAngle, true), // Command group waits on this
           ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kCoralStationLength, false),
           PivotCommands.pivotToTarget(pivot, PivotConstants.kCoralStationAngle, false)
         )
+
     );
+
+    if(!allowEndCondition) {
+      commandGroup.addCommands(holdCommandGroup(pivot, elevator, wrist));
+    }
+
+    return commandGroup;
   }
 
   /**
@@ -134,22 +163,62 @@ public class ArmControlCommandGroups {
    * @param wrist - the wrist subsystem
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command retractCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+  public static Command retractCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, boolean allowEndCondition) {
 
-    return new SequentialCommandGroup(
+    SequentialCommandGroup commandGroup =new SequentialCommandGroup(
 
         new ParallelDeadlineGroup(
-          WristCommands.wristToHome(wrist), // Command group waits on this
+          WristCommands.wristToHome(wrist, true), // Command group waits on this
           ElevatorCommands.elevatorHold(elevator),
           PivotCommands.pivotHold(pivot)
         ),
 
         new ParallelDeadlineGroup(
-          ElevatorCommands.elevatorToHome(elevator), // Command group waits on this
+          ElevatorCommands.elevatorToHome(elevator, true), // Command group waits on this
           PivotCommands.pivotHold(pivot)
         ),
 
-        PivotCommands.pivotToHome(pivot) // Command group waits on this
+        PivotCommands.pivotToHome(pivot, true) // Command group waits on this
+    );
+
+    if(!allowEndCondition) {
+      commandGroup.addCommands(PivotCommands.pivotToHome(pivot, false), ElevatorCommands.elevatorToHome(elevator, false), WristCommands.wristToHome(wrist, false));
+    }
+
+    return commandGroup;
+  }
+
+  /**
+   * Sequential commands for the arm to hold at current state
+   * 
+   * @param pivot - the pivot subsystem
+   * @param elevator the elevator subsystem
+   * @param wrist - the wrist subsystem
+   * @return sequentialCommandGroup - the command with the given logic
+   */
+  public static Command holdCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+
+    return new ParallelCommandGroup(
+      WristCommands.wristHold(wrist),
+      ElevatorCommands.elevatorHold(elevator),
+      PivotCommands.pivotHold(pivot)
+    );
+  }
+
+  /**
+   * Sequential commands for the arm to enter home state WITHOUT SAFETY!
+   * 
+   * @param pivot - the pivot subsystem
+   * @param elevator the elevator subsystem
+   * @param wrist - the wrist subsystem
+   * @return sequentialCommandGroup - the command with the given logic
+   */
+  public static Command homeCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+
+    return new ParallelCommandGroup(
+      WristCommands.wristToHome(wrist, false),
+      ElevatorCommands.elevatorToHome(elevator, false),
+      PivotCommands.pivotToHome(pivot, false)
     );
   }
 }

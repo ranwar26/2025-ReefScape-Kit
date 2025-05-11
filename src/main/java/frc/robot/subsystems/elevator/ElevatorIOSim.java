@@ -21,11 +21,11 @@ public class ElevatorIOSim implements ElevatorIO {
 
     this.m_leftMotor = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(
-            ElevatorConstants.motorGearbox, 2.0, ElevatorConstants.motorToWheelRatio),
+            ElevatorConstants.motorGearbox, 5.0, ElevatorConstants.motorToWheelRatio),
         ElevatorConstants.motorGearbox);
     this.m_rightMotor = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(
-            ElevatorConstants.motorGearbox, 2.0, ElevatorConstants.motorToWheelRatio),
+            ElevatorConstants.motorGearbox, 5.0, ElevatorConstants.motorToWheelRatio),
         ElevatorConstants.motorGearbox);
   }
 

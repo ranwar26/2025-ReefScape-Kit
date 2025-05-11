@@ -213,12 +213,12 @@ public class VisionConstants {
 
     public static final double motorToWheelRatio = 5.0; // TODO: recheck this value
 
-    public static final double kMaxVelocity = 0.0001;
-    public static final double kMaxAcceleration = 0.0001;
+    public static final double kMaxVelocity = 0.05;
+    public static final double kMaxAcceleration = 0.01;
 
     public static final double kP = 0.5;
     public static final double kI = 0.0;
-    public static final double kD = 0.3;
+    public static final double kD = 0.5;
 
     // Target length in meters
     public static final double kHomeLength = 0.0;

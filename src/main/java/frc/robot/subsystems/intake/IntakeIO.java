@@ -34,6 +34,15 @@ public interface IntakeIO {
   }
 
   /**
+   * Returns the current Volts
+   * 
+   * @return double - the volts
+   */
+  public default double getCurrentVolts() {
+    return 0.0;
+  }
+
+  /**
    * get the current Length of the elevator
    * 
    * @param side - the side to grab data from
@@ -41,5 +50,6 @@ public interface IntakeIO {
    */
   public default double getCurrentAngle() {
     return 0.0;
-  };
+  }
+
 }

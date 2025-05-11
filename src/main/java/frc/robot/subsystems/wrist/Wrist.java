@@ -55,7 +55,7 @@ public class Wrist extends SubsystemBase {
   /**
    * get the current angle of the pivot
    * 
-   * @return - the current angle of the side picked
+   * @return - the current angle
    */
   public double getCurrentAngle() {
     return this.io.getCurrentAngle();

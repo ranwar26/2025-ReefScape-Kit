@@ -40,6 +40,11 @@ public class IntakeIOSim implements IntakeIO {
   }
 
   @Override
+  public double getCurrentVolts() {
+    return appliedVolts;
+  }
+
+  @Override
   public double getCurrentAngle() {
     return this.m_intakeMotor.getAngularPositionRad();
   }

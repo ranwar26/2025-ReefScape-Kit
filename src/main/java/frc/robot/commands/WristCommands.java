@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.Constants.WristConstants;
@@ -20,22 +22,22 @@ public class WristCommands {
    * @param allowEndCondition
    * @return - the command with the given logic
    */
-  public static Command wristToTarget(Wrist wrist, double targetAngle, boolean allowEndCondition) {
+  public static Command wristToTarget(Wrist wrist, DoubleSupplier targetAngle, boolean allowEndCondition) {
     if(allowEndCondition) {
       return new FunctionalCommand(
         () -> {},
         () -> {
-          wrist.setTargetAngle(targetAngle);
+          wrist.setTargetAngle(targetAngle.getAsDouble());
         },
         interrupted -> {},
-        () -> Math.abs(wrist.getCurrentAngle() - targetAngle) < WristConstants.kAngleErrorAllowed,
+        () -> Math.abs(wrist.getCurrentAngle() - targetAngle.getAsDouble()) < WristConstants.kAngleErrorAllowed,
         wrist);
 
     } else {
       return new FunctionalCommand(
         () -> {},
         () -> {
-          wrist.setTargetAngle(targetAngle);
+          wrist.setTargetAngle(targetAngle.getAsDouble());
         },
         interrupted -> {},
         () -> false,
@@ -44,13 +46,27 @@ public class WristCommands {
   }
 
   /**
+   * Gives the wrist subsystem a target angle
+   * 
+   * THIS METHOD DOES NOT USE A SUPPLIER! ONLY USE THIS IF THE TARGET IS A CONSTANT!
+   * 
+   * @param wrist - the wrist subsystem
+   * @param targetAngle - the angle to be achieved
+   * @param allowEndCondition
+   * @return - the command with the given logic
+   */
+  public static Command wristToTarget(Wrist wrist, double targetAngle, boolean allowEndCondition) {
+    return wristToTarget(wrist, () -> targetAngle, allowEndCondition);
+  }
+
+  /**
    * Sends the wrist back to home
    * 
    * @param wrist - the wrist subsystem
    * @return - the command with the given logic
    */
-  public static Command wristToHome(Wrist wrist) {
-    return wristToTarget(wrist, WristConstants.kHomeAngle, false);
+  public static Command wristToHome(Wrist wrist, boolean allowEndCondition) {
+    return wristToTarget(wrist, WristConstants.kHomeAngle, allowEndCondition);
   }
 
   /**
@@ -60,6 +76,6 @@ public class WristCommands {
    * @return - the command with the given logic
    */
   public static Command wristHold(Wrist wrist) {
-    return wristToTarget(wrist, wrist.getCurrentAngle(), false);
+    return wristToTarget(wrist, () -> wrist.getCurrentAngle(), false);
   }
 }

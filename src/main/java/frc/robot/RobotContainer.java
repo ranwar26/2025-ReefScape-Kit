@@ -40,6 +40,7 @@ import frc.robot.commands.MechanismCommands;
 import frc.robot.commands.PathplannerOnFlyCommands;
 import frc.robot.commands.PivotCommands;
 import frc.robot.commands.ArmControlCommandGroups;
+import frc.robot.commands.AutoDriveCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -189,11 +190,11 @@ public class RobotContainer {
 		// Default command for each subsystem
 		intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> 0.0));
 
-		wrist.setDefaultCommand(WristCommands.wristToHome(wrist));
+		wrist.setDefaultCommand(WristCommands.wristToHome(wrist, false));
 
-		elevator.setDefaultCommand(ElevatorCommands.elevatorToHome(elevator));
+		elevator.setDefaultCommand(ElevatorCommands.elevatorToHome(elevator, false));
 
-		pivot.setDefaultCommand(PivotCommands.pivotToHome(pivot));
+		pivot.setDefaultCommand(PivotCommands.pivotToHome(pivot, false));
 
 		// Starts the arm mechanism for sim and comp matches
 		CommandScheduler.getInstance().schedule(MechanismCommands.mechanismRun(pivot, elevator, wrist, intake));
@@ -231,9 +232,13 @@ public class RobotContainer {
 
 		controller.leftTrigger().onTrue(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
 
-		controller.a().whileTrue(ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist));
-		controller.b().whileTrue(ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist));
-		controller.y().whileTrue(ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist));
+		controller.a().whileTrue(ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, false));
+		controller.b().whileTrue(ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, false));
+		controller.y().whileTrue(ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, false));
+
+		controller.a().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist, true));
+		controller.b().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist, true));
+		controller.y().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist, true));
 
 		controller.leftBumper().onTrue(PathplannerOnFlyCommands.pathFindToCoralStation(true, null));
 		controller.rightBumper().onTrue(PathplannerOnFlyCommands.pathFindToCoralStation(false, null));
@@ -255,7 +260,7 @@ public class RobotContainer {
 		controller.leftStick().whileTrue(Commands.runOnce(() -> {}, drive));
 
 		// Used for demoing robot
-		controller.rightStick().onTrue(PathplannerOnFlyCommands.randomlyMove());
+		controller.rightStick().onTrue(AutoDriveCommands.autoDriveAndScore(drive, pivot, elevator, wrist, intake));
 	}
 
 	public void configureSIMButtonBindings() {

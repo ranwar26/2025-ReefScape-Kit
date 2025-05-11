@@ -153,20 +153,4 @@ public class PathplannerOnFlyCommands {
 
     }
 
-    // For Demoing use only
-    public static Command randomlyMove() {
-    
-        SequentialCommandGroup primaryCommand = new SequentialCommandGroup(pathFindToReef(4, null));
-
-        for(int i = 0; i < 50; i++) {
-            primaryCommand.addCommands(pathFindToCoralStation(Math.random() < 0.5, null));
-
-            primaryCommand.addCommands(new WaitCommand(1.0));
-
-            primaryCommand.addCommands(pathFindToReef((int) (Math.random() * 6) + 1, null));
-            
-        }
-
-        return primaryCommand;
-    }
 }
