@@ -16,21 +16,28 @@ package frc.robot;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.MechanismCommands;
+import frc.robot.commands.PathplannerOnFlyCommands;
 import frc.robot.commands.PivotCommands;
 import frc.robot.commands.ReefLevelsCommandGroups;
 import frc.robot.commands.WristCommands;
@@ -173,11 +180,11 @@ public class RobotContainer {
 		// Default command, normal field-relative drive
 		drive.setDefaultCommand(DriveCommands.joystickDriveAtAngle(
 				drive,
-				() -> controller.getRightTriggerAxis(),
-				() -> -controller.getLeftY(),
-				() -> -controller.getLeftX(),
-				() -> -controller.getRightY(),
-				() -> -controller.getRightX()));
+				() -> MathUtil.applyDeadband(controller.getRightTriggerAxis(), OIConstants.kDriveDeadband),
+				() -> MathUtil.applyDeadband(-controller.getLeftY(), OIConstants.kDriveDeadband),
+				() -> MathUtil.applyDeadband(-controller.getLeftX(), OIConstants.kDriveDeadband),
+				() -> MathUtil.applyDeadband(-controller.getRightY(), OIConstants.kDriveDeadband),
+				() -> MathUtil.applyDeadband(-controller.getRightX(), OIConstants.kDriveDeadband)));
 
 		// Default command for each subsystem
 		intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> 0.0));
@@ -201,6 +208,8 @@ public class RobotContainer {
 				configureREALButtonBindings();
 				break;
 		}
+
+		PathfindingCommand.warmupCommand().schedule();
 	}
 
 	/**
@@ -213,22 +222,40 @@ public class RobotContainer {
 	 */
 	private void configureREALButtonBindings() {
 
-		// Switch to X pattern when X button is pressed
-		controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+		// Point all wheel towards the center of the robot.
+		controller.x().whileTrue(Commands.runOnce(drive::stopWithX, drive));
 
 		controller.start().onTrue(Commands.runOnce(
 				() -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
 				drive).ignoringDisable(true));
 
-		controller.leftTrigger().onTrue(IntakeCommands.intakeRun(
-				intake,
-				() -> controller.getLeftTriggerAxis()));
+		controller.leftTrigger().onTrue(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
 
-		// Testing Levels on controller (move to button box).
-		controller.leftBumper().whileTrue(ReefLevelsCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, intake));
-		controller.rightBumper().whileTrue(ReefLevelsCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, intake));
+		controller.a().whileTrue(ReefLevelsCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, intake));
+		controller.b().whileTrue(ReefLevelsCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, intake));
 		controller.y().whileTrue(ReefLevelsCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, intake));
 
+		controller.leftBumper().onTrue(PathplannerOnFlyCommands.pathFindToCoralStation(true, null));
+		controller.rightBumper().onTrue(PathplannerOnFlyCommands.pathFindToCoralStation(false, null));
+
+		controller.povDown().onTrue(PathplannerOnFlyCommands.pathFindToReef(1,null));
+		controller.povDownLeft().onTrue(PathplannerOnFlyCommands.pathFindToReef(2,null));
+		controller.povLeft().onTrue(PathplannerOnFlyCommands.pathFindToReef(2,null));
+		controller.povDownRight().onTrue(PathplannerOnFlyCommands.pathFindToReef(3, null));
+		controller.povRight().onTrue(PathplannerOnFlyCommands.pathFindToReef(3, null));
+		controller.povUp().onTrue(PathplannerOnFlyCommands.pathFindToReef(4, null));
+		controller.povUpLeft().onTrue(PathplannerOnFlyCommands.pathFindToReef(5, null));
+		controller.povUpRight().onTrue(PathplannerOnFlyCommands.pathFindToReef(6, null));
+
+		controller.back().onTrue(PathplannerOnFlyCommands.pathFindToPose(
+			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(15.5, 4.0, new Rotation2d(Math.PI)) : new Pose2d(2.0, 4.0, new Rotation2d()),
+		PathConstraints.unlimitedConstraints(12.0), 0));
+		
+		// Used to stop any path finding happing
+		controller.leftStick().whileTrue(Commands.runOnce(() -> {}, drive));
+
+		// Used for demoing robot
+		controller.rightStick().onTrue(PathplannerOnFlyCommands.randomlyMove());
 	}
 
 	public void configureSIMButtonBindings() {
