@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -37,7 +38,7 @@ public class AutoDriveCommands {
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 new WaitCommand(0.5), // Command group waits on this
                 IntakeCommands.intakeRun(intake, () -> 1.0),
-                ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
+                ArmControlCommandGroups.coralStationUpCommandGroup(pivot, elevator, wrist, false)
             ));
 
             
@@ -50,15 +51,19 @@ public class AutoDriveCommands {
             ));
 
             Command targetLevelCommand = null;
+            Command targetLevelCommandWithoutEnd = null;
             switch ((int) (Math.random() * 3) + 2) {
                 case 2:
                     targetLevelCommand = ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, true);
+                    targetLevelCommandWithoutEnd = ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, false);
                     break;
                 case 3:
                     targetLevelCommand = ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, true);
+                    targetLevelCommandWithoutEnd = ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, false);
                     break;
                 case 4:
                     targetLevelCommand = ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, true);
+                    targetLevelCommandWithoutEnd = ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, false);
                     break;
             }
 
@@ -67,7 +72,7 @@ public class AutoDriveCommands {
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 new WaitCommand(0.5), // Command group waits on this
                 IntakeCommands.intakeRun(intake, () -> -1.0),
-                ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
+                targetLevelCommandWithoutEnd
             ));
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(

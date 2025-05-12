@@ -13,18 +13,24 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -137,6 +143,19 @@ public final class Constants {
                 1),
             moduleTranslations);
 
+    public static final Translation2d kWallRedCage = new Translation2d(8.7, 7.3);
+    public static final Translation2d kPostRedCage = new Translation2d(8.9, 5.0);
+
+    public static final Translation2d kWallBlueCage = new Translation2d(8.7, 0.8);
+    public static final Translation2d kPostBlueCage = new Translation2d(8.9, 3.0);
+
+    public static final List<Pair<Translation2d, Translation2d>> opposingCages = new ArrayList<>();
+        static {
+          opposingCages.add(new Pair<Translation2d,Translation2d>(
+            DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? kWallBlueCage : kWallRedCage,
+            DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? kPostBlueCage : kPostRedCage
+          ));
+        }
 }
 
 public class VisionConstants {
@@ -276,4 +295,5 @@ public class VisionConstants {
 
     public static final double kDriveDeadband = 0.05;
   }
+
 }

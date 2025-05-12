@@ -86,7 +86,7 @@ public class PathplannerOnFlyCommands {
 
         return new SequentialCommandGroup(
             AutoBuilder.pathfindToPose(
-            targetPose.transformBy(new Transform2d(-1.0, 0.0, new Rotation2d())),
+            targetPose.transformBy(new Transform2d(-0.75, 0.0, new Rotation2d())),
             constraints
             ),
             AutoBuilder.pathfindToPose(
