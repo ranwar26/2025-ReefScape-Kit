@@ -195,9 +195,9 @@ public class VisionConstants {
     public static final double kHomeAngle = Math.toRadians(30.0);
 
     public static final double kLevel1Angle = Math.toRadians(0.0);
-    public static final double kLevel2Angle = Math.toRadians(62.0);
-    public static final double kLevel3Angle = Math.toRadians(75.0);
-    public static final double kLevel4Angle = Math.toRadians(82.0);
+    public static final double kLevel2Angle = Math.toRadians(60.0);
+    public static final double kLevel3Angle = Math.toRadians(72.0);
+    public static final double kLevel4Angle = Math.toRadians(80.0);
     public static final double kCoralStationAngle = Math.toRadians(74.0);
 
     public static final double kUpperAlgaeRemove = Math.toRadians(67.0);
@@ -218,15 +218,15 @@ public class VisionConstants {
 
     public static final double kP = 0.5;
     public static final double kI = 0.0;
-    public static final double kD = 0.5;
+    public static final double kD = 0.7;
 
     // Target length in meters
     public static final double kHomeLength = 0.0;
 
     public static final double kLevel1Length = 0.0;
-    public static final double kLevel2Length = 0.3;
-    public static final double kLevel3Length = 0.68;
-    public static final double kLevel4Length = 1.19;
+    public static final double kLevel2Length = 0.19;
+    public static final double kLevel3Length = 0.51;
+    public static final double kLevel4Length = 1.3;
     public static final double kCoralStationLength = 0.03;
 
     // The number of meter the elevator has to move to active the second stage.
@@ -253,9 +253,9 @@ public class VisionConstants {
     public static final double kHomeAngle = Math.toRadians(0.0);
 
     public static final double kLevel1Angle = Math.toRadians(90.0);
-    public static final double kLevel2Angle = Math.toRadians(166.0);
-    public static final double kLevel3Angle = Math.toRadians(182.0);
-    public static final double kLevel4Angle = Math.toRadians(175.0);
+    public static final double kLevel2Angle = Math.toRadians(170.0);
+    public static final double kLevel3Angle = Math.toRadians(180.0);
+    public static final double kLevel4Angle = Math.toRadians(192.0);
     public static final double kCoralStationAngle = Math.toRadians(30.0);
 
     public static final double kUpperAlgaeRemove = Math.toRadians(157.0);
