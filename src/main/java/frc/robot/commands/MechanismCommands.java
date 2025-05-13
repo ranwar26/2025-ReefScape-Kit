@@ -20,38 +20,23 @@ import frc.robot.subsystems.wrist.Wrist;
 /** Add your docs here. */
 public class MechanismCommands {
 
-    //Part for the left side
-    private static LoggedMechanism2d mechanismLeft = new LoggedMechanism2d(5, 5.0);
-    private static LoggedMechanismLigament2d elevatorPartLeft = new LoggedMechanismLigament2d("elevator", 0.0, 0);
-    private static LoggedMechanismLigament2d gripperPartLeft = new LoggedMechanismLigament2d("gripper", 0.3, 0);
-    private static LoggedMechanismLigament2d intakePartLeft = new LoggedMechanismLigament2d("intake", 0.05, 0);
 
     //Part for the right side
-    private static LoggedMechanism2d mechanismRight = new LoggedMechanism2d(5, 5.0);
-    private static LoggedMechanismLigament2d elevatorPartRight = new LoggedMechanismLigament2d("elevator", 0.0, 0);
-    private static LoggedMechanismLigament2d gripperPartRight = new LoggedMechanismLigament2d("gripper", 0.3, 0);
-    private static LoggedMechanismLigament2d intakePartRight = new LoggedMechanismLigament2d("intake", 0.05, 0);
+    private static LoggedMechanism2d mechanism = new LoggedMechanism2d(5, 5.0);
+    private static LoggedMechanismLigament2d elevatorPart = new LoggedMechanismLigament2d("elevator", 0.0, 0);
+    private static LoggedMechanismLigament2d gripperPart = new LoggedMechanismLigament2d("gripper", 0.3, 0);
+    private static LoggedMechanismLigament2d intakePart = new LoggedMechanismLigament2d("intake", 0.05, 0);
 
     static {
-        mechanismLeft.getRoot("root", 2.5-0.3, 0.2).append(elevatorPartLeft).append(gripperPartLeft).append(intakePartLeft);
+        mechanism.getRoot("root", 2.5-0.3, 0.2).append(elevatorPart).append(gripperPart).append(intakePart);
 
-        elevatorPartLeft.setColor(new Color8Bit(255, 0, 0));
-        gripperPartLeft.setColor(new Color8Bit(255, 0, 0));
-        intakePartLeft.setColor(new Color8Bit(255, 0, 0));
+        elevatorPart.setColor(new Color8Bit(0, 0, 255));
+        gripperPart.setColor(new Color8Bit(0, 0, 255));
+        intakePart.setColor(new Color8Bit(0, 0, 255));
 
-        elevatorPartLeft.setLineWeight(4.0);
-        gripperPartLeft.setLineWeight(4.0);
-        intakePartLeft.setLineWeight(4.0);
-
-        mechanismRight.getRoot("root", 2.5-0.3, 0.2).append(elevatorPartRight).append(gripperPartRight).append(intakePartRight);
-
-        elevatorPartRight.setColor(new Color8Bit(0, 0, 255));
-        gripperPartRight.setColor(new Color8Bit(0, 0, 255));
-        intakePartRight.setColor(new Color8Bit(0, 0, 255));
-
-        elevatorPartRight.setLineWeight(4.0);
-        gripperPartRight.setLineWeight(4.0);
-        intakePartRight.setLineWeight(4.0);
+        elevatorPart.setLineWeight(4.0);
+        gripperPart.setLineWeight(4.0);
+        intakePart.setLineWeight(4.0);
     }
 
     /**
@@ -67,26 +52,16 @@ public class MechanismCommands {
 
     return Commands.run(
         () -> {
-            elevatorPartLeft.setAngle(Math.toDegrees(pivot.getCurrentAngle("Left")));
-            elevatorPartLeft.setLength(0.7 + elevator.getCurrentLength("Left"));
+            elevatorPart.setAngle(Math.toDegrees(-pivot.getCurrentAngle("Right")));
+            elevatorPart.setLength(0.7 + -elevator.getCurrentLength());
 
-            gripperPartLeft.setAngle(Math.toDegrees(-wrist.getCurrentAngle()) + 90.0);
+            gripperPart.setAngle(Math.toDegrees(-wrist.getCurrentAngle()) + 90.0);
 
-            intakePartLeft.setAngle(Math.toDegrees(intake.getCurrentAngle()));
+            intakePart.setAngle(Math.toDegrees(intake.getCurrentAngle()));
 
-            Logger.recordOutput("Arm System/Left", mechanismLeft);
+            Logger.recordOutput("Arm System/Right", mechanism);
 
-            elevatorPartRight.setAngle(Math.toDegrees(-pivot.getCurrentAngle("Right")));
-            elevatorPartRight.setLength(0.7 + -elevator.getCurrentLength("Right"));
-
-            gripperPartRight.setAngle(Math.toDegrees(-wrist.getCurrentAngle()) + 90.0);
-
-            intakePartRight.setAngle(Math.toDegrees(intake.getCurrentAngle()));
-
-            Logger.recordOutput("Arm System/Right", mechanismRight);
-
-            
         },
-        new Subsystem[] {}).ignoringDisable(true);
+        new Subsystem[] {});
     }
 }

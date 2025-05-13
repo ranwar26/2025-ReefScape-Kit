@@ -4,65 +4,54 @@
 
 package frc.robot.subsystems.elevator;
 
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants.ElevatorConstants;
 
 /** Add your docs here. */
 public class ElevatorIOSim implements ElevatorIO {
 
-  private DCMotorSim m_leftMotor;
-  private DCMotorSim m_rightMotor;
+  private ElevatorSim elevatorSim;
 
-  private double appliedVoltsLeft;
-  private double appliedVoltsRight;
+  private double appliedVolts;
 
   public ElevatorIOSim() {
 
-    this.m_leftMotor = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(
-            ElevatorConstants.motorGearbox, 5.0, ElevatorConstants.motorToWheelRatio),
-        ElevatorConstants.motorGearbox);
-    this.m_rightMotor = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(
-            ElevatorConstants.motorGearbox, 5.0, ElevatorConstants.motorToWheelRatio),
-        ElevatorConstants.motorGearbox);
+    this.elevatorSim = new ElevatorSim(
+      DCMotor.getNEO(2),
+      ElevatorConstants.motorToWheelRatio,
+      8.02,
+      0.06,
+      0.0,
+      0.5,
+      true,
+      0.0
+      );
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-    this.m_leftMotor.setInputVoltage(appliedVoltsLeft);
-    this.m_leftMotor.update(0.02);
 
-    inputs.leftPosition = this.m_leftMotor.getAngularPositionRad();
-    inputs.leftVelocity = this.m_leftMotor.getAngularVelocityRadPerSec();
-    inputs.leftAppliedVolts = appliedVoltsLeft;
-    inputs.leftCurrentAmps = this.m_leftMotor.getCurrentDrawAmps();
+    this.elevatorSim.setInputVoltage(appliedVolts);
+    this.elevatorSim.update(0.02);
 
-    this.m_rightMotor.setInputVoltage(appliedVoltsRight);
-    this.m_rightMotor.update(0.02);
+    inputs.position = this.elevatorSim.getPositionMeters();
+    inputs.velocity = this.elevatorSim.getVelocityMetersPerSecond();
+    inputs.appliedVolts = appliedVolts;
+    inputs.currentAmps = this.elevatorSim.getCurrentDrawAmps();
 
-    inputs.rightPosition = this.m_rightMotor.getAngularPositionRad();
-    inputs.rightVelocity = this.m_rightMotor.getAngularVelocityRadPerSec();
-    inputs.rightAppliedVolts = appliedVoltsRight;
-    inputs.rightCurrentAmps = this.m_rightMotor.getCurrentDrawAmps();
   }
 
   @Override
   public void setElevatorVolts(double volts) {
-    appliedVoltsLeft = volts;
-    appliedVoltsRight = -volts;
+    this.appliedVolts = volts;
   }
 
   @Override
-  public double getCurrentLength(String side) {
-    switch (side) {
-      case "Right":
-          return this.m_rightMotor.getAngularPositionRad();
-  
-      default:
-          return this.m_leftMotor.getAngularPositionRad();
-  }
+  public double getCurrentLength() {
+    return this.elevatorSim.getPositionMeters();
   }
 
 }

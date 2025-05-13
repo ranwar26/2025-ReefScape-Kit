@@ -30,7 +30,7 @@ public class ElevatorCommands {
           elevator.setTargetLength(targetLength.getAsDouble());
         },
         interrupted -> {},
-        () -> Math.abs(elevator.getCurrentLength("Left") - targetLength.getAsDouble()) < ElevatorConstants.kLengthErrorAllowed,
+        () -> Math.abs(elevator.getCurrentLength() - targetLength.getAsDouble()) < ElevatorConstants.kLengthErrorAllowed,
         elevator);
 
     } else {
@@ -76,6 +76,6 @@ public class ElevatorCommands {
    * @return - the command with the logic
    */
   public static Command elevatorHold(Elevator elevator) {
-    return elevatorToTarget(elevator, () -> elevator.getCurrentLength("Left"), false);
+    return elevatorToTarget(elevator, () -> elevator.getCurrentLength(), false);
   }
 }

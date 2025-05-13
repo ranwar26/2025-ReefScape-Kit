@@ -11,6 +11,12 @@ public interface ElevatorIO {
 
     @AutoLog
     public static class ElevatorIOInputs {
+
+        public double position = 0.0;
+        public double velocity = 0.0;
+        public double appliedVolts = 0.0;
+        public double currentAmps = 0.0;
+
         public double leftPosition = 0.0;
         public double leftVelocity = 0.0;
         public double leftAppliedVolts = 0.0;
@@ -44,7 +50,7 @@ public interface ElevatorIO {
      * @param side - the side to grab data from
      * @return - the current length of the side picked
      */
-    public default double getCurrentLength(String side) {
+    public default double getCurrentLength() {
         return 0.0;
     };
 

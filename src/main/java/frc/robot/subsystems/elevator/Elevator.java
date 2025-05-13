@@ -47,7 +47,7 @@ public class Elevator extends SubsystemBase {
    */
   public void setTargetLength(double length) {
 
-    double deltaLength = inputs.leftPosition - length;
+    double deltaLength = inputs.position - length;
 
     double targetSpeed = this.m_elevatorPidController.calculate(deltaLength);
 
@@ -60,16 +60,7 @@ public class Elevator extends SubsystemBase {
    * @return - the current length of the side picked
    */
   public double getCurrentLength() {
-    return this.getCurrentLength("Right");
+    return this.io.getCurrentLength();
   }
 
-  /**
-   * get the current Length of the elevator
-   * 
-   * @param side - the side to grab data from
-   * @return - the current length of the side picked
-   */
-  public double getCurrentLength(String side) {
-    return this.io.getCurrentLength(side);
-  }
 }
