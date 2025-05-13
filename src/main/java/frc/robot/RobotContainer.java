@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -205,7 +206,7 @@ public class RobotContainer {
 		pivot.setDefaultCommand(PivotCommands.pivotToHome(pivot, false));
 
 		// Starts the arm mechanism for sim and comp matches
-		CommandScheduler.getInstance().schedule(MechanismCommands.mechanismRun(pivot, elevator, wrist, intake));
+		MechanismCommands.mechanismRun(pivot, elevator, wrist, intake).ignoringDisable(true).schedule();
 
 		Supplier<Translation2d> robot = () -> drive.getPose().getTranslation();
 		Pathfinding.setDynamicObstacles(DriveConstants.opposingCages, robot.get());
