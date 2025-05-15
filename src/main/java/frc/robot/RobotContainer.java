@@ -244,13 +244,19 @@ public class RobotContainer {
 
 		controller.leftTrigger().onTrue(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
 
-		controller.a().whileTrue(ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, false));
-		controller.b().whileTrue(ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, false));
-		controller.y().whileTrue(ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, false));
+		controller.a().whileTrue(
+			ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist)
+			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)));
+		controller.b().whileTrue(
+			ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist)
+			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)));
+		controller.y().whileTrue(
+			ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist)
+			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)));
 
-		controller.a().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist, true));
-		controller.b().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist, true));
-		controller.y().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist, true));
+		controller.a().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
+		controller.b().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
+		controller.y().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
 
 		controller.leftBumper().onTrue(PathplannerOnFlyCommands.pathFindToCoralStation(true, null));
 		controller.rightBumper().onTrue(PathplannerOnFlyCommands.pathFindToCoralStation(false, null));

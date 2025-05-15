@@ -29,16 +29,18 @@ public class AutoDriveCommands {
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 PathplannerOnFlyCommands.pathFindToCoralStation(Math.random() < 0.5, null),
-                ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist),
+                ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
+                    .andThen(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist)
+                    ),
                 IntakeCommands.intakeRun(intake, () -> 0.0)
             ));
 
-            primaryCommand.addCommands(ArmControlCommandGroups.coralStationUpCommandGroup(pivot, elevator, wrist, true));
+            primaryCommand.addCommands(ArmControlCommandGroups.coralStationUpCommandGroup(pivot, elevator, wrist));
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 new WaitCommand(0.5), // Command group waits on this
                 IntakeCommands.intakeRun(intake, () -> 1.0),
-                ArmControlCommandGroups.coralStationUpCommandGroup(pivot, elevator, wrist, false)
+                ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
             ));
 
             
@@ -46,24 +48,22 @@ public class AutoDriveCommands {
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 PathplannerOnFlyCommands.pathFindToReef((int) (Math.random() * 6) + 1, null),
-                ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist),
+                ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
+                    .andThen(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist)
+                    ),
                 IntakeCommands.intakeRun(intake, () -> 0.0)
             ));
 
             Command targetLevelCommand = null;
-            Command targetLevelCommandWithoutEnd = null;
             switch ((int) (Math.random() * 3) + 2) {
                 case 2:
-                    targetLevelCommand = ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, true);
-                    targetLevelCommandWithoutEnd = ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist, false);
+                    targetLevelCommand = ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist);
                     break;
                 case 3:
-                    targetLevelCommand = ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, true);
-                    targetLevelCommandWithoutEnd = ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, false);
+                    targetLevelCommand = ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist);
                     break;
                 case 4:
-                    targetLevelCommand = ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist, true);
-                    targetLevelCommandWithoutEnd = ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist, false);
+                    targetLevelCommand = ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist);
                     break;
             }
 
@@ -72,12 +72,12 @@ public class AutoDriveCommands {
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 new WaitCommand(0.5), // Command group waits on this
                 IntakeCommands.intakeRun(intake, () -> -1.0),
-                targetLevelCommandWithoutEnd
+                ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
             ));
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 new WaitCommand(0.5),
-                ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist, false)
+                ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
             ));
         }
 
