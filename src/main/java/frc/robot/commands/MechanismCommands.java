@@ -53,7 +53,7 @@ public class MechanismCommands {
     return Commands.run(
         () -> {
             elevatorPart.setAngle(Math.toDegrees(-pivot.getCurrentAngle("Right")));
-            elevatorPart.setLength(0.7 + -elevator.getCurrentLength());
+            elevatorPart.setLength(elevator.getCurrentLength());
 
             gripperPart.setAngle(Math.toDegrees(-wrist.getCurrentAngle()) + 90.0);
 

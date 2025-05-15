@@ -13,19 +13,12 @@ public interface ElevatorIO {
     public static class ElevatorIOInputs {
 
         public double position = 0.0;
+        public double targetPosition = 0.0;
+        public double errorPosition = 0.0;
         public double velocity = 0.0;
         public double appliedVolts = 0.0;
         public double currentAmps = 0.0;
 
-        public double leftPosition = 0.0;
-        public double leftVelocity = 0.0;
-        public double leftAppliedVolts = 0.0;
-        public double leftCurrentAmps = 0.0;
-
-        public double rightPosition = 0.0;
-        public double rightVelocity = 0.0;
-        public double rightAppliedVolts = 0.0;
-        public double rightCurrentAmps = 0.0;
     }
 
     /**
@@ -37,11 +30,11 @@ public interface ElevatorIO {
     }
 
     /**
-     * Sets the motors at the given voltage
+     * Sets the target value for the elevator to move to
      * 
-     * @param volts - the number of volt
+     * @param length - the target length
      */
-    public default void setElevatorVolts(double volts) {
+    public default void setTargetLength(double length) {
     }
 
     /**

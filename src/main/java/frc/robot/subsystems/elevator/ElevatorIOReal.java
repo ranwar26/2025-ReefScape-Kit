@@ -8,14 +8,22 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants.ElevatorConstants;
+
 /** Add your docs here. */
 public class ElevatorIOReal implements ElevatorIO {
 
     private SparkMax m_leftMotor;
     private SparkMax m_rightMotor;
 
+    private PIDController m_elevatorPIDController;
+
     private RelativeEncoder m_leftEncoder;
     private RelativeEncoder m_rightEncoder;
+
+    private double targetLength;
 
     public ElevatorIOReal() {
 
@@ -24,25 +32,32 @@ public class ElevatorIOReal implements ElevatorIO {
 
         this.m_leftEncoder = this.m_leftMotor.getEncoder();
         this.m_rightEncoder = this.m_rightMotor.getEncoder();
+
+        this.m_elevatorPIDController = new PIDController(
+            ElevatorConstants.kRealP,
+            ElevatorConstants.kRealI,
+            ElevatorConstants.kRealD
+        );
     }
 
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
-        inputs.leftPosition = this.m_leftEncoder.getPosition();
-        inputs.leftVelocity = this.m_leftEncoder.getVelocity();
-        inputs.leftAppliedVolts = this.m_leftMotor.getAppliedOutput() * this.m_leftMotor.getBusVoltage();
-        inputs.leftCurrentAmps = this.m_leftMotor.getOutputCurrent();
-
-        inputs.rightPosition = this.m_rightEncoder.getPosition();
-        inputs.rightVelocity = this.m_rightEncoder.getVelocity();
-        inputs.rightAppliedVolts = this.m_rightMotor.getAppliedOutput() * this.m_rightMotor.getBusVoltage();
-        inputs.rightCurrentAmps = this.m_rightMotor.getOutputCurrent();
+        inputs.position = this.m_rightEncoder.getPosition();
+        inputs.targetPosition = this.targetLength;
+        inputs.targetPosition = Math.abs(this.targetLength - this.m_rightEncoder.getPosition());
+        inputs.velocity = this.m_rightEncoder.getVelocity();
+        inputs.appliedVolts = this.m_rightMotor.getAppliedOutput() * this.m_rightMotor.getBusVoltage();
+        inputs.currentAmps = this.m_rightMotor.getOutputCurrent();
     }
 
     @Override
-    public void setElevatorVolts(double volts) {
-        this.m_leftMotor.setVoltage(volts);
-        this.m_rightMotor.setVoltage(-volts);
+    public void setTargetLength(double length) {
+        this.targetLength = length;
+        double speed = this.m_elevatorPIDController.calculate(getCurrentLength(), length);
+        double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
+
+        this.m_leftMotor.setVoltage(-volts);
+        this.m_rightMotor.setVoltage(volts);
     }
 
     @Override

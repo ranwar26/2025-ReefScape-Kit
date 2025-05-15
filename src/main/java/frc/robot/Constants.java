@@ -232,21 +232,21 @@ public class VisionConstants {
 
     public static final double motorToWheelRatio = 5.0; // TODO: recheck this value
 
-    public static final double kMaxVelocity = 0.05;
-    public static final double kMaxAcceleration = 0.01;
-
-    public static final double kP = 0.5;
-    public static final double kI = 0.0;
-    public static final double kD = 0.7;
+    public static final double kRealP = 2.7;
+    public static final double kRealI = 0.0;
+    public static final double kRealD = 0.0;
+    public static final double kSimP = 0.8;
+    public static final double kSimI = 0.6;
+    public static final double kSimD = 0.2;
 
     // Target length in meters
-    public static final double kHomeLength = 0.0;
+    public static final double kHomeLength = 0.659;
 
-    public static final double kLevel1Length = 0.0;
-    public static final double kLevel2Length = 0.19;
-    public static final double kLevel3Length = 0.51;
-    public static final double kLevel4Length = 1.3;
-    public static final double kCoralStationLength = 0.03;
+    public static final double kLevel1Length = 0.659;
+    public static final double kLevel2Length = 0.849;
+    public static final double kLevel3Length = 1.169;
+    public static final double kLevel4Length = 1.959;
+    public static final double kCoralStationLength = 0.689;
 
     // The number of meter the elevator has to move to active the second stage.
     public static final double kSecondStageTrip = 0.75;
