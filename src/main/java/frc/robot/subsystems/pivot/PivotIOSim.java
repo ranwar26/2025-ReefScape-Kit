@@ -16,7 +16,7 @@ import frc.robot.Constants.PivotConstants;
 /** Add your docs here. */
 public class PivotIOSim implements PivotIO {
 
-    private SingleJointedArmSim singleArmSim;
+    private SingleJointedArmSim pivotArmSim;
 
     private PIDController m_pivotPIDController;
 
@@ -25,7 +25,7 @@ public class PivotIOSim implements PivotIO {
 
     public PivotIOSim() {
 
-        this.singleArmSim = new SingleJointedArmSim(
+        this.pivotArmSim = new SingleJointedArmSim(
         DCMotor.getNeo550(2),
         PivotConstants.motorToPivotAngleRatio,
         0.970,
@@ -47,15 +47,15 @@ public class PivotIOSim implements PivotIO {
     @Override
     public void updateInputs(PivotIOInputs inputs) {
 
-        this.singleArmSim.setInputVoltage(appliedVolts);
-        this.singleArmSim.update(0.02);
+        this.pivotArmSim.setInputVoltage(appliedVolts);
+        this.pivotArmSim.update(0.02);
 
-        inputs.position = singleArmSim.getAngleRads();
+        inputs.position = pivotArmSim.getAngleRads();
         inputs.targetPosition = this.targetAngle;
         inputs.errorPosition = Math.abs(inputs.targetPosition - inputs.position);
-        inputs.velocity = singleArmSim.getVelocityRadPerSec();
+        inputs.velocity = pivotArmSim.getVelocityRadPerSec();
         inputs.appliedVolts = appliedVolts;
-        inputs.currentAmps = this.singleArmSim.getCurrentDrawAmps();
+        inputs.currentAmps = this.pivotArmSim.getCurrentDrawAmps();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class PivotIOSim implements PivotIO {
 
     @Override
     public double getCurrentAngle() {
-        return this.singleArmSim.getAngleRads();
+        return this.pivotArmSim.getAngleRads();
     }
 
 }
