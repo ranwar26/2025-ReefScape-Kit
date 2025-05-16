@@ -20,7 +20,6 @@ public class ElevatorIOReal implements ElevatorIO {
 
     private PIDController m_elevatorPIDController;
 
-    private RelativeEncoder m_leftEncoder;
     private RelativeEncoder m_rightEncoder;
 
     private double targetLength;
@@ -30,7 +29,6 @@ public class ElevatorIOReal implements ElevatorIO {
         this.m_leftMotor = new SparkMax(0, MotorType.kBrushless); // TODO: set motor ID
         this.m_rightMotor = new SparkMax(0, MotorType.kBrushless);
 
-        this.m_leftEncoder = this.m_leftMotor.getEncoder();
         this.m_rightEncoder = this.m_rightMotor.getEncoder();
 
         this.m_elevatorPIDController = new PIDController(

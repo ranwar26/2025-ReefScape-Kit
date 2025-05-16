@@ -27,7 +27,6 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 

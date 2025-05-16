@@ -19,7 +19,6 @@ public class PivotIOReal implements PivotIO {
     private SparkMax m_leftMotor;
     private SparkMax m_rightMotor;
 
-    private RelativeEncoder m_leftEncoder;
     private RelativeEncoder m_rightEncoder;
 
     private PIDController m_pivotPIDController;
@@ -31,7 +30,6 @@ public class PivotIOReal implements PivotIO {
         this.m_leftMotor = new SparkMax(0, MotorType.kBrushless); // TODO: set motor ID
         this.m_rightMotor = new SparkMax(0, MotorType.kBrushless);
 
-        this.m_leftEncoder = this.m_leftMotor.getEncoder();
         this.m_rightEncoder = this.m_rightMotor.getEncoder();
 
         this.m_pivotPIDController = new PIDController(
