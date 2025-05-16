@@ -259,14 +259,14 @@ public class VisionConstants {
 
     public static final DCMotor motorGearbox = DCMotor.getNEO(1);
 
-    public static final double motorToWheelRatio = 48.0; // TODO: recheck this value
+    public static final double motorToWheelRatio = 1.0; // TODO: recheck this value
 
     public static final double kRealP = 0.4;
     public static final double kRealI = 0.001;
     public static final double kRealD = 0.0;
-    public static final double kSimP = 0.4;
-    public static final double kSimI = 0.001;
-    public static final double kSimD = 0.0;
+    public static final double kSimP = 0.6;
+    public static final double kSimI = 0.0;
+    public static final double kSimD = 0.3;
 
     // Target angle in degrees converted to radians
     public static final double kHomeAngle = Math.toRadians(0.0);

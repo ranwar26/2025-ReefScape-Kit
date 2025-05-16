@@ -25,9 +25,9 @@ public class WristIOSim implements WristIO {
     this.m_wristMotor =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                WristConstants.motorGearbox, 0.205, WristConstants.motorToWheelRatio),
+                WristConstants.motorGearbox, 0.0882126, WristConstants.motorToWheelRatio),
             WristConstants.motorGearbox);
-    
+
     this.m_wristPIDController = new PIDController(
       WristConstants.kSimP,
       WristConstants.kSimI,
@@ -43,7 +43,7 @@ public class WristIOSim implements WristIO {
 
     inputs.position = this.m_wristMotor.getAngularPositionRad();
     inputs.targetPosition = this.targetAngle;
-    inputs.errorPosition = Math.abs(this.targetAngle - this.m_wristMotor.getAngularPositionRad());
+    inputs.errorPosition = Math.abs(inputs.targetPosition - inputs.position);
     inputs.velocity = this.m_wristMotor.getAngularVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = this.m_wristMotor.getCurrentDrawAmps();
