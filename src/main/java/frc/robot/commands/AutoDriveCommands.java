@@ -40,10 +40,17 @@ public class AutoDriveCommands {
             primaryCommand.addCommands(ArmControlCommandGroups.coralStationUpCommandGroup(pivot, elevator, wrist));
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
-                new WaitCommand(0.5), // Command group waits on this
+                new WaitCommand(1.0), // Command group waits on this
                 IntakeCommands.intakeRun(intake, () -> 1.0),
                 ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
             ));
+
+            primaryCommand.addCommands(new ParallelDeadlineGroup(
+                new WaitCommand(0.5), 
+                PivotCommands.pivotToHome(pivot, false),
+                ElevatorCommands.elevatorHold(elevator),
+                WristCommands.wristHold(wrist)
+                ));
 
             
             // ################### GOING TO REEF ###################

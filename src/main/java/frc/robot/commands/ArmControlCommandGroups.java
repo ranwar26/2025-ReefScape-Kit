@@ -117,17 +117,17 @@ public class ArmControlCommandGroups {
 
     return new SequentialCommandGroup(
 
-        PivotCommands.pivotToTarget(pivot, PivotConstants.kCoralStationAngle, true), // Command group waits on this
-
-        new ParallelDeadlineGroup(
-              ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kCoralStationLength, true), // Command group waits on this
-            PivotCommands.pivotToTarget(pivot, PivotConstants.kCoralStationAngle, false)
-        ),
+        ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kCoralStationLength, true), // Command group waits on this
 
         new ParallelDeadlineGroup(
           WristCommands.wristToTarget(wrist, WristConstants.kCoralStationAngle, true), // Command group waits on this
-          ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kCoralStationLength, false),
-          PivotCommands.pivotToTarget(pivot, PivotConstants.kCoralStationAngle, false)
+          ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kCoralStationLength, false)
+        ),
+
+        new ParallelDeadlineGroup(
+          PivotCommands.pivotToTarget(pivot, PivotConstants.kCoralStationAngle, true), // Command group waits on this
+          WristCommands.wristToTarget(wrist, WristConstants.kCoralStationAngle, false),
+          ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kCoralStationLength, false)
         )
 
     );
