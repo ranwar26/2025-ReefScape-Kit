@@ -201,17 +201,17 @@ public class VisionConstants {
 
     public static final DCMotor motorGearbox = DCMotor.getNEO(1);
 
-    public static final double motorToWheelRatio = 12.0; // TODO: recheck this value
+    public static final double motorToPivotAngleRatio = 213.33;
 
-    public static final double kMaxVelocity = 0.05;
-    public static final double kMaxAcceleration = 0.01;
-
-    public static final double kP = 0.5;
-    public static final double kI = 0.0;
-    public static final double kD = 0.4;
+    public static final double kRealP = 1.2;
+    public static final double kRealI = 0.0;
+    public static final double kRealD = 0.0;
+    public static final double kSimP = 5.0;
+    public static final double kSimI = 0.2;
+    public static final double kSimD = 0.4;
 
     // Target angle in degrees converted to radians
-    public static final double kHomeAngle = Math.toRadians(30.0);
+    public static final double kHomeAngle = Math.toRadians(40.0);
 
     public static final double kLevel1Angle = Math.toRadians(0.0);
     public static final double kLevel2Angle = Math.toRadians(60.0);
@@ -261,12 +261,12 @@ public class VisionConstants {
 
     public static final double motorToWheelRatio = 48.0; // TODO: recheck this value
 
-    public static final double kMaxVelocity = 0.0005;
-    public static final double kMaxAcceleration = 0.0001;
-
-    public static final double kP = 0.4;
-    public static final double kI = 0.001;
-    public static final double kD = 0.0;
+    public static final double kRealP = 0.4;
+    public static final double kRealI = 0.001;
+    public static final double kRealD = 0.0;
+    public static final double kSimP = 0.4;
+    public static final double kSimI = 0.001;
+    public static final double kSimD = 0.0;
 
     // Target angle in degrees converted to radians
     public static final double kHomeAngle = Math.toRadians(0.0);

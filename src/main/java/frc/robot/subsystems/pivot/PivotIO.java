@@ -11,22 +11,20 @@ public interface PivotIO {
 
     @AutoLog
     public static class PivotIOInputs {
-        public double leftPosition = 0.0;
-        public double leftVelocity = 0.0;
-        public double leftAppliedVolts = 0.0;
-        public double leftCurrentAmps = 0.0;
+        public double position = 0.0;
+        public double targetPosition = 0.0;
+        public double errorPosition = 0.0;
+        public double velocity = 0.0;
+        public double appliedVolts = 0.0;
+        public double currentAmps = 0.0;
 
-        public double rightPosition = 0.0;
-        public double rightVelocity = 0.0;
-        public double rightAppliedVolts = 0.0;
-        public double rightCurrentAmps = 0.0;
     }
 
     /**
-     * Updates the inputs of the pivot subsystem
-     * 
-     * @param inputs - the class to be updated
-     */
+   * Tell the pivot to move to the target length
+   * 
+   * @param angle - the target angle
+   */
     public default void updateInputs(PivotIOInputs inputs) {
     }
 
@@ -35,16 +33,15 @@ public interface PivotIO {
      * 
      * @param volts - the number of volt
      */
-    public default void setPivotVolts(double volts) {
+    public default void setTargetAngle(double angle) {
     }
 
     /**
      * get the current angle of the pivot
      * 
-     * @param side - the side to grab data from
-     * @return - the current length of the side picked
+     * @return - the current angle of the pivot
      */
-    public default double getCurrentAngle(String side) {
+    public default double getCurrentAngle() {
         return 0.0;
     };
 }

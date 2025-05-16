@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveConstants;
@@ -223,6 +224,7 @@ public class RobotContainer {
 		}
 
 		PathfindingCommand.warmupCommand().schedule();
+		ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist).ignoringDisable(true).schedule();
 	}
 
 	/**
@@ -273,7 +275,7 @@ public class RobotContainer {
 		controller.back().onTrue(PathplannerOnFlyCommands.pathFindToPose(
 			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(15.5, 4.0, new Rotation2d(Math.PI)) : new Pose2d(2.0, 4.0, new Rotation2d()),
 		PathConstraints.unlimitedConstraints(12.0), 0));
-		
+
 		// Used to stop any path finding happing
 		controller.leftStick().whileTrue(Commands.runOnce(() -> {}, drive));
 

@@ -6,6 +6,11 @@ package frc.robot.subsystems.pivot;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants.PivotConstants;
+
 import com.revrobotics.spark.SparkMax;
 
 /** Add your docs here. */
@@ -17,6 +22,10 @@ public class PivotIOReal implements PivotIO {
     private RelativeEncoder m_leftEncoder;
     private RelativeEncoder m_rightEncoder;
 
+    private PIDController m_pivotPIDController;
+
+    private double m_targetAngle;
+
     public PivotIOReal() {
 
         this.m_leftMotor = new SparkMax(0, MotorType.kBrushless); // TODO: set motor ID
@@ -24,35 +33,36 @@ public class PivotIOReal implements PivotIO {
 
         this.m_leftEncoder = this.m_leftMotor.getEncoder();
         this.m_rightEncoder = this.m_rightMotor.getEncoder();
+
+        this.m_pivotPIDController = new PIDController(
+        PivotConstants.kRealP,
+        PivotConstants.kRealI,
+        PivotConstants.kRealD
+        );
     }
 
     @Override
     public void updateInputs(PivotIOInputs inputs) {
-        inputs.leftPosition = this.m_leftEncoder.getPosition();
-        inputs.leftVelocity = this.m_leftEncoder.getVelocity();
-        inputs.leftAppliedVolts = this.m_leftMotor.getAppliedOutput() * this.m_leftMotor.getBusVoltage();
-        inputs.leftCurrentAmps = this.m_leftMotor.getOutputCurrent();
-
-        inputs.rightPosition = this.m_rightEncoder.getPosition();
-        inputs.rightVelocity = this.m_rightEncoder.getVelocity();
-        inputs.rightAppliedVolts = this.m_rightMotor.getAppliedOutput() * this.m_rightMotor.getBusVoltage();
-        inputs.rightCurrentAmps = this.m_rightMotor.getOutputCurrent();
+        inputs.position = this.m_rightEncoder.getPosition();
+        inputs.targetPosition = this.m_targetAngle;
+        inputs.errorPosition = Math.abs(this.m_targetAngle - this.m_rightEncoder.getPosition());
+        inputs.velocity = this.m_rightEncoder.getVelocity();
+        inputs.appliedVolts = this.m_rightMotor.getAppliedOutput() * this.m_rightMotor.getBusVoltage();
+        inputs.currentAmps = this.m_rightMotor.getOutputCurrent();
     }
 
     @Override
-    public void setPivotVolts(double volts) {
-        this.m_leftMotor.setVoltage(volts);
-        this.m_rightMotor.setVoltage(-volts);
+    public void setTargetAngle(double angle) {
+        this.m_targetAngle = angle;
+        double speed = this.m_pivotPIDController.calculate(getCurrentAngle(), angle);
+        double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
+
+        this.m_leftMotor.setVoltage(-volts);
+        this.m_rightMotor.setVoltage(volts);
     }
 
     @Override
-    public double getCurrentAngle(String side) {
-        switch (side) {
-            case "Right":
-                return this.m_rightEncoder.getPosition();
-        
-            default:
-                return this.m_leftEncoder.getPosition();
-        }
+    public double getCurrentAngle() {
+        return this.m_rightEncoder.getPosition();
     }
 }

@@ -23,6 +23,7 @@ public class ElevatorCommands {
    * @return - the command with the logic
    */
   public static Command elevatorToTarget(Elevator elevator, DoubleSupplier targetLength, boolean allowEndCondition) {
+    
     if(allowEndCondition) {
       return new FunctionalCommand(
         () -> {},
@@ -47,8 +48,6 @@ public class ElevatorCommands {
 
   /**
    * Gives the elevator subsystem a target length
-   * 
-   * THIS METHOD DOES NOT USE A SUPPLIER! ONLY USE THIS IF THE TARGET IS A CONSTANT!
    * 
    * @param elevator - the elevator subsystem
    * @param targetLength - the length to be achieved
@@ -76,6 +75,17 @@ public class ElevatorCommands {
    * @return - the command with the logic
    */
   public static Command elevatorHold(Elevator elevator) {
-    return elevatorToTarget(elevator, () -> elevator.getCurrentLength(), false);
+    double[] target = new double[1];
+
+    return new FunctionalCommand(
+        () -> {
+          target[0] = elevator.getCurrentLength();
+        },
+        () -> {
+          elevator.setTargetLength(target[0]);
+        },
+        interrupted -> {},
+        () -> false,
+        elevator);
   }
 }

@@ -12,6 +12,8 @@ public interface WristIO {
   @AutoLog
   public static class WristIOInputs {
     public double position = 0.0;
+    public double targetPosition = 0.0;
+    public double errorPosition = 0.0;
     public double velocity = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
@@ -26,11 +28,11 @@ public interface WristIO {
   }
 
   /**
-   * Sets the motors at the given voltage
+   * Tell the pivot to move to the target length
    * 
-   * @param volts - the number of volt
+   * @param angle - the target angle
    */
-  public default void setWristVolts(double volts) {
+  public default void setTargetAngle(double length) {
   }
 
   /**

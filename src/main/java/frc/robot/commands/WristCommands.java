@@ -48,8 +48,6 @@ public class WristCommands {
   /**
    * Gives the wrist subsystem a target angle
    * 
-   * THIS METHOD DOES NOT USE A SUPPLIER! ONLY USE THIS IF THE TARGET IS A CONSTANT!
-   * 
    * @param wrist - the wrist subsystem
    * @param targetAngle - the angle to be achieved
    * @param allowEndCondition
@@ -76,6 +74,17 @@ public class WristCommands {
    * @return - the command with the given logic
    */
   public static Command wristHold(Wrist wrist) {
-    return wristToTarget(wrist, () -> wrist.getCurrentAngle(), false);
+    double[] target = new double[1];
+
+    return new FunctionalCommand(
+        () -> {
+          target[0] = wrist.getCurrentAngle();
+        },
+        () -> {
+          wrist.setTargetAngle(target[0]);
+        },
+        interrupted -> {},
+        () -> false,
+        wrist);
   }
 }

@@ -6,30 +6,18 @@ package frc.robot.subsystems.wrist;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.WristConstants;
 
 public class Wrist extends SubsystemBase {
 
   private WristIO io;
   private WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
 
-  private ProfiledPIDController m_wristPIDControllor;
-
   /** Creates a new wrist. */
   public Wrist(WristIO io) {
 
     this.io = io;
 
-    this.m_wristPIDControllor = new ProfiledPIDController(
-        WristConstants.kP,
-        WristConstants.kI,
-        WristConstants.kD,
-        new TrapezoidProfile.Constraints(
-            WristConstants.kMaxVelocity, WristConstants.kMaxAcceleration));
   }
 
   @Override
@@ -44,12 +32,7 @@ public class Wrist extends SubsystemBase {
    * @param angle - the target angle
    */
   public void setTargetAngle(double angle) {
-
-    double deltaAngle = inputs.position - angle;
-
-    double targetSpeed = this.m_wristPIDControllor.calculate(deltaAngle);
-
-    this.io.setWristVolts(MathUtil.clamp(targetSpeed, -1.0, 1.0) * 12.0);
+    this.io.setTargetAngle(angle);
   }
 
   /**

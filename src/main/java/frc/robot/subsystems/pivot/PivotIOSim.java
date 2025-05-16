@@ -4,66 +4,72 @@
 
 package frc.robot.subsystems.pivot;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.PivotConstants;
 
 /** Add your docs here. */
 public class PivotIOSim implements PivotIO {
 
-    private DCMotorSim m_leftMotor;
-    private DCMotorSim m_rightMotor;
+    private SingleJointedArmSim singleArmSim;
 
-    private double appliedVoltsLeft;
-    private double appliedVoltsRight;
+    private PIDController m_pivotPIDController;
+
+    private double targetAngle;
+    private double appliedVolts;
 
     public PivotIOSim() {
 
-        this.m_leftMotor = new DCMotorSim(
-                LinearSystemId.createDCMotorSystem(
-                        PivotConstants.motorGearbox, 5.0, PivotConstants.motorToWheelRatio),
-                PivotConstants.motorGearbox);
-        this.m_rightMotor = new DCMotorSim(
-                LinearSystemId.createDCMotorSystem(
-                        PivotConstants.motorGearbox, 5.0, PivotConstants.motorToWheelRatio),
-                PivotConstants.motorGearbox);
+        this.singleArmSim = new SingleJointedArmSim(
+        DCMotor.getNeo550(2),
+        PivotConstants.motorToPivotAngleRatio,
+        0.970,
+        ElevatorConstants.kHomeLength,
+        Math.toRadians(30.0),
+        Math.toRadians(225.0),
+        true,
+        Math.toRadians(30.0)
+        );
+
+        this.m_pivotPIDController = new PIDController(
+            PivotConstants.kSimP,
+            PivotConstants.kSimI,
+            PivotConstants.kSimD
+        );
 
     }
 
     @Override
     public void updateInputs(PivotIOInputs inputs) {
-        this.m_leftMotor.setInputVoltage(appliedVoltsLeft);
-        this.m_leftMotor.update(0.02);
 
-        inputs.leftPosition = this.m_leftMotor.getAngularPositionRad();
-        inputs.leftVelocity = this.m_leftMotor.getAngularVelocityRadPerSec();
-        inputs.leftAppliedVolts = appliedVoltsLeft;
-        inputs.leftCurrentAmps = this.m_leftMotor.getCurrentDrawAmps();
+        this.singleArmSim.setInputVoltage(appliedVolts);
+        this.singleArmSim.update(0.02);
 
-        this.m_rightMotor.setInputVoltage(appliedVoltsRight);
-        this.m_rightMotor.update(0.02);
-
-        inputs.rightPosition = this.m_rightMotor.getAngularPositionRad();
-        inputs.rightVelocity = this.m_rightMotor.getAngularVelocityRadPerSec();
-        inputs.rightAppliedVolts = appliedVoltsRight;
-        inputs.rightCurrentAmps = this.m_rightMotor.getCurrentDrawAmps();
+        inputs.position = singleArmSim.getAngleRads();
+        inputs.targetPosition = this.targetAngle;
+        inputs.errorPosition = Math.abs(inputs.targetPosition - inputs.position);
+        inputs.velocity = singleArmSim.getVelocityRadPerSec();
+        inputs.appliedVolts = appliedVolts;
+        inputs.currentAmps = this.singleArmSim.getCurrentDrawAmps();
     }
 
     @Override
-    public void setPivotVolts(double volts) {
-        appliedVoltsLeft = volts;
-        appliedVoltsRight = -volts;
+    public void setTargetAngle(double angle) {
+        this.targetAngle = angle;
+        double speed = this.m_pivotPIDController.calculate(getCurrentAngle(), angle);
+        double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
+
+        this.appliedVolts = volts;
     }
 
     @Override
-    public double getCurrentAngle(String side) {
-        switch (side) {
-            case "Right":
-                return this.m_rightMotor.getAngularPositionRad();
-        
-            default:
-                return this.m_leftMotor.getAngularPositionRad();
-        }
+    public double getCurrentAngle() {
+        return this.singleArmSim.getAngleRads();
     }
 
 }

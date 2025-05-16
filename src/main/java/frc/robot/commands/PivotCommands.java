@@ -23,6 +23,7 @@ public class PivotCommands {
    * @return - Command with the given logic
    */
   public static Command pivotToTarget(Pivot pivot, DoubleSupplier targetAngle, boolean allowEndCondition) {
+
     if(allowEndCondition) {
       return new FunctionalCommand(
         () -> {},
@@ -30,7 +31,7 @@ public class PivotCommands {
           pivot.setTargetAngle(targetAngle.getAsDouble());
         },
         interrupted -> {},
-        () -> Math.abs(pivot.getCurrentAngle("Left") - targetAngle.getAsDouble()) < PivotConstants.kAngleErrorAllowed,
+        () -> Math.abs(pivot.getCurrentAngle() - targetAngle.getAsDouble()) < PivotConstants.kAngleErrorAllowed,
         pivot);
 
     } else {
@@ -74,6 +75,17 @@ public class PivotCommands {
    * @return - Command with the given logic
    */
   public static Command pivotHold(Pivot pivot) {
-    return pivotToTarget(pivot, () -> pivot.getCurrentAngle("Left"), false);
+    double[] target = new double[1];
+
+    return new FunctionalCommand(
+        () -> {
+          target[0] = pivot.getCurrentAngle();
+        },
+        () -> {
+          pivot.setTargetAngle(target[0]);
+        },
+        interrupted -> {},
+        () -> false,
+        pivot);
   }
 }
