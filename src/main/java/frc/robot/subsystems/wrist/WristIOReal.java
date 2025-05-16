@@ -55,6 +55,11 @@ public class WristIOReal implements WristIO {
   }
 
   @Override
+    public double getTargetAngle() {
+        return this.targetAngle;
+    }
+
+  @Override
   public double getCurrentAngle() {
     return this.m_encoder.getPosition();
   }

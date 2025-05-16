@@ -207,7 +207,8 @@ public class RobotContainer {
 		pivot.setDefaultCommand(PivotCommands.pivotToHome(pivot, false));
 
 		// Starts the arm mechanism for sim and comp matches
-		MechanismCommands.mechanismRun(pivot, elevator, wrist, intake).ignoringDisable(true).schedule();
+		MechanismCommands.mechanismRunCurrent(pivot, elevator, wrist, intake).ignoringDisable(true).schedule();
+		MechanismCommands.mechanismRunTarget(pivot, elevator, wrist, intake).ignoringDisable(true).schedule();
 
 		Supplier<Translation2d> robot = () -> drive.getPose().getTranslation();
 		Pathfinding.setDynamicObstacles(DriveConstants.opposingCages, robot.get());

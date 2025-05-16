@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
@@ -76,7 +78,9 @@ public class AutoDriveCommands {
             ));
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
-                new WaitCommand(0.5),
+                new WaitUntilCommand(() -> Math.abs(
+                    elevator.getCurrentLength() - ElevatorConstants.kHomeLength) < ElevatorConstants.kLengthErrorAllowed
+                ),
                 ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
             ));
         }

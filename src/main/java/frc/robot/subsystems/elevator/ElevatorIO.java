@@ -38,9 +38,17 @@ public interface ElevatorIO {
     }
 
     /**
-     * get the current length of the elevator
+     * gets the current target of the elevator
      * 
-     * @param side - the side to grab data from
+     * @return - the target length
+     */
+    public default double getTargetLength() {
+        return 0.0;
+    }
+
+    /**
+     * gets the current length of the elevator
+     * 
      * @return - the current length of the side picked
      */
     public default double getCurrentLength() {

@@ -60,6 +60,11 @@ public class WristIOSim implements WristIO {
   }
 
   @Override
+    public double getTargetAngle() {
+        return this.targetAngle;
+    }
+
+  @Override
   public double getCurrentAngle() {
     return this.m_wristMotor.getAngularPositionRad();
   }

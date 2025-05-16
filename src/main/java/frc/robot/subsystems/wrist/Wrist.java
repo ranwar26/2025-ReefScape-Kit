@@ -35,6 +35,10 @@ public class Wrist extends SubsystemBase {
     this.io.setTargetAngle(angle);
   }
 
+  public double getTargetAngle() {
+    return this.io.getTargetAngle();
+  }
+
   /**
    * get the current angle of the pivot
    * 

@@ -68,6 +68,11 @@ public class PivotIOSim implements PivotIO {
     }
 
     @Override
+    public double getTargetAngle() {
+        return this.targetAngle;
+    }
+
+    @Override
     public double getCurrentAngle() {
         return this.pivotArmSim.getAngleRads();
     }

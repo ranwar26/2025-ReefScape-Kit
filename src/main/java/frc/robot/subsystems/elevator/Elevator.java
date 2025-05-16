@@ -36,6 +36,10 @@ public class Elevator extends SubsystemBase {
     this.io.setTargetLength(length);
   }
 
+  public double getTargetLength() {
+    return this.io.getTargetLength();
+  }
+
   /**
    * get the current Length of the elevator (Right encoder if none is given)
    * 

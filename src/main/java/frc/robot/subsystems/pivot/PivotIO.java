@@ -36,6 +36,11 @@ public interface PivotIO {
     public default void setTargetAngle(double angle) {
     }
 
+    
+    public default double getTargetAngle() {
+        return 0.0;
+    }
+
     /**
      * get the current angle of the pivot
      * 

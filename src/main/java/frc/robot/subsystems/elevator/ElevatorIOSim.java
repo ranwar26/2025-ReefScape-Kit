@@ -64,6 +64,11 @@ public class ElevatorIOSim implements ElevatorIO {
   }
 
   @Override
+    public double getTargetLength() {
+        return this.targetLength;
+    }
+
+  @Override
   public double getCurrentLength() {
     return this.elevatorSim.getPositionMeters();
   }

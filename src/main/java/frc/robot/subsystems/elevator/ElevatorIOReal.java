@@ -61,6 +61,11 @@ public class ElevatorIOReal implements ElevatorIO {
     }
 
     @Override
+    public double getTargetLength() {
+        return this.targetLength;
+    }
+
+    @Override
     public double getCurrentLength() {
         return this.m_rightEncoder.getPosition();
     }

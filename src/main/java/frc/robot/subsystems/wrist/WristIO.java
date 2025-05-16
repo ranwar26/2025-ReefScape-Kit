@@ -35,6 +35,10 @@ public interface WristIO {
   public default void setTargetAngle(double length) {
   }
 
+  public default double getTargetAngle() {
+    return 0.0;
+  }
+
   /**
    * get the current angle of the wrist
    * 
