@@ -192,12 +192,12 @@ public class ArmControlCommandGroups {
    * @param wrist - the wrist subsystem
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command homeCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+  public static Command homeCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist, boolean allowEndCondition) {
 
     return new ParallelCommandGroup(
-      WristCommands.wristToHome(wrist, false),
-      ElevatorCommands.elevatorToHome(elevator, false),
-      PivotCommands.pivotToHome(pivot, false)
+      WristCommands.wristToHome(wrist, allowEndCondition),
+      ElevatorCommands.elevatorToHome(elevator, allowEndCondition),
+      PivotCommands.pivotToHome(pivot, allowEndCondition)
     );
   }
 }

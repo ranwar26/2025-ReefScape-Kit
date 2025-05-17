@@ -39,6 +39,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.FieldConstants.CagePosition;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DynamicAutoCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.MechanismCommands;
@@ -96,6 +97,7 @@ public class RobotContainer {
 
 	// Dashboard inputs
 	private final LoggedDashboardChooser<Command> autoChooser;
+	private final LoggedDashboardChooser<Boolean> useDynamicAuto;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -183,6 +185,11 @@ public class RobotContainer {
 		autoChooser.addOption("Drive SysId (Dynamic Reverse)",
 				drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+		useDynamicAuto = new LoggedDashboardChooser<>("Use Dynamic Auto");
+
+		useDynamicAuto.addDefaultOption("Use Dynamic Auto", true);
+		useDynamicAuto.addOption("Use Hard Paths", false);
+
 		// Default command, normal field-relative drive
 		drive.setDefaultCommand(DriveCommands.joystickDriveAtAngle(
 				drive,
@@ -211,8 +218,9 @@ public class RobotContainer {
 		// Configure the button bindings
 		configureButtonBindings();
 
+		DynamicAutoCommands.setupDynamicAuto(drive, pivot, elevator, wrist, intake);
 		PathfindingCommand.warmupCommand().schedule();
-		ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist).ignoringDisable(true).schedule();
+		ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist, false).ignoringDisable(true).schedule();
 	}
 
 	/**
@@ -296,7 +304,12 @@ public class RobotContainer {
 	 * @return the command to run in autonomous
 	 */
 	public Command getAutonomousCommand() {
-		return autoChooser.get();
+		if(useDynamicAuto.get()) {
+			return DynamicAutoCommands.getDynamicAuto();
+		} else {
+			return autoChooser.get();
+		}
+
 	}
 
 }

@@ -31,7 +31,7 @@ public class AutoScoreCommands {
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 PathplannerAutoDriveCommands.pathFindToCoralStation(Math.random() < 0.5, null),
                 ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
-                    .andThen(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist)
+                    .andThen(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist, false)
                     ),
                 IntakeCommands.intakeRun(intake, () -> 0.0)
             ));
@@ -58,7 +58,7 @@ public class AutoScoreCommands {
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 PathplannerAutoDriveCommands.pathFindToReef((int) (Math.random() * 6) + 1, null),
                 ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
-                    .andThen(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist)
+                    .andThen(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist, false)
                     )
             ));
 

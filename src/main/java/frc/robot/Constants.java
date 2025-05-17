@@ -215,8 +215,8 @@ public class VisionConstants {
     public static final double kRealP = 2.7;
     public static final double kRealI = 0.0;
     public static final double kRealD = 0.0;
-    public static final double kSimP = 0.8;
-    public static final double kSimI = 0.6;
+    public static final double kSimP = 2.2;
+    public static final double kSimI = 1.4;
     public static final double kSimD = 0.2;
 
     // Target length in meters
@@ -244,7 +244,7 @@ public class VisionConstants {
     public static final double kRealP = 0.4;
     public static final double kRealI = 0.001;
     public static final double kRealD = 0.0;
-    public static final double kSimP = 0.6;
+    public static final double kSimP = 0.9;
     public static final double kSimI = 0.0;
     public static final double kSimD = 0.3;
 
