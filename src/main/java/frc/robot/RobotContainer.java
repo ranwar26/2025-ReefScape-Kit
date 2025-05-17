@@ -207,15 +207,7 @@ public class RobotContainer {
 		Pathfinding.setDynamicObstacles(DriveConstants.opposingCages, robot.get());
 
 		// Configure the button bindings
-		switch (Constants.currentMode) {
-			case SIM:
-				configureREALButtonBindings();
-				configureSIMButtonBindings(); // Add/Overwrite sim bindings
-				break;
-			default:
-				configureREALButtonBindings();
-				break;
-		}
+		configureButtonBindings();
 
 		PathfindingCommand.warmupCommand().schedule();
 		ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist).ignoringDisable(true).schedule();
@@ -229,7 +221,7 @@ public class RobotContainer {
 	 * and then passing it to a
 	 * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 	 */
-	private void configureREALButtonBindings() {
+	private void configureButtonBindings() {
 
 		// Point all wheel towards the center of the robot.
 		controller.x().whileTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -275,10 +267,6 @@ public class RobotContainer {
 
 		// Used for demoing robot
 		controller.rightStick().onTrue(AutoDriveCommands.autoDriveAndScore(drive, pivot, elevator, wrist, intake));
-	}
-
-	public void configureSIMButtonBindings() {
-
 	}
 
 	/**
