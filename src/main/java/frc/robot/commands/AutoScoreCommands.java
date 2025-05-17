@@ -29,7 +29,7 @@ public class AutoScoreCommands {
             // ################### GOING TO CORAL STATION ###################
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
-                PathplannerAutoDriveCommands.pathFindToCoralStation(Math.random() < 0.5, null),
+                AutoDriveCommands.pathFindToCoralStation(Math.random() < 0.5, null),
                 ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
                     .andThen(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist, false)
                     ),
@@ -56,7 +56,7 @@ public class AutoScoreCommands {
             // ################### GOING TO REEF ###################
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
-                PathplannerAutoDriveCommands.pathFindToReef((int) (Math.random() * 6) + 1, null),
+                AutoDriveCommands.pathFindToReef((int) (Math.random() * 6) + 1, null),
                 ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
                     .andThen(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist, false)
                     )

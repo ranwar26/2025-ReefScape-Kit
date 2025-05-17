@@ -43,7 +43,7 @@ import frc.robot.commands.DynamicAutoCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.MechanismCommands;
-import frc.robot.commands.PathplannerAutoDriveCommands;
+import frc.robot.commands.AutoDriveCommands;
 import frc.robot.commands.PivotCommands;
 import frc.robot.commands.ArmControlCommandGroups;
 import frc.robot.commands.AutoScoreCommands;
@@ -262,28 +262,28 @@ public class RobotContainer {
 		controller.b().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
 		controller.y().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
 
-		controller.leftBumper().onTrue(PathplannerAutoDriveCommands.pathFindToCoralStation(true, null));
-		controller.rightBumper().onTrue(PathplannerAutoDriveCommands.pathFindToCoralStation(false, null));
+		controller.leftBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(true, null));
+		controller.rightBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(false, null));
 
-		controller.povDown().onTrue(PathplannerAutoDriveCommands.pathFindToReef(1,null));
-		controller.povDownLeft().onTrue(PathplannerAutoDriveCommands.pathFindToReef(2,null));
-		controller.povLeft().onTrue(PathplannerAutoDriveCommands.pathFindToReef(2,null));
-		controller.povDownRight().onTrue(PathplannerAutoDriveCommands.pathFindToReef(3, null));
-		controller.povRight().onTrue(PathplannerAutoDriveCommands.pathFindToReef(3, null));
-		controller.povUp().onTrue(PathplannerAutoDriveCommands.pathFindToReef(4, null));
-		controller.povUpLeft().onTrue(PathplannerAutoDriveCommands.pathFindToReef(5, null));
-		controller.povUpRight().onTrue(PathplannerAutoDriveCommands.pathFindToReef(6, null));
+		controller.povDown().onTrue(AutoDriveCommands.pathFindToReef(1,null));
+		controller.povDownLeft().onTrue(AutoDriveCommands.pathFindToReef(2,null));
+		controller.povLeft().onTrue(AutoDriveCommands.pathFindToReef(2,null));
+		controller.povDownRight().onTrue(AutoDriveCommands.pathFindToReef(3, null));
+		controller.povRight().onTrue(AutoDriveCommands.pathFindToReef(3, null));
+		controller.povUp().onTrue(AutoDriveCommands.pathFindToReef(4, null));
+		controller.povUpLeft().onTrue(AutoDriveCommands.pathFindToReef(5, null));
+		controller.povUpRight().onTrue(AutoDriveCommands.pathFindToReef(6, null));
 
-		controller.back().onTrue(PathplannerAutoDriveCommands.pathFindToPose(
+		controller.back().onTrue(AutoDriveCommands.pathFindToPose(
 			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(13.5, 6.5, new Rotation2d(Math.PI)) : new Pose2d(4.0, 1.5, new Rotation2d()),
 		PathConstraints.unlimitedConstraints(12.0), 4.0)
 
-		.andThen(PathplannerAutoDriveCommands.pathFindToPose(
+		.andThen(AutoDriveCommands.pathFindToPose(
 			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(16.0, 4.0, new Rotation2d(Math.PI)) : new Pose2d(1.5, 4.0, new Rotation2d()),
 		PathConstraints.unlimitedConstraints(12.0), 0))
 		);
 
-		controller.x().onTrue(PathplannerAutoDriveCommands.pathFindToPose(
+		controller.x().onTrue(AutoDriveCommands.pathFindToPose(
 			() -> new Pose2d(
 				CagePosition.alliedCages.get(0).getFirst().interpolate(CagePosition.alliedCages.get(0).getSecond(), 0.5),
 				new Rotation2d()

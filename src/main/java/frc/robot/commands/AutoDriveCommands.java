@@ -19,7 +19,7 @@ import frc.robot.FieldConstants.CoralPositions;
 import frc.robot.FieldConstants.ReefPositions;
 
 /** Add your docs here. */
-public class PathplannerAutoDriveCommands {
+public class AutoDriveCommands {
 
     public static Command pathFindToPose(Supplier<Pose2d> targetPose, PathConstraints constraints, double targetEndVelocity) {
 

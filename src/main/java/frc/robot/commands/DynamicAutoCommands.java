@@ -81,7 +81,7 @@ public class DynamicAutoCommands {
         SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
 
         if(reefSide.get() != null)
-            primaryCommandGroup.addCommands(PathplannerAutoDriveCommands.pathFindToReef(reefSide.get(), constraints).deadlineFor(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist,false)));
+            primaryCommandGroup.addCommands(AutoDriveCommands.pathFindToReef(reefSide.get(), constraints).deadlineFor(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist,false)));
         
         if(reefLevel.get() != null)
             primaryCommandGroup.addCommands(new SequentialCommandGroup(
@@ -97,7 +97,7 @@ public class DynamicAutoCommands {
 
         if(coralStation.get() != null)
         primaryCommandGroup.addCommands(new SequentialCommandGroup(
-            PathplannerAutoDriveCommands.pathFindToCoralStation(coralStation.get(), constraints).deadlineFor(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)),
+            AutoDriveCommands.pathFindToCoralStation(coralStation.get(), constraints).deadlineFor(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)),
             ArmControlCommandGroups.coralStationUpCommandGroup(pivot, elevator, wrist),
             new ParallelDeadlineGroup(
                 new WaitCommand(1.0),
