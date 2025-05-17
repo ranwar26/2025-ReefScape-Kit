@@ -223,7 +223,7 @@ public class VisionConstants {
     public static final double kLowerAlgaeRemove = Math.toRadians(59.0);
 
     // The error limit before a command will end.
-    public static final double kAngleErrorAllowed = 0.1;
+    public static final double kAngleErrorAllowed = Math.toRadians(3.0);
   }
 
   public final class ElevatorConstants {
@@ -252,7 +252,7 @@ public class VisionConstants {
     public static final double kSecondStageTrip = 0.75;
 
     // The error limit before a command will end.
-    public static final double kLengthErrorAllowed = 0.1;
+    public static final double kLengthErrorAllowed = 0.03;
   }
 
   public final class WristConstants {
@@ -275,13 +275,13 @@ public class VisionConstants {
     public static final double kLevel2Angle = Math.toRadians(168.0);
     public static final double kLevel3Angle = Math.toRadians(180.0);
     public static final double kLevel4Angle = Math.toRadians(192.0);
-    public static final double kCoralStationAngle = Math.toRadians(30.0);
+    public static final double kCoralStationAngle = Math.toRadians(26.0);
 
     public static final double kUpperAlgaeRemove = Math.toRadians(157.0);
     public static final double kLowerAlgaeRemove = Math.toRadians(155.0);
 
     // The error limit before a command will end.
-    public static final double kAngleErrorAllowed = 0.1;
+    public static final double kAngleErrorAllowed = Math.toRadians(1.0);
   }
 
   public final class IntakeConstants {

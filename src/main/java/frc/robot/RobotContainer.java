@@ -41,10 +41,11 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.MechanismCommands;
-import frc.robot.commands.PathplannerOnFlyCommands;
+import frc.robot.commands.PathplannerAutoDriveCommands;
 import frc.robot.commands.PivotCommands;
 import frc.robot.commands.ArmControlCommandGroups;
-import frc.robot.commands.AutoDriveCommands;
+import frc.robot.commands.AutoScoreCommands;
+import frc.robot.commands.ControllerCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -234,31 +235,37 @@ public class RobotContainer {
 
 		controller.a().whileTrue(
 			ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist)
-			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)));
+			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
+			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.5))
+			));
 		controller.b().whileTrue(
 			ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist)
-			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)));
+			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
+			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.5))
+			));
 		controller.y().whileTrue(
 			ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist)
-			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)));
+			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
+			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.5))
+			));
 
 		controller.a().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
 		controller.b().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
 		controller.y().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
 
-		controller.leftBumper().onTrue(PathplannerOnFlyCommands.pathFindToCoralStation(true, null));
-		controller.rightBumper().onTrue(PathplannerOnFlyCommands.pathFindToCoralStation(false, null));
+		controller.leftBumper().onTrue(PathplannerAutoDriveCommands.pathFindToCoralStation(true, null));
+		controller.rightBumper().onTrue(PathplannerAutoDriveCommands.pathFindToCoralStation(false, null));
 
-		controller.povDown().onTrue(PathplannerOnFlyCommands.pathFindToReef(1,null));
-		controller.povDownLeft().onTrue(PathplannerOnFlyCommands.pathFindToReef(2,null));
-		controller.povLeft().onTrue(PathplannerOnFlyCommands.pathFindToReef(2,null));
-		controller.povDownRight().onTrue(PathplannerOnFlyCommands.pathFindToReef(3, null));
-		controller.povRight().onTrue(PathplannerOnFlyCommands.pathFindToReef(3, null));
-		controller.povUp().onTrue(PathplannerOnFlyCommands.pathFindToReef(4, null));
-		controller.povUpLeft().onTrue(PathplannerOnFlyCommands.pathFindToReef(5, null));
-		controller.povUpRight().onTrue(PathplannerOnFlyCommands.pathFindToReef(6, null));
+		controller.povDown().onTrue(PathplannerAutoDriveCommands.pathFindToReef(1,null));
+		controller.povDownLeft().onTrue(PathplannerAutoDriveCommands.pathFindToReef(2,null));
+		controller.povLeft().onTrue(PathplannerAutoDriveCommands.pathFindToReef(2,null));
+		controller.povDownRight().onTrue(PathplannerAutoDriveCommands.pathFindToReef(3, null));
+		controller.povRight().onTrue(PathplannerAutoDriveCommands.pathFindToReef(3, null));
+		controller.povUp().onTrue(PathplannerAutoDriveCommands.pathFindToReef(4, null));
+		controller.povUpLeft().onTrue(PathplannerAutoDriveCommands.pathFindToReef(5, null));
+		controller.povUpRight().onTrue(PathplannerAutoDriveCommands.pathFindToReef(6, null));
 
-		controller.back().onTrue(PathplannerOnFlyCommands.pathFindToPose(
+		controller.back().onTrue(PathplannerAutoDriveCommands.pathFindToPose(
 			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(15.5, 4.0, new Rotation2d(Math.PI)) : new Pose2d(2.0, 4.0, new Rotation2d()),
 		PathConstraints.unlimitedConstraints(12.0), 0));
 
@@ -266,7 +273,7 @@ public class RobotContainer {
 		controller.leftStick().whileTrue(Commands.runOnce(() -> {}, drive));
 
 		// Used for demoing robot
-		controller.rightStick().onTrue(AutoDriveCommands.autoDriveAndScore(drive, pivot, elevator, wrist, intake));
+		controller.rightStick().onTrue(AutoScoreCommands.autoDriveAndScore(drive, pivot, elevator, wrist, intake));
 	}
 
 	/**

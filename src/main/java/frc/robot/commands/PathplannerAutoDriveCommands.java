@@ -22,7 +22,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 
 /** Add your docs here. */
-public class PathplannerOnFlyCommands {
+public class PathplannerAutoDriveCommands {
 
     public static Command pathFindToPose(Supplier<Pose2d> targetPose, PathConstraints constraints, double targetEndVelocity) {
 

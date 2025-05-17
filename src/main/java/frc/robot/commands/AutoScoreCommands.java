@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -17,7 +18,7 @@ import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.wrist.Wrist;
 
 /** Add your docs here. */
-public class AutoDriveCommands {
+public class AutoScoreCommands {
 
     // For Demoing use only
     public static Command autoDriveAndScore(Drive drive, Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
@@ -29,7 +30,7 @@ public class AutoDriveCommands {
             // ################### GOING TO CORAL STATION ###################
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
-                PathplannerOnFlyCommands.pathFindToCoralStation(Math.random() < 0.5, null),
+                PathplannerAutoDriveCommands.pathFindToCoralStation(Math.random() < 0.5, null),
                 ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
                     .andThen(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist)
                     ),
@@ -45,7 +46,8 @@ public class AutoDriveCommands {
             ));
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
-                new WaitCommand(0.5), 
+                new WaitCommand(0.5),
+                IntakeCommands.intakeRun(intake, () -> 0.0),
                 PivotCommands.pivotToHome(pivot, false),
                 ElevatorCommands.elevatorHold(elevator),
                 WristCommands.wristHold(wrist)
@@ -55,11 +57,10 @@ public class AutoDriveCommands {
             // ################### GOING TO REEF ###################
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
-                PathplannerOnFlyCommands.pathFindToReef((int) (Math.random() * 6) + 1, null),
+                PathplannerAutoDriveCommands.pathFindToReef((int) (Math.random() * 6) + 1, null),
                 ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
                     .andThen(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist)
-                    ),
-                IntakeCommands.intakeRun(intake, () -> 0.0)
+                    )
             ));
 
             Command targetLevelCommand = null;
@@ -87,6 +88,7 @@ public class AutoDriveCommands {
                 new WaitUntilCommand(() -> Math.abs(
                     elevator.getCurrentLength() - ElevatorConstants.kHomeLength) < ElevatorConstants.kLengthErrorAllowed
                 ),
+                IntakeCommands.intakeRun(intake, () -> 0.0),
                 ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
             ));
         }
