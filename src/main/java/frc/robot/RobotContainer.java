@@ -25,6 +25,7 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -34,9 +35,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.FieldConstants.CagePosition;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
@@ -205,7 +206,7 @@ public class RobotContainer {
 		MechanismCommands.mechanismRunTarget(pivot, elevator, wrist, intake).ignoringDisable(true).schedule();
 
 		Supplier<Translation2d> robot = () -> drive.getPose().getTranslation();
-		Pathfinding.setDynamicObstacles(DriveConstants.opposingCages, robot.get());
+		Pathfinding.setDynamicObstacles(CagePosition.opposingCages, robot.get());
 
 		// Configure the button bindings
 		configureButtonBindings();
@@ -266,8 +267,21 @@ public class RobotContainer {
 		controller.povUpRight().onTrue(PathplannerAutoDriveCommands.pathFindToReef(6, null));
 
 		controller.back().onTrue(PathplannerAutoDriveCommands.pathFindToPose(
-			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(15.5, 4.0, new Rotation2d(Math.PI)) : new Pose2d(2.0, 4.0, new Rotation2d()),
-		PathConstraints.unlimitedConstraints(12.0), 0));
+			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(13.5, 6.5, new Rotation2d(Math.PI)) : new Pose2d(4.0, 1.5, new Rotation2d()),
+		PathConstraints.unlimitedConstraints(12.0), 4.0)
+
+		.andThen(PathplannerAutoDriveCommands.pathFindToPose(
+			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(16.0, 4.0, new Rotation2d(Math.PI)) : new Pose2d(1.5, 4.0, new Rotation2d()),
+		PathConstraints.unlimitedConstraints(12.0), 0))
+		);
+
+		controller.x().onTrue(PathplannerAutoDriveCommands.pathFindToPose(
+			() -> new Pose2d(
+				CagePosition.alliedCages.get(0).getFirst().interpolate(CagePosition.alliedCages.get(0).getSecond(), 0.5),
+				new Rotation2d()
+				).transformBy(new Transform2d(-2.0, 0.0, new Rotation2d())
+			),
+			PathConstraints.unlimitedConstraints(12.0), 0));
 
 		// Used to stop any path finding happing
 		controller.leftStick().whileTrue(Commands.runOnce(() -> {}, drive));

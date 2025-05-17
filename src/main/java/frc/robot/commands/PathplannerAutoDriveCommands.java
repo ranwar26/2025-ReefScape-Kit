@@ -9,17 +9,12 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.FieldConstants.CoralPositions;
 import frc.robot.FieldConstants.ReefPositions;
 
@@ -83,7 +78,7 @@ public class PathplannerAutoDriveCommands {
             break;
         }
 
-        PathConstraints approachConstraints = new PathConstraints(0.5, 1.0, Math.PI / 2.0, Math.PI / 2.0);
+        PathConstraints approachConstraints = new PathConstraints(1.0, 1.0, Math.PI / 2.0, Math.PI / 2.0);
 
         return new SequentialCommandGroup(
             AutoBuilder.pathfindToPose(

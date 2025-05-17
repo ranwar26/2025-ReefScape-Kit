@@ -4,11 +4,16 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.VisionConstants;
@@ -56,5 +61,29 @@ public class FieldConstants {
         public static final Pose2d leftCoralRobotPosition = leftCoralTag.transformBy(positionFromTagOffset);
         public static final Pose2d rightCoralRobotPosition = rightCoralTag.transformBy(positionFromTagOffset);
 
+    }
+
+    public final class CagePosition {
+
+        public static final Translation2d kWallBlueCage = new Translation2d(8.7, 7.3);
+        public static final Translation2d kPostBlueCage = new Translation2d(8.9, 5.0);
+
+        public static final Translation2d kWallRedCage = new Translation2d(8.7, 0.8);
+        public static final Translation2d kPostRedCage = new Translation2d(8.9, 3.0);
+
+        public static final List<Pair<Translation2d, Translation2d>> opposingCages = new ArrayList<>();
+        public static final List<Pair<Translation2d, Translation2d>> alliedCages = new ArrayList<>();
+
+        static {
+          opposingCages.add(new Pair<Translation2d,Translation2d>(
+            DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? kWallRedCage : kWallBlueCage,
+            DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? kPostRedCage : kPostBlueCage
+          ));
+
+          alliedCages.add(new Pair<Translation2d,Translation2d>(
+            DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? kWallBlueCage : kWallRedCage,
+            DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? kPostBlueCage : kPostRedCage
+          ));
+        }
     }
 }
