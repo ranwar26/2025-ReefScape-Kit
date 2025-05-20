@@ -4,12 +4,17 @@
 
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -110,7 +115,7 @@ public class AutoDriveCommands {
     }
 
 
-    public static PIDController preciseMovePIDController = new PIDController(1.0, 0, 0);
+    public static PIDController preciseMovePIDController = new PIDController(1.0, 0, 0.0);
 
     /**
      * Only run when near the target, as it does not use pathfinding. 
@@ -121,25 +126,36 @@ public class AutoDriveCommands {
      */
     public static Command preciseMoveToPose(Drive drive, Pose2d targetPose) {
 
-        Transform2d[] deltaPose = new Transform2d[1];
+        double[] deltaValues = new double[2];
+
+        Pose2d maxErrorPose = new Pose2d(0.01, 0.01, new Rotation2d());
+
+        BooleanSupplier isWithinError = () ->
+            Math.abs(drive.getPose().minus(targetPose).getX()) < maxErrorPose.getX() &&
+            Math.abs(drive.getPose().minus(targetPose).getY()) < maxErrorPose.getY();
+
+        Debouncer debouncer = new Debouncer(0.2, DebounceType.kBoth);
 
         return new SequentialCommandGroup(
             new InstantCommand(
                 () -> {
                     Pose2d currentRobotPose = drive.getPose();
 
-                    deltaPose[0] = currentRobotPose.minus(targetPose).times(-1);
+                    deltaValues[0] = currentRobotPose.getX() - targetPose.getX();
+                    deltaValues[1] = currentRobotPose.getY() - targetPose.getY();
                 }
             ),
             DriveCommands.joystickDriveAtAngle(
             drive,
             () -> 1.0,
-            () -> preciseMovePIDController.calculate(deltaPose[0].getX()),
-            () -> preciseMovePIDController.calculate(deltaPose[0].getY()),
+            () -> preciseMovePIDController.calculate(deltaValues[0]),
+            () -> preciseMovePIDController.calculate(deltaValues[1]),
             () -> targetPose.getRotation().getCos(),
             () -> targetPose.getRotation().getSin()
             ).withTimeout(0.02)
-        ).repeatedly().withTimeout(1.0);
+        ).repeatedly().until(() -> debouncer.calculate(isWithinError.getAsBoolean())).andThen(new InstantCommand(
+            () -> drive.stopWithX()
+        ));
 
     }
 
