@@ -81,7 +81,7 @@ public class DynamicAutoCommands {
         SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
 
         if(reefSide.get() != null)
-            primaryCommandGroup.addCommands(AutoDriveCommands.pathFindToReef(reefSide.get(), constraints).deadlineFor(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist,false)));
+            primaryCommandGroup.addCommands(AutoDriveCommands.pathFindToReef(drive, reefSide.get(), constraints).deadlineFor(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist,false)));
         
         if(reefLevel.get() != null)
             primaryCommandGroup.addCommands(new SequentialCommandGroup(
