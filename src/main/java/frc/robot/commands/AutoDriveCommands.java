@@ -9,14 +9,18 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.FieldConstants.CoralPositions;
 import frc.robot.FieldConstants.ReefPositions;
+import frc.robot.subsystems.drive.Drive;
 
 /** Add your docs here. */
 public class AutoDriveCommands {
@@ -46,7 +50,7 @@ public class AutoDriveCommands {
      * @param constraints
      * @return
      */
-    public static Command pathFindToReef(int faceOfReef, PathConstraints constraints) {
+    public static Command pathFindToReef(Drive drive, int faceOfReef, PathConstraints constraints) {
 
         if(constraints == null) {
             constraints = new PathConstraints(DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxAngularSpeed, DriveConstants.maxAngularSpeed);
@@ -78,16 +82,14 @@ public class AutoDriveCommands {
             break;
         }
 
-        PathConstraints approachConstraints = new PathConstraints(1.0, 1.0, Math.PI / 2.0, Math.PI / 2.0);
-
         return new SequentialCommandGroup(
             AutoBuilder.pathfindToPose(
-            targetPose.transformBy(new Transform2d(-0.75, 0.0, new Rotation2d())),
+            targetPose,
             constraints
             ),
-            AutoBuilder.pathfindToPose(
-            targetPose,
-            approachConstraints
+            preciseMoveToPose(
+                drive,
+                targetPose
             )
         );
     }
@@ -105,6 +107,40 @@ public class AutoDriveCommands {
             constraints,
             0.0
         );
+    }
+
+
+    public static PIDController preciseMovePIDController = new PIDController(1.0, 0, 0);
+
+    /**
+     * Only run when near the target, as it does not use pathfinding. 
+     * 
+     * @param drive
+     * @param pose
+     * @return
+     */
+    public static Command preciseMoveToPose(Drive drive, Pose2d targetPose) {
+
+        Transform2d[] deltaPose = new Transform2d[1];
+
+        return new SequentialCommandGroup(
+            new InstantCommand(
+                () -> {
+                    Pose2d currentRobotPose = drive.getPose();
+
+                    deltaPose[0] = currentRobotPose.minus(targetPose).times(-1);
+                }
+            ),
+            DriveCommands.joystickDriveAtAngle(
+            drive,
+            () -> 1.0,
+            () -> preciseMovePIDController.calculate(deltaPose[0].getX()),
+            () -> preciseMovePIDController.calculate(deltaPose[0].getY()),
+            () -> targetPose.getRotation().getCos(),
+            () -> targetPose.getRotation().getSin()
+            ).withTimeout(0.02)
+        ).repeatedly().withTimeout(1.0);
+
     }
 
 }
