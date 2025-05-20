@@ -30,7 +30,9 @@ public class PivotCommands {
         () -> {
           pivot.setTargetAngle(targetAngle.getAsDouble());
         },
-        interrupted -> {},
+        interrupted -> {
+          pivot.setTargetAngle(pivot.getCurrentAngle());
+        },
         () -> Math.abs(pivot.getCurrentAngle() - targetAngle.getAsDouble()) < PivotConstants.kAngleErrorAllowed,
         pivot);
 
@@ -40,7 +42,9 @@ public class PivotCommands {
         () -> {
           pivot.setTargetAngle(targetAngle.getAsDouble());
         },
-        interrupted -> {},
+        interrupted -> {
+          pivot.setTargetAngle(pivot.getCurrentAngle());
+        },
         () -> false,
         pivot);
     }

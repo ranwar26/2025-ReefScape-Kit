@@ -67,14 +67,14 @@ public class DynamicAutoCommands {
                 drive.resetOdometry(startingPose.get());
             }));
 
-            primaryCommandGroup.addCommands(cycle(firstReefSide, firstReefLevel, firstCoralStation));
-            primaryCommandGroup.addCommands(cycle(secondReefSide, secondReefLevel, secondCoralStation));
-            primaryCommandGroup.addCommands(cycle(thirdReefSide, thirdReefLevel, thirdCoralStation));
+            primaryCommandGroup.addCommands(getCycle(firstReefSide, firstReefLevel, firstCoralStation));
+            primaryCommandGroup.addCommands(getCycle(secondReefSide, secondReefLevel, secondCoralStation));
+            primaryCommandGroup.addCommands(getCycle(thirdReefSide, thirdReefLevel, thirdCoralStation));
 
         return primaryCommandGroup;
     }
 
-    public static Command cycle(LoggedDashboardChooser<Integer> reefSide, LoggedDashboardChooser<Command> reefLevel, LoggedDashboardChooser<Boolean> coralStation) {
+    private static Command getCycle(LoggedDashboardChooser<Integer> reefSide, LoggedDashboardChooser<Command> reefLevel, LoggedDashboardChooser<Boolean> coralStation) {
 
         PathConstraints constraints = new PathConstraints(DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxAngularSpeed, DriveConstants.maxAngularSpeed);
 

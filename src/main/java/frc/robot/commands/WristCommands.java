@@ -29,7 +29,9 @@ public class WristCommands {
         () -> {
           wrist.setTargetAngle(targetAngle.getAsDouble());
         },
-        interrupted -> {},
+        interrupted -> {
+          wrist.setTargetAngle(wrist.getCurrentAngle());
+        },
         () -> Math.abs(wrist.getCurrentAngle() - targetAngle.getAsDouble()) < WristConstants.kAngleErrorAllowed,
         wrist);
 
@@ -39,7 +41,9 @@ public class WristCommands {
         () -> {
           wrist.setTargetAngle(targetAngle.getAsDouble());
         },
-        interrupted -> {},
+        interrupted -> {
+          wrist.setTargetAngle(wrist.getCurrentAngle());
+        },
         () -> false,
         wrist);
     }

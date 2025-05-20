@@ -30,7 +30,9 @@ public class ElevatorCommands {
         () -> {
           elevator.setTargetLength(targetLength.getAsDouble());
         },
-        interrupted -> {},
+        interrupted -> {
+          elevator.setTargetLength(elevator.getCurrentLength());
+        },
         () -> Math.abs(elevator.getCurrentLength() - targetLength.getAsDouble()) < ElevatorConstants.kLengthErrorAllowed,
         elevator);
 
@@ -40,7 +42,9 @@ public class ElevatorCommands {
         () -> {
           elevator.setTargetLength(targetLength.getAsDouble());
         },
-        interrupted -> {},
+        interrupted -> {
+          elevator.setTargetLength(elevator.getCurrentLength());
+        },
         () -> false,
         elevator);
     }
