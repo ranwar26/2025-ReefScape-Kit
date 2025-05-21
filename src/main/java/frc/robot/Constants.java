@@ -116,13 +116,13 @@ public final class Constants {
     public static final double turnKp = 8.0;
     public static final double turnKd = 0.4;
     public static final double turnSimP = 8.0;
-    public static final double turnSimD = 0.4;
+    public static final double turnSimD = 0.5;
     public static final double turnPIDMinInput = 0; // Radians
     public static final double turnPIDMaxInput = 2 * Math.PI; // Radians
 
     // PathPlanner configuration
-    public static final double robotMassKg = 47.62; // TODO: recalculate Mass and MOI
-    public static final double robotMOI = 4.306;
+    public static final double robotMassKg = 50.219;
+    public static final double robotMOI = 4.859;
     public static final double wheelCOF = 1.190;
     public static final RobotConfig ppConfig =
         new RobotConfig(
