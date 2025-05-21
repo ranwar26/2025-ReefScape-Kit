@@ -26,19 +26,21 @@ import frc.robot.subsystems.wrist.Wrist;
 /** Add your docs here. */
 public class DynamicAutoCommands {
 
-    private static LoggedDashboardChooser<Pose2d> startingPose = new LoggedDashboardChooser<>("Starting Pose");
+    public static final String networkKeyPrefix = "Dynamic Auto/";
 
-    private static LoggedDashboardChooser<Integer> firstReefSide = new LoggedDashboardChooser<>("First Reef Side");
-    private static LoggedDashboardChooser<Command> firstReefLevel = new LoggedDashboardChooser<>("First Reef Level");
-    private static LoggedDashboardChooser<Boolean> firstCoralStation = new LoggedDashboardChooser<>("First Coral Station");
+    private static LoggedDashboardChooser<Pose2d> startingPose = new LoggedDashboardChooser<>(networkKeyPrefix + "Starting Pose");
 
-    private static LoggedDashboardChooser<Integer> secondReefSide = new LoggedDashboardChooser<>("Second Reef Side");
-    private static LoggedDashboardChooser<Command> secondReefLevel = new LoggedDashboardChooser<>("Second Reef Level");
-    private static LoggedDashboardChooser<Boolean> secondCoralStation = new LoggedDashboardChooser<>("Second Coral Station");
+    private static LoggedDashboardChooser<Integer> firstReefSide = new LoggedDashboardChooser<>(networkKeyPrefix + "First Reef Side");
+    private static LoggedDashboardChooser<Command> firstReefLevel = new LoggedDashboardChooser<>(networkKeyPrefix + "First Reef Level");
+    private static LoggedDashboardChooser<Boolean> firstCoralStation = new LoggedDashboardChooser<>(networkKeyPrefix + "First Coral Station");
 
-    private static LoggedDashboardChooser<Integer> thirdReefSide = new LoggedDashboardChooser<>("Third Reef Side");
-    private static LoggedDashboardChooser<Command> thirdReefLevel = new LoggedDashboardChooser<>("Third Reef Level");
-    private static LoggedDashboardChooser<Boolean> thirdCoralStation = new LoggedDashboardChooser<>("Third Coral Station");
+    private static LoggedDashboardChooser<Integer> secondReefSide = new LoggedDashboardChooser<>(networkKeyPrefix + "Second Reef Side");
+    private static LoggedDashboardChooser<Command> secondReefLevel = new LoggedDashboardChooser<>(networkKeyPrefix + "Second Reef Level");
+    private static LoggedDashboardChooser<Boolean> secondCoralStation = new LoggedDashboardChooser<>(networkKeyPrefix + "Second Coral Station");
+
+    private static LoggedDashboardChooser<Integer> thirdReefSide = new LoggedDashboardChooser<>(networkKeyPrefix + "Third Reef Side");
+    private static LoggedDashboardChooser<Command> thirdReefLevel = new LoggedDashboardChooser<>(networkKeyPrefix + "Third Reef Level");
+    private static LoggedDashboardChooser<Boolean> thirdCoralStation = new LoggedDashboardChooser<>(networkKeyPrefix + "Third Coral Station");
 
     private static Drive drive;
     private static Pivot pivot;
