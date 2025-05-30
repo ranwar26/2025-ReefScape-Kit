@@ -77,8 +77,7 @@ public class MechanismCommands {
 
             Logger.recordOutput("Arm System/Current", mechanismCurrent);
 
-        },
-        new Subsystem[] {});
+        }).withName("mechanismRunCurrent");
     }
 
     /**
@@ -103,7 +102,6 @@ public class MechanismCommands {
     
                 Logger.recordOutput("Arm System/Target", mechanismTarget);
     
-            },
-            new Subsystem[] {});
+            }).withName("mechanismRunTarget");
         }
 }

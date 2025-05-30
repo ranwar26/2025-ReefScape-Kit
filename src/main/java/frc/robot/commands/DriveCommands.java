@@ -133,7 +133,7 @@ public class DriveCommands {
    * @param yAngleSupplier - y component of the angle
    * @return - the command with the logic of this method
    */
-  public static Command joystickDriveAtAngle(
+  public static Command driveAtAngle(
       Drive drive,
       DoubleSupplier throttleSupplier,
       DoubleSupplier xSupplier,
@@ -142,7 +142,7 @@ public class DriveCommands {
       DoubleSupplier yAngleSupplier) {
 
     // Construct command
-    return Commands.run(
+    Command returnCommand = Commands.run(
         () -> {
 
           double throttle = throttleSupplier.getAsDouble();
@@ -183,7 +183,11 @@ public class DriveCommands {
         drive)
 
         // Reset PID controller when command starts
-        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians())).withName("driveAtAngle");
+
+        returnCommand.setSubsystem("Drive");
+
+        return returnCommand;
   }
 
   /**
@@ -247,7 +251,7 @@ public class DriveCommands {
                   System.out.println("********** Drive FF Characterization Results **********");
                   System.out.println("\tkS: " + formatter.format(kS));
                   System.out.println("\tkV: " + formatter.format(kV));
-                }));
+                })).withName("feedforwardCharacterization");
   }
 
   /** Measures the robot's wheel radius by spinning in a circle. */
@@ -316,7 +320,7 @@ public class DriveCommands {
                               + " meters, "
                               + formatter.format(Units.metersToInches(wheelRadius))
                               + " inches");
-                    })));
+                    }))).withName("wheelRadiusCharacterization");
   }
 
   private static class WheelRadiusCharacterizationState {

@@ -65,13 +65,13 @@ public class AutoScoreCommands {
             Command targetLevelCommand = null;
             switch ((int) (Math.random() * 3) + 2) {
                 case 2:
-                    targetLevelCommand = ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist);
+                    targetLevelCommand = ArmControlCommandGroups.level2UpCommandGroup(pivot, elevator, wrist);
                     break;
                 case 3:
-                    targetLevelCommand = ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist);
+                    targetLevelCommand = ArmControlCommandGroups.level3UpCommandGroup(pivot, elevator, wrist);
                     break;
                 case 4:
-                    targetLevelCommand = ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist);
+                    targetLevelCommand = ArmControlCommandGroups.level4UpCommandGroup(pivot, elevator, wrist);
                     break;
             }
 
@@ -92,6 +92,6 @@ public class AutoScoreCommands {
             ));
         }
 
-        return primaryCommand;
+        return primaryCommand.withName("autoDriveAndScore");
     }
 }

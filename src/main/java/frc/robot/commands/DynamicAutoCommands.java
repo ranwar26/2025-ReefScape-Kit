@@ -11,6 +11,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -64,7 +65,7 @@ public class DynamicAutoCommands {
 
         SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
 
-        primaryCommandGroup.addCommands(new InstantCommand(
+        primaryCommandGroup.addCommands(Commands.runOnce(
             () -> {
                 drive.resetOdometry(startingPose.get());
             }));
@@ -73,7 +74,7 @@ public class DynamicAutoCommands {
             primaryCommandGroup.addCommands(getCycle(secondReefSide, secondReefLevel, secondCoralStation));
             primaryCommandGroup.addCommands(getCycle(thirdReefSide, thirdReefLevel, thirdCoralStation));
 
-        return primaryCommandGroup;
+        return primaryCommandGroup.withName("dynamicAuto");
     }
 
     private static Command getCycle(LoggedDashboardChooser<Integer> reefSide, LoggedDashboardChooser<Command> reefLevel, LoggedDashboardChooser<Boolean> coralStation) {
@@ -132,9 +133,9 @@ public class DynamicAutoCommands {
         firstReefSide.addOption("Back Right", 6);
 
         firstReefLevel.addDefaultOption("SKIP", null);
-        firstReefLevel.addOption("Level 2", ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist));
-        firstReefLevel.addOption("Level 3", ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist));
-        firstReefLevel.addOption("Level 4", ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist));
+        firstReefLevel.addOption("Level 2", ArmControlCommandGroups.level2UpCommandGroup(pivot, elevator, wrist));
+        firstReefLevel.addOption("Level 3", ArmControlCommandGroups.level3UpCommandGroup(pivot, elevator, wrist));
+        firstReefLevel.addOption("Level 4", ArmControlCommandGroups.level4UpCommandGroup(pivot, elevator, wrist));
 
         firstCoralStation.addDefaultOption("SKIP", null);
         firstCoralStation.addOption("Left Side", true);
@@ -150,9 +151,9 @@ public class DynamicAutoCommands {
         secondReefSide.addOption("Back Right", 6);
 
         secondReefLevel.addDefaultOption("SKIP", null);
-        secondReefLevel.addOption("Level 2", ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist));
-        secondReefLevel.addOption("Level 3", ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist));
-        secondReefLevel.addOption("Level 4", ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist));
+        secondReefLevel.addOption("Level 2", ArmControlCommandGroups.level2UpCommandGroup(pivot, elevator, wrist));
+        secondReefLevel.addOption("Level 3", ArmControlCommandGroups.level3UpCommandGroup(pivot, elevator, wrist));
+        secondReefLevel.addOption("Level 4", ArmControlCommandGroups.level4UpCommandGroup(pivot, elevator, wrist));
 
         secondCoralStation.addDefaultOption("SKIP", null);
         secondCoralStation.addOption("Left Side", true);
@@ -168,9 +169,9 @@ public class DynamicAutoCommands {
         thirdReefSide.addOption("Back Right", 6);
 
         thirdReefLevel.addDefaultOption("SKIP", null);
-        thirdReefLevel.addOption("Level 2", ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist));
-        thirdReefLevel.addOption("Level 3", ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist));
-        thirdReefLevel.addOption("Level 4", ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist));
+        thirdReefLevel.addOption("Level 2", ArmControlCommandGroups.level2UpCommandGroup(pivot, elevator, wrist));
+        thirdReefLevel.addOption("Level 3", ArmControlCommandGroups.level3UpCommandGroup(pivot, elevator, wrist));
+        thirdReefLevel.addOption("Level 4", ArmControlCommandGroups.level4UpCommandGroup(pivot, elevator, wrist));
 
         thirdCoralStation.addDefaultOption("SKIP", null);
         thirdCoralStation.addOption("Left Side", true);

@@ -23,9 +23,11 @@ public class ElevatorCommands {
    * @return - the command with the logic
    */
   public static Command elevatorToTarget(Elevator elevator, DoubleSupplier targetLength, boolean allowEndCondition) {
+
+    Command returnCommand;
     
     if(allowEndCondition) {
-      return new FunctionalCommand(
+      returnCommand = new FunctionalCommand(
         () -> {},
         () -> {
           elevator.setTargetLength(targetLength.getAsDouble());
@@ -34,10 +36,10 @@ public class ElevatorCommands {
           elevator.setTargetLength(elevator.getCurrentLength());
         },
         () -> Math.abs(elevator.getCurrentLength() - targetLength.getAsDouble()) < ElevatorConstants.kLengthErrorAllowed,
-        elevator);
+        elevator).withName("elevatorToTarget");
 
     } else {
-      return new FunctionalCommand(
+      returnCommand = new FunctionalCommand(
         () -> {},
         () -> {
           elevator.setTargetLength(targetLength.getAsDouble());
@@ -46,8 +48,12 @@ public class ElevatorCommands {
           elevator.setTargetLength(elevator.getCurrentLength());
         },
         () -> false,
-        elevator);
+        elevator).withName("elevatorToTarget");
     }
+
+    returnCommand.setSubsystem("Elevator");
+
+    return returnCommand;
   }
 
   /**
@@ -69,7 +75,7 @@ public class ElevatorCommands {
    * @return - the command with the logic
    */
   public static Command elevatorToHome(Elevator elevator, boolean allowEndCondition) {
-    return elevatorToTarget(elevator, ElevatorConstants.kHomeLength, allowEndCondition);
+    return elevatorToTarget(elevator, ElevatorConstants.kHomeLength, allowEndCondition).withName("elevatorToHome");
   }
 
   /**
@@ -90,6 +96,6 @@ public class ElevatorCommands {
         },
         interrupted -> {},
         () -> false,
-        elevator);
+        elevator).withName("elevatorHold");
   }
 }

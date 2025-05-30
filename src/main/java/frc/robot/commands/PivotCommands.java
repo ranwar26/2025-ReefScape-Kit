@@ -24,8 +24,10 @@ public class PivotCommands {
    */
   public static Command pivotToTarget(Pivot pivot, DoubleSupplier targetAngle, boolean allowEndCondition) {
 
+    Command returnCommand;
+
     if(allowEndCondition) {
-      return new FunctionalCommand(
+      returnCommand = new FunctionalCommand(
         () -> {},
         () -> {
           pivot.setTargetAngle(targetAngle.getAsDouble());
@@ -34,10 +36,10 @@ public class PivotCommands {
           pivot.setTargetAngle(pivot.getCurrentAngle());
         },
         () -> Math.abs(pivot.getCurrentAngle() - targetAngle.getAsDouble()) < PivotConstants.kAngleErrorAllowed,
-        pivot);
+        pivot).withName("pivotToTarget");
 
     } else {
-      return new FunctionalCommand(
+      returnCommand = new FunctionalCommand(
         () -> {},
         () -> {
           pivot.setTargetAngle(targetAngle.getAsDouble());
@@ -46,8 +48,12 @@ public class PivotCommands {
           pivot.setTargetAngle(pivot.getCurrentAngle());
         },
         () -> false,
-        pivot);
+        pivot).withName("pivotToTarget");
     }
+
+    returnCommand.setSubsystem("Pivot");
+
+    return returnCommand;
   }
 
   /**
@@ -69,7 +75,7 @@ public class PivotCommands {
    * @return - Command with the given logic
    */
   public static Command pivotToHome(Pivot pivot, boolean allowEndCondition) {
-    return pivotToTarget(pivot, PivotConstants.kHomeAngle, allowEndCondition);
+    return pivotToTarget(pivot, PivotConstants.kHomeAngle, allowEndCondition).withName("pivotToHome");
   }
 
   /**
@@ -90,6 +96,6 @@ public class PivotCommands {
         },
         interrupted -> {},
         () -> false,
-        pivot);
+        pivot).withName("pivotHold");
   }
 }

@@ -27,7 +27,7 @@ public class ArmControlCommandGroups {
    * @param allowEndCondition - whether the command will stop after all set points are hit
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command Level2UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+  public static Command level2UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
 
     return new SequentialCommandGroup(
 
@@ -43,7 +43,7 @@ public class ArmControlCommandGroups {
           ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel2Length, false),
           PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel2Angle, false)
         )
-    );
+    ).withName("level2UpCommandGroup");
   }
 
   /**
@@ -55,7 +55,7 @@ public class ArmControlCommandGroups {
    * @param allowEndCondition - whether the command will stop after all set points are hit
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command Level3UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+  public static Command level3UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
 
     return new SequentialCommandGroup(
 
@@ -71,7 +71,7 @@ public class ArmControlCommandGroups {
           ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel3Length, false),
           PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel3Angle, false)
         )
-    );
+    ).withName("level3UpCommandGroup");
 
   }
 
@@ -84,7 +84,7 @@ public class ArmControlCommandGroups {
    * @param allowEndCondition - whether the command will stop after all set points are hit
    * @return sequentialCommandGroup - the command with the given logic
    */
-  public static Command Level4UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
+  public static Command level4UpCommandGroup(Pivot pivot, Elevator elevator, Wrist wrist) {
 
     return new SequentialCommandGroup(
 
@@ -100,7 +100,7 @@ public class ArmControlCommandGroups {
           ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kLevel4Length, false),
           PivotCommands.pivotToTarget(pivot, PivotConstants.kLevel4Angle, false)
         )
-    );
+    ).withName("level4UpCommandGroup");
 
   }
 
@@ -130,7 +130,7 @@ public class ArmControlCommandGroups {
           ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kCoralStationLength, false)
         )
 
-    );
+    ).withName("coralStationUpCommandGroup");
 
   }
 
@@ -163,7 +163,7 @@ public class ArmControlCommandGroups {
           WristCommands.wristToHome(wrist, false),
           ElevatorCommands.elevatorToHome(elevator, false)
         )
-    );
+    ).withName("retractCommandGroup");
 
   }
 
@@ -181,7 +181,7 @@ public class ArmControlCommandGroups {
       PivotCommands.pivotHold(pivot),
       ElevatorCommands.elevatorHold(elevator),
       WristCommands.wristHold(wrist)
-    );
+    ).withName("holdCommandGroup");
   }
 
   /**
@@ -198,6 +198,6 @@ public class ArmControlCommandGroups {
       WristCommands.wristToHome(wrist, allowEndCondition),
       ElevatorCommands.elevatorToHome(elevator, allowEndCondition),
       PivotCommands.pivotToHome(pivot, allowEndCondition)
-    );
+    ).withName("homeCommandGroup");
   }
 }

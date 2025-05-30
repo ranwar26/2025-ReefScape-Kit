@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -40,7 +41,7 @@ public class AutoDriveCommands {
             targetPose.get(),
             constraints,
             targetEndVelocity
-            );
+        ).withName("pathFindToPose");
     }
 
     /**
@@ -96,7 +97,7 @@ public class AutoDriveCommands {
                 drive,
                 targetPose
             )
-        );
+        ).withName("pathFindToReef");
     }
 
     public static Command pathFindToCoralStation(boolean leftStation, PathConstraints constraints) {
@@ -111,7 +112,7 @@ public class AutoDriveCommands {
             targetPose,
             constraints,
             0.0
-        );
+        ).withName("pathFindToCoralStation");
     }
 
 
@@ -137,7 +138,7 @@ public class AutoDriveCommands {
         Debouncer debouncer = new Debouncer(0.2, DebounceType.kBoth);
 
         return new SequentialCommandGroup(
-            new InstantCommand(
+            Commands.runOnce(
                 () -> {
                     Pose2d currentRobotPose = drive.getPose();
 
@@ -145,7 +146,7 @@ public class AutoDriveCommands {
                     deltaValues[1] = currentRobotPose.getY() - targetPose.getY();
                 }
             ),
-            DriveCommands.joystickDriveAtAngle(
+            DriveCommands.driveAtAngle(
             drive,
             () -> 1.0,
             () -> preciseMovePIDController.calculate(deltaValues[0]),
@@ -153,9 +154,9 @@ public class AutoDriveCommands {
             () -> targetPose.getRotation().getCos(),
             () -> targetPose.getRotation().getSin()
             ).withTimeout(0.02)
-        ).repeatedly().until(() -> debouncer.calculate(isWithinError.getAsBoolean())).andThen(new InstantCommand(
+        ).repeatedly().until(() -> debouncer.calculate(isWithinError.getAsBoolean())).andThen(Commands.runOnce(
             () -> drive.stopWithX()
-        ));
+        )).withName("preciseMoveToPose");
 
     }
 

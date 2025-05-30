@@ -13,8 +13,12 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -32,7 +36,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OIConstants;
@@ -74,6 +80,8 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIO;
 import frc.robot.subsystems.wrist.WristIOReal;
 import frc.robot.subsystems.wrist.WristIOSim;
+import frc.robot.util.Elastic;
+import frc.robot.util.Elastic.Notification;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -98,6 +106,7 @@ public class RobotContainer {
 	// Dashboard inputs
 	private final LoggedDashboardChooser<Command> autoChooser;
 	private final LoggedDashboardChooser<Boolean> useDynamicAuto;
+
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -166,6 +175,13 @@ public class RobotContainer {
 				break;
 		}
 
+		drive.setName("Drive");
+		vision.setName("Vision");
+		pivot.setName("Pivot");
+		elevator.setName("Elevator");
+		wrist.setName("Wrist");
+		intake.setName("Intake");
+
 		// Set up auto routines
 		autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -191,7 +207,7 @@ public class RobotContainer {
 		useDynamicAuto.addOption("Use Hard Paths", false);
 
 		// Default command, normal field-relative drive
-		drive.setDefaultCommand(DriveCommands.joystickDriveAtAngle(
+		drive.setDefaultCommand(DriveCommands.driveAtAngle(
 				drive,
 				() -> MathUtil.applyDeadband(controller.getRightTriggerAxis(), OIConstants.kDriveDeadband),
 				() -> MathUtil.applyDeadband(-controller.getLeftY(), OIConstants.kDriveDeadband),
@@ -200,7 +216,7 @@ public class RobotContainer {
 				() -> MathUtil.applyDeadband(-controller.getRightX(), OIConstants.kDriveDeadband)));
 
 		// Default command for each subsystem
-		intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> 0.0));
+		intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
 
 		wrist.setDefaultCommand(WristCommands.wristToHome(wrist, false));
 
@@ -209,18 +225,25 @@ public class RobotContainer {
 		pivot.setDefaultCommand(PivotCommands.pivotToHome(pivot, false));
 
 		// Starts the arm mechanism for sim and comp matches
-		MechanismCommands.mechanismRunCurrent(pivot, elevator, wrist, intake).ignoringDisable(true).schedule();
-		MechanismCommands.mechanismRunTarget(pivot, elevator, wrist, intake).ignoringDisable(true).schedule();
+		MechanismCommands.mechanismRunCurrent(pivot, elevator, wrist, intake).ignoringDisable(true)
+			.alongWith(MechanismCommands.mechanismRunTarget(pivot, elevator, wrist, intake).ignoringDisable(true))
+				.withName("mechanismCommands").schedule();
 
-		Supplier<Translation2d> robot = () -> drive.getPose().getTranslation();
-		Pathfinding.setDynamicObstacles(CagePosition.opposingCages, robot.get());
+		Pathfinding.setDynamicObstacles(CagePosition.opposingCages, drive.getPose().getTranslation());
 
 		// Configure the button bindings
 		configureButtonBindings();
 
 		DynamicAutoCommands.setupDynamicAuto(drive, pivot, elevator, wrist, intake);
-		PathfindingCommand.warmupCommand().schedule();
-		ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist, false).ignoringDisable(true).schedule();
+		MechanismCommands.mechanismRunCurrent(pivot, elevator, wrist, intake).ignoringDisable(true)
+			.alongWith(MechanismCommands.mechanismRunTarget(pivot, elevator, wrist, intake).ignoringDisable(true))
+				.withName("mechanismCommands").schedule();
+
+		PathfindingCommand.warmupCommand().withName("WarmupCommand")
+			.andThen(Commands.runOnce(() -> Elastic.sendNotification(
+				new Elastic.Notification(Elastic.Notification.NotificationLevel.INFO, "All Systems Go!", "All Warmups, Bindings, Logging, and Sim Commands have been setup!", 350, 90)
+				)))
+				.ignoringDisable(true).schedule();
 	}
 
 	/**
@@ -240,23 +263,21 @@ public class RobotContainer {
 				() -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
 				drive).ignoringDisable(true));
 
-		controller.leftTrigger().onTrue(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
-
 		controller.a().whileTrue(
-			ArmControlCommandGroups.Level2UpCommandGroup(pivot, elevator, wrist)
+			ArmControlCommandGroups.level2UpCommandGroup(pivot, elevator, wrist)
 			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
-			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.5))
-			));
+			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2))
+			).withName("level2UpAndHoldWithRumble"));
 		controller.b().whileTrue(
-			ArmControlCommandGroups.Level3UpCommandGroup(pivot, elevator, wrist)
+			ArmControlCommandGroups.level3UpCommandGroup(pivot, elevator, wrist)
 			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
-			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.5))
-			));
+			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2))
+			).withName("level3UpAndHoldWithRumble"));
 		controller.y().whileTrue(
-			ArmControlCommandGroups.Level4UpCommandGroup(pivot, elevator, wrist)
+			ArmControlCommandGroups.level4UpCommandGroup(pivot, elevator, wrist)
 			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
-			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.5))
-			));
+			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2))
+			).withName("level4UpAndHoldWithRumble"));
 
 		controller.a().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
 		controller.b().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));

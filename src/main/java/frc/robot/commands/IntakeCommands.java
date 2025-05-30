@@ -21,10 +21,14 @@ public class IntakeCommands {
    */
   public static Command intakeRun(Intake intake, DoubleSupplier speedPercentage) {
 
-    return Commands.run(
+    Command returnCommand = Commands.run(
         () -> {
           intake.setIntakePercentage(speedPercentage.getAsDouble());
         },
-        intake);
+        intake).withName("intakeRun");
+
+    returnCommand.setSubsystem("Intake");
+
+    return returnCommand;
   }
 }

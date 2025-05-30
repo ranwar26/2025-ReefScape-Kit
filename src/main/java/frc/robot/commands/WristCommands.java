@@ -23,8 +23,11 @@ public class WristCommands {
    * @return - the command with the given logic
    */
   public static Command wristToTarget(Wrist wrist, DoubleSupplier targetAngle, boolean allowEndCondition) {
+
+    Command returnCommand;
+
     if(allowEndCondition) {
-      return new FunctionalCommand(
+      returnCommand = new FunctionalCommand(
         () -> {},
         () -> {
           wrist.setTargetAngle(targetAngle.getAsDouble());
@@ -33,10 +36,10 @@ public class WristCommands {
           wrist.setTargetAngle(wrist.getCurrentAngle());
         },
         () -> Math.abs(wrist.getCurrentAngle() - targetAngle.getAsDouble()) < WristConstants.kAngleErrorAllowed,
-        wrist);
+        wrist).withName("wristToTarget");
 
     } else {
-      return new FunctionalCommand(
+      returnCommand = new FunctionalCommand(
         () -> {},
         () -> {
           wrist.setTargetAngle(targetAngle.getAsDouble());
@@ -45,8 +48,12 @@ public class WristCommands {
           wrist.setTargetAngle(wrist.getCurrentAngle());
         },
         () -> false,
-        wrist);
+        wrist).withName("wristToTarget");
     }
+
+    returnCommand.setSubsystem("Wrist");
+
+    return returnCommand;
   }
 
   /**
@@ -68,7 +75,7 @@ public class WristCommands {
    * @return - the command with the given logic
    */
   public static Command wristToHome(Wrist wrist, boolean allowEndCondition) {
-    return wristToTarget(wrist, WristConstants.kHomeAngle, allowEndCondition);
+    return wristToTarget(wrist, WristConstants.kHomeAngle, allowEndCondition).withName("wristToHome");
   }
 
   /**
@@ -89,6 +96,6 @@ public class WristCommands {
         },
         interrupted -> {},
         () -> false,
-        wrist);
+        wrist).withName("wristHold");
   }
 }

@@ -16,6 +16,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.Elastic;
+import frc.robot.util.Elastic.Notification;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
 
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -26,13 +33,29 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
- * described in the TimedRobot documentation. If you change the name of this class or the package after creating this
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as
+ * described in the TimedRobot documentation. If you change the name of this
+ * class or the package after creating this
  * project, you must also update the build.gradle file in the project.
  */
 public class Robot extends LoggedRobot {
     private Command autonomousCommand;
     private RobotContainer robotContainer;
+
+    // Commands Logging
+    private final List<Command> activeCommands = new ArrayList<>();
+
+    private final List<String> allCommandNames = new ArrayList<>();
+    private final List<String> driveCommandNames = new ArrayList<>();
+    private final List<String> pivotCommandNames = new ArrayList<>();
+    private final List<String> elevatorCommandNames = new ArrayList<>();
+    private final List<String> wristCommandNames = new ArrayList<>();
+    private final List<String> intakeCommandNames = new ArrayList<>();
+
+    private final List<List<String>> allSubsystemCommandNames = new ArrayList<>(
+        Arrays.asList(driveCommandNames, pivotCommandNames, elevatorCommandNames, wristCommandNames, intakeCommandNames)
+    );
 
     public Robot() {
         // Record metadata
@@ -81,9 +104,29 @@ public class Robot extends LoggedRobot {
         // Start AdvantageKit logger
         Logger.start();
 
+        CommandScheduler.getInstance().onCommandInitialize(new Consumer<Command>() {
+            @Override
+            public void accept(Command command) {
+                activeCommands.add(command);
+            }
+        });
+        CommandScheduler.getInstance().onCommandFinish(new Consumer<Command>() {
+            @Override
+            public void accept(Command command) {
+                activeCommands.remove(command);
+            }
+        });
+        CommandScheduler.getInstance().onCommandInterrupt(new Consumer<Command>() {
+            @Override
+            public void accept(Command command) {
+                activeCommands.remove(command);
+            }
+        });
+
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
         robotContainer = new RobotContainer();
+
     }
 
     /** This function is called periodically during all modes. */
@@ -99,19 +142,70 @@ public class Robot extends LoggedRobot {
         // the Command-based framework to work.
         CommandScheduler.getInstance().run();
 
+        allCommandNames.clear();
+        driveCommandNames.clear();
+        pivotCommandNames.clear();
+        elevatorCommandNames.clear();
+        wristCommandNames.clear();
+        intakeCommandNames.clear();
+
+        for (int i = 0; i < activeCommands.size(); i++) {
+
+            allCommandNames.add(activeCommands.get(i).getName());
+
+            switch (activeCommands.get(i).getSubsystem()) {
+                case "Drive":
+                    driveCommandNames.add(activeCommands.get(i).getName());
+                    break;
+                case "Pivot":
+                    pivotCommandNames.add(activeCommands.get(i).getName());
+                    break;
+                case "Elevator":
+                    elevatorCommandNames.add(activeCommands.get(i).getName());
+                    break;
+                case "Wrist":
+                    wristCommandNames.add(activeCommands.get(i).getName());
+                    break;
+                case "Intake":
+                    intakeCommandNames.add(activeCommands.get(i).getName());
+                    break;
+            }
+        }
+
+        for(List<String> subsystemCommandNames : allSubsystemCommandNames) {
+            if (subsystemCommandNames.size() > 1) {
+                Elastic.sendNotification(new Notification(Notification.NotificationLevel.WARNING, "Double Command",
+                        "Currently " + subsystemCommandNames.size() + " commands are running on drive"));
+    
+                System.out.println("Currently " + subsystemCommandNames.size() + " commands are running on drive");
+            }
+        }
+
+        Logger.recordOutput("Active Commands/All", allCommandNames.toArray(new String[0]));
+        Logger.recordOutput("Active Commands/Subsystem/Drive",      driveCommandNames.size() > 0 ? driveCommandNames.get(0) : "No Active Drive Command");
+        Logger.recordOutput("Active Commands/Subsystem/Pivot",      pivotCommandNames.size() > 0 ? pivotCommandNames.get(0) : "No Active Pivot Command");
+        Logger.recordOutput("Active Commands/Subsystem/Elevator",   elevatorCommandNames.size() > 0 ? elevatorCommandNames.get(0) : "No Active Elevator Command");
+        Logger.recordOutput("Active Commands/Subsystem/Wrist",      wristCommandNames.size() > 0 ? wristCommandNames.get(0) : "No Active Wrist Command");
+        Logger.recordOutput("Active Commands/Subsystem/Intake",     intakeCommandNames.size() > 0 ?  intakeCommandNames.get(0) : "No Active Intake Command");
+
         // Return to normal thread priority
         Threads.setCurrentThreadPriority(false, 10);
     }
 
     /** This function is called once when the robot is disabled. */
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+    }
 
     /** This function is called periodically when disabled. */
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+    }
 
-    /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+    /**
+     * This autonomous runs the autonomous command selected by your
+     * {@link RobotContainer} class.
+     */
     @Override
     public void autonomousInit() {
         autonomousCommand = robotContainer.getAutonomousCommand();
@@ -124,7 +218,8 @@ public class Robot extends LoggedRobot {
 
     /** This function is called periodically during autonomous. */
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+    }
 
     /** This function is called once when teleop is enabled. */
     @Override
@@ -140,7 +235,8 @@ public class Robot extends LoggedRobot {
 
     /** This function is called periodically during operator control. */
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+    }
 
     /** This function is called once when test mode is enabled. */
     @Override
@@ -151,13 +247,17 @@ public class Robot extends LoggedRobot {
 
     /** This function is called periodically during test mode. */
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+    }
 
     /** This function is called once when the robot is first started up. */
     @Override
-    public void simulationInit() {}
+    public void simulationInit() {
+    }
 
     /** This function is called periodically whilst in simulation. */
     @Override
-    public void simulationPeriodic() {}
+    public void simulationPeriodic() {
+    }
+
 }

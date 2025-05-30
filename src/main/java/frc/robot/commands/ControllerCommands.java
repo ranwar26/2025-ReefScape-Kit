@@ -27,6 +27,6 @@ public class ControllerCommands {
                 controller.setRumble(RumbleType.kBothRumble, 0.0);
             },
             () -> DriverStation.getMatchTime() < endTime[0]
-            );
+            ).withName("setRumble");
     }
 }
