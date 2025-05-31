@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -41,7 +42,7 @@ public class AutoScoreCommands {
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 new WaitCommand(1.0), // Command group waits on this
                 IntakeCommands.intakeRun(intake, () -> 1.0),
-                ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
+                ArmControlCommandGroups.holdAtCoralStationCommandGroup(pivot, elevator, wrist)
             ));
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
@@ -63,15 +64,19 @@ public class AutoScoreCommands {
             ));
 
             Command targetLevelCommand = null;
+            Command targetHoldLevelCommand = null;
             switch ((int) (Math.random() * 3) + 2) {
                 case 2:
                     targetLevelCommand = ArmControlCommandGroups.level2UpCommandGroup(pivot, elevator, wrist);
+                    targetHoldLevelCommand = ArmControlCommandGroups.holdAtLevel2CommandGroup(pivot, elevator, wrist);
                     break;
                 case 3:
                     targetLevelCommand = ArmControlCommandGroups.level3UpCommandGroup(pivot, elevator, wrist);
+                    targetHoldLevelCommand = ArmControlCommandGroups.holdAtLevel3CommandGroup(pivot, elevator, wrist);
                     break;
                 case 4:
                     targetLevelCommand = ArmControlCommandGroups.level4UpCommandGroup(pivot, elevator, wrist);
+                    targetHoldLevelCommand = ArmControlCommandGroups.holdAtLevel4CommandGroup(pivot, elevator, wrist);
                     break;
             }
 
@@ -80,16 +85,13 @@ public class AutoScoreCommands {
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 new WaitCommand(0.5), // Command group waits on this
                 IntakeCommands.intakeRun(intake, () -> -1.0),
-                ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
+                targetHoldLevelCommand
             ));
 
-            primaryCommand.addCommands(new ParallelDeadlineGroup(
-                new WaitUntilCommand(() -> Math.abs(
-                    elevator.getCurrentLength() - ElevatorConstants.kHomeLength) < ElevatorConstants.kLengthErrorAllowed
-                ),
+            primaryCommand.addCommands(new ParallelCommandGroup(
                 IntakeCommands.intakeRun(intake, () -> 0.0),
                 ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
-            ));
+            ).until(() -> Math.abs(elevator.getCurrentLength() - ElevatorConstants.kHomeLength) < ElevatorConstants.kLengthErrorAllowed));
         }
 
         return primaryCommand.withName("autoDriveAndScore");

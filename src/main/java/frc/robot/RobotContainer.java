@@ -264,19 +264,19 @@ public class RobotContainer {
 
 		controller.a().whileTrue(
 			ArmControlCommandGroups.level2UpCommandGroup(pivot, elevator, wrist)
-			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
-			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2))
-			).withName("level2UpAndHoldWithRumble"));
+			.andThen(ArmControlCommandGroups.holdAtLevel2CommandGroup(pivot, elevator, wrist)
+			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2)))
+				.withName("level2UpAndHoldWithRumble"));
 		controller.b().whileTrue(
 			ArmControlCommandGroups.level3UpCommandGroup(pivot, elevator, wrist)
-			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
-			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2))
-			).withName("level3UpAndHoldWithRumble"));
+			.andThen(ArmControlCommandGroups.holdAtLevel3CommandGroup(pivot, elevator, wrist)
+			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2)))
+				.withName("level3UpAndHoldWithRumble"));
 		controller.y().whileTrue(
 			ArmControlCommandGroups.level4UpCommandGroup(pivot, elevator, wrist)
-			.andThen(ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
-			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2))
-			).withName("level4UpAndHoldWithRumble"));
+			.andThen(ArmControlCommandGroups.holdAtLevel4CommandGroup(pivot, elevator, wrist)
+			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2)))
+				.withName("level4UpAndHoldWithRumble"));
 
 		controller.a().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
 		controller.b().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));

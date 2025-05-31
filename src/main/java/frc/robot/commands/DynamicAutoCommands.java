@@ -15,11 +15,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
@@ -110,7 +113,15 @@ public class DynamicAutoCommands {
               new WaitCommand(0.5),
               IntakeCommands.intakeRun(intake, () -> 1.0),
               ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)),
-          IntakeCommands.intakeRun(intake, () -> 0.0).withTimeout(0.0)));
+          IntakeCommands.intakeRun(intake, () -> 0.0).withTimeout(0.0),
+
+          new ParallelCommandGroup(
+            IntakeCommands.intakeRun(intake, () -> 0.0),
+            ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist))
+            .until(() -> Math.abs(wrist.getCurrentAngle() - WristConstants.kHomeAngle) < WristConstants.kAngleErrorAllowed)
+          ));
+
+    
 
     // Moves and grabs a coral out of the chosen coral station
     if (coralStation.get() != null)
