@@ -332,4 +332,8 @@ public class RobotContainer {
 
 	}
 
+	public void teleopInit() {
+		ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist).schedule();
+	}
+
 }

@@ -16,6 +16,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.ArmControlCommandGroups;
 import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.Notification;
 
@@ -153,6 +154,8 @@ public class Robot extends LoggedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
+
+        robotContainer.teleopInit();
     }
 
     /** This function is called periodically during operator control. */
