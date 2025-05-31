@@ -41,6 +41,9 @@ public class WristIOSim implements WristIO {
     this.m_wristMotor.setInputVoltage(appliedVolts);
     this.m_wristMotor.update(0.02);
 
+    // Adds hard stops
+    this.m_wristMotor.setAngle(MathUtil.clamp(this.m_wristMotor.getAngularPositionRad(), Math.toRadians(0.0), Math.toRadians(200.0)));
+
     inputs.position = this.m_wristMotor.getAngularPositionRad();
     inputs.targetPosition = this.targetAngle;
     inputs.errorPosition = Math.abs(inputs.targetPosition - inputs.position);
