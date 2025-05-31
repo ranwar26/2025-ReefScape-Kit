@@ -75,7 +75,9 @@ public class ElevatorCommands {
    * @return - the command with the logic
    */
   public static Command elevatorToHome(Elevator elevator, boolean allowEndCondition) {
-    return elevatorToTarget(elevator, ElevatorConstants.kHomeLength, allowEndCondition).withName("elevatorToHome");
+    Command returnCommand = elevatorToTarget(elevator, ElevatorConstants.kHomeLength, allowEndCondition).withName("elevatorToHome");
+    returnCommand.setSubsystem("Elevator");
+    return returnCommand;
   }
 
   /**

@@ -43,12 +43,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.Constants.WristConstants;
 import frc.robot.FieldConstants.CagePosition;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DynamicAutoCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
-import frc.robot.commands.MechanismCommands;
+import frc.robot.commands.StateLoggingCommands;
 import frc.robot.commands.AutoDriveCommands;
 import frc.robot.commands.PivotCommands;
 import frc.robot.commands.ArmControlCommandGroups;
@@ -206,6 +207,8 @@ public class RobotContainer {
 		useDynamicAuto.addDefaultOption("Use Dynamic Auto", true);
 		useDynamicAuto.addOption("Use Hard Paths", false);
 
+		StateLoggingCommands.logCommands().schedule();
+
 		// Default command, normal field-relative drive
 		drive.setDefaultCommand(DriveCommands.driveAtAngle(
 				drive,
@@ -224,26 +227,22 @@ public class RobotContainer {
 
 		pivot.setDefaultCommand(PivotCommands.pivotToHome(pivot, false));
 
-		// Starts the arm mechanism for sim and comp matches
-		MechanismCommands.mechanismRunCurrent(pivot, elevator, wrist, intake).ignoringDisable(true)
-			.alongWith(MechanismCommands.mechanismRunTarget(pivot, elevator, wrist, intake).ignoringDisable(true))
-				.withName("mechanismCommands").schedule();
-
-		Pathfinding.setDynamicObstacles(CagePosition.opposingCages, drive.getPose().getTranslation());
-
 		// Configure the button bindings
 		configureButtonBindings();
 
+		Pathfinding.setDynamicObstacles(CagePosition.opposingCages, drive.getPose().getTranslation());
+
+		// Starts the arm mechanism for sim and comp matches
 		DynamicAutoCommands.setupDynamicAuto(drive, pivot, elevator, wrist, intake);
-		MechanismCommands.mechanismRunCurrent(pivot, elevator, wrist, intake).ignoringDisable(true)
-			.alongWith(MechanismCommands.mechanismRunTarget(pivot, elevator, wrist, intake).ignoringDisable(true))
+		StateLoggingCommands.mechanismRunCurrent(pivot, elevator, wrist, intake).ignoringDisable(true)
+			.alongWith(StateLoggingCommands.mechanismRunTarget(pivot, elevator, wrist, intake).ignoringDisable(true))
 				.withName("mechanismCommands").schedule();
 
-		PathfindingCommand.warmupCommand().withName("WarmupCommand")
+		PathfindingCommand.warmupCommand()
 			.andThen(Commands.runOnce(() -> Elastic.sendNotification(
-				new Elastic.Notification(Elastic.Notification.NotificationLevel.INFO, "All Systems Go!", "All Warmups, Bindings, Logging, and Sim Commands have been setup!", 350, 90)
+				new Elastic.Notification(Elastic.Notification.NotificationLevel.INFO, "All Systems Go!", "All Warmups, Bindings, Logging, and Sim Commands have been setup!")
 				)))
-				.ignoringDisable(true).schedule();
+				.ignoringDisable(true).withName("WarmupCommand").schedule();
 	}
 
 	/**

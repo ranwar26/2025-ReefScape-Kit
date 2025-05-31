@@ -75,7 +75,9 @@ public class PivotCommands {
    * @return - Command with the given logic
    */
   public static Command pivotToHome(Pivot pivot, boolean allowEndCondition) {
-    return pivotToTarget(pivot, PivotConstants.kHomeAngle, allowEndCondition).withName("pivotToHome");
+    Command returnCommand = pivotToTarget(pivot, PivotConstants.kHomeAngle, allowEndCondition).withName("pivotToHome");
+    returnCommand.setSubsystem("Pivot");
+    return returnCommand;
   }
 
   /**

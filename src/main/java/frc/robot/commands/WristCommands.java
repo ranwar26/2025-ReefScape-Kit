@@ -75,7 +75,9 @@ public class WristCommands {
    * @return - the command with the given logic
    */
   public static Command wristToHome(Wrist wrist, boolean allowEndCondition) {
-    return wristToTarget(wrist, WristConstants.kHomeAngle, allowEndCondition).withName("wristToHome");
+    Command returnCommand = wristToTarget(wrist, WristConstants.kHomeAngle, allowEndCondition).withName("wristToHome");
+    returnCommand.setSubsystem("Wrist");
+    return returnCommand;
   }
 
   /**
