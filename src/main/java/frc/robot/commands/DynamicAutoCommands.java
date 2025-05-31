@@ -31,19 +31,32 @@ public class DynamicAutoCommands {
 
     public static final String networkKeyPrefix = "Dynamic Auto/";
 
-    private static LoggedDashboardChooser<Pose2d> startingPose = new LoggedDashboardChooser<>(networkKeyPrefix + "Starting Pose");
+    public static final PathConstraints constraints = new PathConstraints(DriveConstants.maxSpeedMetersPerSec,
+            DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxAngularSpeed, DriveConstants.maxAngularSpeed);
 
-    private static LoggedDashboardChooser<Integer> firstReefSide = new LoggedDashboardChooser<>(networkKeyPrefix + "First Reef Side");
-    private static LoggedDashboardChooser<Command> firstReefLevel = new LoggedDashboardChooser<>(networkKeyPrefix + "First Reef Level");
-    private static LoggedDashboardChooser<Boolean> firstCoralStation = new LoggedDashboardChooser<>(networkKeyPrefix + "First Coral Station");
+    private static LoggedDashboardChooser<Pose2d> startingPose = new LoggedDashboardChooser<>(
+            networkKeyPrefix + "Starting Pose");
 
-    private static LoggedDashboardChooser<Integer> secondReefSide = new LoggedDashboardChooser<>(networkKeyPrefix + "Second Reef Side");
-    private static LoggedDashboardChooser<Command> secondReefLevel = new LoggedDashboardChooser<>(networkKeyPrefix + "Second Reef Level");
-    private static LoggedDashboardChooser<Boolean> secondCoralStation = new LoggedDashboardChooser<>(networkKeyPrefix + "Second Coral Station");
+    private static LoggedDashboardChooser<Integer> firstReefSide = new LoggedDashboardChooser<>(
+            networkKeyPrefix + "First Reef Side");
+    private static LoggedDashboardChooser<Command> firstReefLevel = new LoggedDashboardChooser<>(
+            networkKeyPrefix + "First Reef Level");
+    private static LoggedDashboardChooser<Boolean> firstCoralStation = new LoggedDashboardChooser<>(
+            networkKeyPrefix + "First Coral Station");
 
-    private static LoggedDashboardChooser<Integer> thirdReefSide = new LoggedDashboardChooser<>(networkKeyPrefix + "Third Reef Side");
-    private static LoggedDashboardChooser<Command> thirdReefLevel = new LoggedDashboardChooser<>(networkKeyPrefix + "Third Reef Level");
-    private static LoggedDashboardChooser<Boolean> thirdCoralStation = new LoggedDashboardChooser<>(networkKeyPrefix + "Third Coral Station");
+    private static LoggedDashboardChooser<Integer> secondReefSide = new LoggedDashboardChooser<>(
+            networkKeyPrefix + "Second Reef Side");
+    private static LoggedDashboardChooser<Command> secondReefLevel = new LoggedDashboardChooser<>(
+            networkKeyPrefix + "Second Reef Level");
+    private static LoggedDashboardChooser<Boolean> secondCoralStation = new LoggedDashboardChooser<>(
+            networkKeyPrefix + "Second Coral Station");
+
+    private static LoggedDashboardChooser<Integer> thirdReefSide = new LoggedDashboardChooser<>(
+            networkKeyPrefix + "Third Reef Side");
+    private static LoggedDashboardChooser<Command> thirdReefLevel = new LoggedDashboardChooser<>(
+            networkKeyPrefix + "Third Reef Level");
+    private static LoggedDashboardChooser<Boolean> thirdCoralStation = new LoggedDashboardChooser<>(
+            networkKeyPrefix + "Third Coral Station");
 
     private static Drive drive;
     private static Pivot pivot;
@@ -68,49 +81,49 @@ public class DynamicAutoCommands {
         SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
 
         primaryCommandGroup.addCommands(Commands.runOnce(
-            () -> {
-                drive.resetOdometry(startingPose.get());
-            }));
+                () -> {
+                    drive.resetOdometry(startingPose.get());
+                }));
 
-            primaryCommandGroup.addCommands(getCycle(firstReefSide, firstReefLevel, firstCoralStation));
-            primaryCommandGroup.addCommands(getCycle(secondReefSide, secondReefLevel, secondCoralStation));
-            primaryCommandGroup.addCommands(getCycle(thirdReefSide, thirdReefLevel, thirdCoralStation));
+        primaryCommandGroup.addCommands(getCycle(firstReefSide, firstReefLevel, firstCoralStation));
+        primaryCommandGroup.addCommands(getCycle(secondReefSide, secondReefLevel, secondCoralStation));
+        primaryCommandGroup.addCommands(getCycle(thirdReefSide, thirdReefLevel, thirdCoralStation));
 
         return primaryCommandGroup.withName("dynamicAuto");
     }
 
     private static Command getCycle(LoggedDashboardChooser<Integer> reefSide, LoggedDashboardChooser<Command> reefLevel, LoggedDashboardChooser<Boolean> coralStation) {
 
-        PathConstraints constraints = new PathConstraints(DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxAngularSpeed, DriveConstants.maxAngularSpeed);
-
         SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
 
-        if(reefSide.get() != null)
-            primaryCommandGroup.addCommands(AutoDriveCommands.pathFindToReef(drive, reefSide.get(), constraints).deadlineFor(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist,false)));
-        
-        if(reefLevel.get() != null)
+        // Moves to the chosen reef side
+        if (reefSide.get() != null)
+            primaryCommandGroup.addCommands(AutoDriveCommands.pathFindToReef(drive, reefSide.get(), constraints)
+                    .deadlineFor(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist, false)));
+
+        //Scores on the chosen reef level
+        if (reefLevel.get() != null)
             primaryCommandGroup.addCommands(new SequentialCommandGroup(
                 reefLevel.get(),
                 new ParallelDeadlineGroup(
-                    new WaitCommand(0.25),
-                    IntakeCommands.intakeRun(intake, () -> 1.0),
-                    ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
-                ),
+                        new WaitCommand(0.5),
+                        IntakeCommands.intakeRun(intake, () -> 1.0),
+                        ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)),
                 IntakeCommands.intakeRun(intake, () -> 0.0).raceWith(new WaitCommand(0.0))
             ));
 
-
-        if(coralStation.get() != null)
-        primaryCommandGroup.addCommands(new SequentialCommandGroup(
-            AutoDriveCommands.pathFindToCoralStation(coralStation.get(), constraints).deadlineFor(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)),
-            ArmControlCommandGroups.coralStationUpCommandGroup(pivot, elevator, wrist),
-            new ParallelDeadlineGroup(
-                new WaitCommand(1.0),
-                IntakeCommands.intakeRun(intake, () -> -1.0),
-                ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)
-            ),
-            IntakeCommands.intakeRun(intake, () -> 0.0).raceWith(new WaitCommand(0.0))
-        ));
+        //Moves a grabs a coral out of the chosen coral station
+        if (coralStation.get() != null)
+            primaryCommandGroup.addCommands(new SequentialCommandGroup(
+                    AutoDriveCommands.pathFindToCoralStation(coralStation.get(), constraints)
+                            .deadlineFor(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)),
+                    ArmControlCommandGroups.coralStationUpCommandGroup(pivot, elevator, wrist),
+                    new ParallelDeadlineGroup(
+                            new WaitCommand(1.0),
+                            IntakeCommands.intakeRun(intake, () -> -1.0),
+                            ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)),
+                    IntakeCommands.intakeRun(intake, () -> 0.0).raceWith(new WaitCommand(0.0))
+            ));
 
         return primaryCommandGroup;
     }
@@ -184,31 +197,45 @@ public class DynamicAutoCommands {
     public static class StartingPoses {
 
         /** Blue side */
-        public static final Pose2d leftWallCage_BlueSide =   new Pose2d(7.1, 7.3, new Rotation2d());
+        public static final Pose2d leftWallCage_BlueSide = new Pose2d(7.1, 7.3, new Rotation2d());
         public static final Pose2d leftCenterCage_BlueSide = new Pose2d(7.1, 6.2, new Rotation2d());
-        public static final Pose2d leftPostCage_BlueSide =   new Pose2d(7.1, 5.1, new Rotation2d());
-        public static final Pose2d center_BlueSide =         new Pose2d(7.1, 4.0, new Rotation2d());
-        public static final Pose2d rightWallCage_BlueSide =  new Pose2d(7.1, 0.8, new Rotation2d());
-        public static final Pose2d rightCenterCage_BlueSide =new Pose2d(7.1, 1.9, new Rotation2d());
-        public static final Pose2d rightPostCage_BlueSide =  new Pose2d(7.1, 3.0, new Rotation2d());
+        public static final Pose2d leftPostCage_BlueSide = new Pose2d(7.1, 5.1, new Rotation2d());
+        public static final Pose2d center_BlueSide = new Pose2d(7.1, 4.0, new Rotation2d());
+        public static final Pose2d rightWallCage_BlueSide = new Pose2d(7.1, 0.8, new Rotation2d());
+        public static final Pose2d rightCenterCage_BlueSide = new Pose2d(7.1, 1.9, new Rotation2d());
+        public static final Pose2d rightPostCage_BlueSide = new Pose2d(7.1, 3.0, new Rotation2d());
 
         /** Red Side */
-        public static final Pose2d leftWallCage_RedSide =   new Pose2d(10.4, 0.8, new Rotation2d());
+        public static final Pose2d leftWallCage_RedSide = new Pose2d(10.4, 0.8, new Rotation2d());
         public static final Pose2d leftCenterCage_RedSide = new Pose2d(10.4, 1.9, new Rotation2d());
-        public static final Pose2d leftPostCage_RedSide =   new Pose2d(10.4, 3.0, new Rotation2d());
-        public static final Pose2d center_RedSide =         new Pose2d(10.4, 4.0, new Rotation2d());
-        public static final Pose2d rightWallCage_RedSide =  new Pose2d(10.4, 7.3, new Rotation2d());
-        public static final Pose2d rightCenterCage_RedSide =new Pose2d(10.4, 6.2, new Rotation2d());
-        public static final Pose2d rightPostCage_RedSide =  new Pose2d(10.4, 5.1, new Rotation2d());
+        public static final Pose2d leftPostCage_RedSide = new Pose2d(10.4, 3.0, new Rotation2d());
+        public static final Pose2d center_RedSide = new Pose2d(10.4, 4.0, new Rotation2d());
+        public static final Pose2d rightWallCage_RedSide = new Pose2d(10.4, 7.3, new Rotation2d());
+        public static final Pose2d rightCenterCage_RedSide = new Pose2d(10.4, 6.2, new Rotation2d());
+        public static final Pose2d rightPostCage_RedSide = new Pose2d(10.4, 5.1, new Rotation2d());
 
         /** Our team side */
-        public static final Pose2d leftWallCage =     DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? leftWallCage_BlueSide    : leftWallCage_RedSide;
-        public static final Pose2d leftCenterCage =   DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? leftCenterCage_BlueSide  : leftCenterCage_RedSide;
-        public static final Pose2d leftPostCage =     DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? leftPostCage_BlueSide    : leftPostCage_RedSide;
-        public static final Pose2d center =           DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? center_BlueSide          : center_RedSide;
-        public static final Pose2d rightWallCage =    DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? rightWallCage_BlueSide   : rightWallCage_RedSide;
-        public static final Pose2d rightCenterCage =  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? rightCenterCage_BlueSide : rightCenterCage_RedSide;
-        public static final Pose2d rightPostCage =    DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? rightPostCage_BlueSide   : rightPostCage_RedSide;
+        public static final Pose2d leftWallCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                ? leftWallCage_BlueSide
+                : leftWallCage_RedSide;
+        public static final Pose2d leftCenterCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                ? leftCenterCage_BlueSide
+                : leftCenterCage_RedSide;
+        public static final Pose2d leftPostCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                ? leftPostCage_BlueSide
+                : leftPostCage_RedSide;
+        public static final Pose2d center = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                ? center_BlueSide
+                : center_RedSide;
+        public static final Pose2d rightWallCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                ? rightWallCage_BlueSide
+                : rightWallCage_RedSide;
+        public static final Pose2d rightCenterCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                ? rightCenterCage_BlueSide
+                : rightCenterCage_RedSide;
+        public static final Pose2d rightPostCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                ? rightPostCage_BlueSide
+                : rightPostCage_RedSide;
     }
 
 }

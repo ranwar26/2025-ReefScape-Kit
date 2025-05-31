@@ -128,8 +128,7 @@ public class ArmControlCommandGroups {
     return new SequentialCommandGroup(
 
         new ParallelDeadlineGroup(
-            ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kCoralStationLength, true), // Command group
-                                                                                                      // waits on this
+            ElevatorCommands.elevatorToTarget(elevator, ElevatorConstants.kCoralStationLength, true), // Command group waits on this
             PivotCommands.pivotToHome(pivot, false),
             WristCommands.wristToHome(wrist, false)),
 

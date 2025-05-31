@@ -116,7 +116,7 @@ public class AutoDriveCommands {
     }
 
 
-    public static PIDController preciseMovePIDController = new PIDController(1.0, 0, 0.0);
+    public static PIDController preciseMovePIDController = new PIDController(0.5, 0, 0.0);
 
     /**
      * Only run when near the target, as it does not use pathfinding. 
@@ -135,7 +135,7 @@ public class AutoDriveCommands {
             Math.abs(drive.getPose().minus(targetPose).getX()) < maxErrorPose.getX() &&
             Math.abs(drive.getPose().minus(targetPose).getY()) < maxErrorPose.getY();
 
-        Debouncer debouncer = new Debouncer(0.2, DebounceType.kBoth);
+        Debouncer debouncer = new Debouncer(0.1, DebounceType.kBoth);
 
         return new SequentialCommandGroup(
             Commands.runOnce(
