@@ -41,7 +41,7 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
-   * get the current Length of the elevator (Right encoder if none is given)
+   * get the current Length of the elevator
    * 
    * @return - the current length of the side picked
    */
