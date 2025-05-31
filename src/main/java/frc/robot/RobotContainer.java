@@ -108,6 +108,7 @@ public class RobotContainer {
 	private final LoggedDashboardChooser<Command> autoChooser;
 	private final LoggedDashboardChooser<Boolean> useDynamicAuto;
 
+	private Command dynamicAutoCommand = null;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -285,14 +286,14 @@ public class RobotContainer {
 		controller.leftBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(true, null));
 		controller.rightBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(false, null));
 
-		controller.povDown().onTrue(AutoDriveCommands.pathFindToReef(drive, 1, null));
-		controller.povDownLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, 2,null));
-		controller.povLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, 2,null));
-		controller.povDownRight().onTrue(AutoDriveCommands.pathFindToReef(drive, 3, null));
-		controller.povRight().onTrue(AutoDriveCommands.pathFindToReef(drive, 3, null));
-		controller.povUp().onTrue(AutoDriveCommands.pathFindToReef(drive, 4, null));
-		controller.povUpLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, 5, null));
-		controller.povUpRight().onTrue(AutoDriveCommands.pathFindToReef(drive, 6, null));
+		controller.povDown().onTrue(AutoDriveCommands.pathFindToReef(drive, 1, null,true));
+		controller.povDownLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, 2,null,true));
+		controller.povLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, 2,null,true));
+		controller.povDownRight().onTrue(AutoDriveCommands.pathFindToReef(drive, 3, null,true));
+		controller.povRight().onTrue(AutoDriveCommands.pathFindToReef(drive, 3, null,true));
+		controller.povUp().onTrue(AutoDriveCommands.pathFindToReef(drive, 4, null,true));
+		controller.povUpLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, 5, null,true));
+		controller.povUpRight().onTrue(AutoDriveCommands.pathFindToReef(drive, 6, null,true));
 
 		controller.back().onTrue(AutoDriveCommands.pathFindToPose(
 			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(13.5, 6.5, new Rotation2d(Math.PI)) : new Pose2d(4.0, 1.5, new Rotation2d()),
@@ -324,8 +325,12 @@ public class RobotContainer {
 	 * @return the command to run in autonomous
 	 */
 	public Command getAutonomousCommand() {
+
+		if(this.dynamicAutoCommand == null)
+			this.dynamicAutoCommand = DynamicAutoCommands.getDynamicAuto();
+
 		if(useDynamicAuto.get()) {
-			return DynamicAutoCommands.getDynamicAuto();
+			return this.dynamicAutoCommand;
 		} else {
 			return autoChooser.get();
 		}

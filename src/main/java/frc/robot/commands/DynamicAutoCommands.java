@@ -102,13 +102,13 @@ public class DynamicAutoCommands {
 
     // Moves to the chosen reef side
     if (reefSide.get() != null)
-      primaryCommandGroup.addCommands(AutoDriveCommands.pathFindToReef(drive, reefSide.get(), constraints)
+      primaryCommandGroup.addCommands(AutoDriveCommands.pathFindToReef(drive, reefSide.get(), constraints,false)
           .deadlineFor(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist, false)));
 
     // Scores on the chosen reef level
     if (reefLevel.get() != null)
       primaryCommandGroup.addCommands(new SequentialCommandGroup(
-          reefLevel.get(),
+        AutoDriveCommands.pathFindToReef(drive, reefSide.get(), constraints,true).alongWith(reefLevel.get()),
           new ParallelDeadlineGroup(
               new WaitCommand(0.5),
               IntakeCommands.intakeRun(intake, () -> 1.0),
@@ -120,8 +120,6 @@ public class DynamicAutoCommands {
             ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist))
             .until(() -> Math.abs(wrist.getCurrentAngle() - WristConstants.kHomeAngle) < WristConstants.kAngleErrorAllowed)
           ));
-
-    
 
     // Moves and grabs a coral out of the chosen coral station
     if (coralStation.get() != null)

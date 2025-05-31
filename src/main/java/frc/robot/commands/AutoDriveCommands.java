@@ -56,7 +56,7 @@ public class AutoDriveCommands {
      * @param constraints
      * @return
      */
-    public static Command pathFindToReef(Drive drive, int faceOfReef, PathConstraints constraints) {
+    public static Command pathFindToReef(Drive drive, int faceOfReef, PathConstraints constraints, boolean withPreciseMove) {
 
         if(constraints == null) {
             constraints = new PathConstraints(DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxAngularSpeed, DriveConstants.maxAngularSpeed);
@@ -88,16 +88,22 @@ public class AutoDriveCommands {
             break;
         }
 
-        return new SequentialCommandGroup(
-            AutoBuilder.pathfindToPose(
-            targetPose,
-            constraints
-            ),
-            preciseMoveToPose(
-                drive,
-                targetPose
-            )
-        ).withName("pathFindToReef");
+        if(withPreciseMove) {
+            return new SequentialCommandGroup(
+                AutoBuilder.pathfindToPose(
+                targetPose,
+                constraints
+                ),
+                preciseMoveToPose(
+                    drive,
+                    targetPose
+                )
+            ).withName("pathFindToReef");
+        }
+        return AutoBuilder.pathfindToPose(
+                targetPose,
+                constraints
+            ).withName("pathFindToReef");
     }
 
     public static Command pathFindToCoralStation(boolean leftStation, PathConstraints constraints) {

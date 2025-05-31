@@ -57,7 +57,7 @@ public class AutoScoreCommands {
             // ################### GOING TO REEF ###################
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
-                AutoDriveCommands.pathFindToReef(drive, (int) (Math.random() * 6) + 1, null),
+                AutoDriveCommands.pathFindToReef(drive, (int) (Math.random() * 6) + 1, null,true),
                 ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)
                     .andThen(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist, false)
                     )
