@@ -10,6 +10,8 @@ import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -116,12 +118,12 @@ public class DynamicAutoCommands {
     public static void chooserSetup() {
 
         startingPose.addDefaultOption("Center", StartingPoses.center);
-        startingPose.addOption("Wall Blue Cage", StartingPoses.wallBlueCage);
-        startingPose.addOption("Center Blue Cage", StartingPoses.centerBlueCage);
-        startingPose.addOption("Post Blue Cage", StartingPoses.postBlueCage);
-        startingPose.addOption("Wall Red Cage", StartingPoses.wallRedCage);
-        startingPose.addOption("Center Red Cage", StartingPoses.centerRedCage);
-        startingPose.addOption("Post Red Cage", StartingPoses.postRedCage);
+        startingPose.addOption("Left Wall Cage", StartingPoses.leftWallCage);
+        startingPose.addOption("Left Center Cage", StartingPoses.leftCenterCage);
+        startingPose.addOption("Left Post Cage", StartingPoses.leftPostCage);
+        startingPose.addOption("Right Wall Cage", StartingPoses.rightWallCage);
+        startingPose.addOption("Right Center Cage", StartingPoses.rightCenterCage);
+        startingPose.addOption("Right Post Cage", StartingPoses.rightPostCage);
 
         // ############ FIRST CYCLE ############
         firstReefSide.addDefaultOption("SKIP", null);
@@ -181,13 +183,32 @@ public class DynamicAutoCommands {
 
     public static class StartingPoses {
 
-        public static final Pose2d wallBlueCage =   new Pose2d(7.1, 7.3, new Rotation2d());
-        public static final Pose2d centerBlueCage = new Pose2d(7.1, 6.2, new Rotation2d());
-        public static final Pose2d postBlueCage =   new Pose2d(7.1, 5.1, new Rotation2d());
-        public static final Pose2d center =         new Pose2d(7.1, 4.0, new Rotation2d());
-        public static final Pose2d wallRedCage =    new Pose2d(7.1, 0.8, new Rotation2d());
-        public static final Pose2d centerRedCage =  new Pose2d(7.1, 1.9, new Rotation2d());
-        public static final Pose2d postRedCage =    new Pose2d(7.1, 3.0, new Rotation2d());
+        /** Blue side */
+        public static final Pose2d leftWallCage_BlueSide =   new Pose2d(7.1, 7.3, new Rotation2d());
+        public static final Pose2d leftCenterCage_BlueSide = new Pose2d(7.1, 6.2, new Rotation2d());
+        public static final Pose2d leftPostCage_BlueSide =   new Pose2d(7.1, 5.1, new Rotation2d());
+        public static final Pose2d center_BlueSide =         new Pose2d(7.1, 4.0, new Rotation2d());
+        public static final Pose2d rightWallCage_BlueSide =  new Pose2d(7.1, 0.8, new Rotation2d());
+        public static final Pose2d rightCenterCage_BlueSide =new Pose2d(7.1, 1.9, new Rotation2d());
+        public static final Pose2d rightPostCage_BlueSide =  new Pose2d(7.1, 3.0, new Rotation2d());
+
+        /** Red Side */
+        public static final Pose2d leftWallCage_RedSide =   new Pose2d(10.4, 0.8, new Rotation2d());
+        public static final Pose2d leftCenterCage_RedSide = new Pose2d(10.4, 1.9, new Rotation2d());
+        public static final Pose2d leftPostCage_RedSide =   new Pose2d(10.4, 3.0, new Rotation2d());
+        public static final Pose2d center_RedSide =         new Pose2d(10.4, 4.0, new Rotation2d());
+        public static final Pose2d rightWallCage_RedSide =  new Pose2d(10.4, 7.3, new Rotation2d());
+        public static final Pose2d rightCenterCage_RedSide =new Pose2d(10.4, 6.2, new Rotation2d());
+        public static final Pose2d rightPostCage_RedSide =  new Pose2d(10.4, 5.1, new Rotation2d());
+
+        /** Our team side */
+        public static final Pose2d leftWallCage =     DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? leftWallCage_BlueSide    : leftWallCage_RedSide;
+        public static final Pose2d leftCenterCage =   DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? leftCenterCage_BlueSide  : leftCenterCage_RedSide;
+        public static final Pose2d leftPostCage =     DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? leftPostCage_BlueSide    : leftPostCage_RedSide;
+        public static final Pose2d center =           DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? center_BlueSide          : center_RedSide;
+        public static final Pose2d rightWallCage =    DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? rightWallCage_BlueSide   : rightWallCage_RedSide;
+        public static final Pose2d rightCenterCage =  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? rightCenterCage_BlueSide : rightCenterCage_RedSide;
+        public static final Pose2d rightPostCage =    DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? rightPostCage_BlueSide   : rightPostCage_RedSide;
     }
 
 }
