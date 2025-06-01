@@ -157,25 +157,25 @@ public class StateLoggingCommands {
             wristCommandNames.clear();
             intakeCommandNames.clear();
 
-            for (int i = 0; i < activeCommands.size(); i++) {
+            for (Command command : activeCommands.toArray(new Command[0])) {
 
-                allCommandNames.add(activeCommands.get(i).getName());
+                allCommandNames.add(command.getName());
 
-                switch (activeCommands.get(i).getSubsystem()) {
+                switch (command.getSubsystem()) {
                     case "Drive":
-                        driveCommandNames.add(activeCommands.get(i).getName());
+                        driveCommandNames.add(command.getName());
                         break;
                     case "Pivot":
-                        pivotCommandNames.add(activeCommands.get(i).getName());
+                        pivotCommandNames.add(command.getName());
                         break;
                     case "Elevator":
-                        elevatorCommandNames.add(activeCommands.get(i).getName());
+                        elevatorCommandNames.add(command.getName());
                         break;
                     case "Wrist":
-                        wristCommandNames.add(activeCommands.get(i).getName());
+                        wristCommandNames.add(command.getName());
                         break;
                     case "Intake":
-                        intakeCommandNames.add(activeCommands.get(i).getName());
+                        intakeCommandNames.add(command.getName());
                         break;
                 }
             }
@@ -183,10 +183,11 @@ public class StateLoggingCommands {
             for (List<String> subsystemCommandNames : allSubsystemCommandNames) {
                 if (subsystemCommandNames.size() > 1) {
                     Elastic.sendNotification(new Notification(Notification.NotificationLevel.WARNING, "Double Command",
-                            "Currently " + subsystemCommandNames.size() + " commands are running on a subsystem"));
+                            "Currently " + subsystemCommandNames.size() + " commands are running on a subsystem, with names: " + subsystemCommandNames.toString()));
 
-                    System.out.println(
-                            "Currently " + subsystemCommandNames.size() + " commands are running on a subsystem");
+                    System.out.println( "Warning: " +
+                            "Currently " + subsystemCommandNames.size() + " commands are running on a subsystem, with names: " + subsystemCommandNames.toString());
+
                 }
             }
 
