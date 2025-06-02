@@ -115,7 +115,7 @@ public class DynamicAutoCommands {
             AutoDriveCommands.pathFindToReef(drive, reefSide, constraints, true)
         ),
         Commands.waitSeconds(0.5).deadlineFor(
-            ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL).alongWith(IntakeCommands.intakeRun(intake, () -> 1.0))
+            ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL).alongWith(IntakeCommands.intakeRun(intake, () -> 1.0))
         )
     );
 
@@ -132,7 +132,7 @@ public class DynamicAutoCommands {
             AutoDriveCommands.pathFindToCoralStation(drive, coralStation, constraints, true)
         ),
         Commands.waitSeconds(0.5).deadlineFor(
-            ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL).alongWith(IntakeCommands.intakeRun(intake, () -> -1.0))
+            ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL).alongWith(IntakeCommands.intakeRun(intake, () -> -1.0))
         )
     );
 

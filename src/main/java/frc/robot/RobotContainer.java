@@ -268,17 +268,17 @@ public class RobotContainer {
 
 		controller.a().whileTrue(
 			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL)
-			.andThen(ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)
+			.andThen(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL)
 			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2)))
 				.withName("level2UpAndHoldWithRumble"));
 		controller.b().whileTrue(
 			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL)
-			.andThen(ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)
+			.andThen(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL)
 			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2)))
 				.withName("level3UpAndHoldWithRumble"));
 		controller.y().whileTrue(
 			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
-			.andThen(ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)
+			.andThen(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
 			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2)))
 				.withName("level4UpAndHoldWithRumble"));
 

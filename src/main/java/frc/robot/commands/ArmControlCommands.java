@@ -146,20 +146,26 @@ public class ArmControlCommands {
    * @param controlledSystems which system to have hold
    * @return A command with the given logic
    */
-  public static Command armHoldCommand(Pivot pivot, Elevator elevator, Wrist wrist, ArmSystem... controlledSystems) {
+  public static Command armHoldAtCommand(Pivot pivot, Elevator elevator, Wrist wrist, ArmPosition holdPosition, ArmSystem... controlledSystems) {
+
+    double[] subsystemHold = getSubsystemPositions(holdPosition);
+
+    double pivotHold = subsystemHold[0];
+    double elevatorHold = subsystemHold[1];
+    double wristHold = subsystemHold[2];
 
     List<ArmSystem> activeSystems = controlledSystemSetup(controlledSystems);
 
     ParallelCommandGroup returnCommand = new ParallelCommandGroup();
 
     if(activeSystems.contains(ArmSystem.PIVOT)) {
-      returnCommand.addCommands(PivotCommands.pivotHold(pivot));
+      returnCommand.addCommands(PivotCommands.pivotToTarget(pivot, pivotHold, false));
     }
     if(activeSystems.contains(ArmSystem.ELEVATOR)) {
-      returnCommand.addCommands(ElevatorCommands.elevatorHold(elevator));
+      returnCommand.addCommands(ElevatorCommands.elevatorToTarget(elevator, elevatorHold, false));
     }
     if(activeSystems.contains(ArmSystem.WRIST)) {
-      returnCommand.addCommands(WristCommands.wristHold(wrist));
+      returnCommand.addCommands(WristCommands.wristToTarget(wrist, wristHold, false));
     }
 
     return returnCommand;

@@ -43,7 +43,7 @@ public class AutoScoreCommands {
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 new WaitCommand(1.0), // Command group waits on this
                 IntakeCommands.intakeRun(intake, () -> 1.0),
-                ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)
+                ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
             ));
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
@@ -80,7 +80,7 @@ public class AutoScoreCommands {
             primaryCommand.addCommands(new ParallelDeadlineGroup(
                 new WaitCommand(0.5), // Command group waits on this
                 IntakeCommands.intakeRun(intake, () -> -1.0),
-                ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)
+                ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, targetLevel, ArmSystem.ALL)
             ));
 
             primaryCommand.addCommands(new ParallelCommandGroup(
