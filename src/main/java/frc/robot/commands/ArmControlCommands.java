@@ -21,7 +21,7 @@ import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.wrist.Wrist;
 
 /** Add your docs here. */
-public class NEW_ArmControlCommands {
+public class ArmControlCommands {
 
   /**
    * Returns a command to move the arm to the target position. The subsystems move in the order: Pivot, Elevator, Wrist.
@@ -77,10 +77,14 @@ public class NEW_ArmControlCommands {
    * @param pivot The pivot subsystem
    * @param elevator The Elevator subsystem
    * @param wrist The Wrist subsystem
-   * @param fromState The starting or where the arm is coming from.
+   * @param fromState The starting or where the arm is coming from. If unknown use null.
    * @return A command with the given logic
    */
   public static Command armDownCommand(Pivot pivot, Elevator elevator, Wrist wrist, ArmPosition fromState) {
+
+    if(fromState == null) {
+      return armDownUnknownCommand(pivot, elevator, wrist);
+    }
     
     double[] subsystemTargets = getSubsystemPositions(fromState);
 
@@ -107,6 +111,29 @@ public class NEW_ArmControlCommands {
     );
 
     return returnCommand.withName("ArmDownCommand");
+  }
+
+  private static Command armDownUnknownCommand(Pivot pivot, Elevator elevator, Wrist wrist) {
+
+    SequentialCommandGroup returnCommand = new SequentialCommandGroup();
+    
+    returnCommand.addCommands(new ParallelDeadlineGroup(
+      WristCommands.wristToHome(wrist, true),
+      PivotCommands.pivotHold(pivot),
+      ElevatorCommands.elevatorHold(elevator)
+    ));
+
+    returnCommand.addCommands(new ParallelDeadlineGroup(
+      ElevatorCommands.elevatorToHome(elevator, false),
+      PivotCommands.pivotHold(pivot)
+    ));
+
+    returnCommand.addCommands(
+      PivotCommands.pivotToHome(pivot, false)
+    );
+
+    return returnCommand.withName("ArmDownCommand");
+
   }
 
   /**

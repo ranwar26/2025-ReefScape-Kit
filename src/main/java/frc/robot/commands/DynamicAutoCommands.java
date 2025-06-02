@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.WristConstants;
+import frc.robot.commands.ArmControlCommands.ArmPosition;
+import frc.robot.commands.ArmControlCommands.ArmSystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
@@ -101,37 +103,26 @@ public class DynamicAutoCommands {
     SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
 
     // Moves to the chosen reef side
-    if (reefSide.get() != null)
-      primaryCommandGroup.addCommands(AutoDriveCommands.pathFindToReef(drive, reefSide.get(), constraints,false)
-          .deadlineFor(ArmControlCommandGroups.homeCommandGroup(pivot, elevator, wrist, false)));
+    if (reefSide.get() != null) primaryCommandGroup.addCommands(
+        AutoDriveCommands.pathFindToReef(drive, reefSide.get(), constraints, true)
+    );
 
     // Scores on the chosen reef level
-    if (reefLevel.get() != null)
-      primaryCommandGroup.addCommands(new SequentialCommandGroup(
-        AutoDriveCommands.pathFindToReef(drive, reefSide.get(), constraints,true).alongWith(reefLevel.get()),
-          new ParallelDeadlineGroup(
-              new WaitCommand(0.5),
-              IntakeCommands.intakeRun(intake, () -> 1.0),
-              ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)),
-          IntakeCommands.intakeRun(intake, () -> 0.0).withTimeout(0.0),
-
-          new ParallelCommandGroup(
-            IntakeCommands.intakeRun(intake, () -> 0.0),
-            ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist))
-            .until(() -> Math.abs(wrist.getCurrentAngle() - WristConstants.kHomeAngle) < WristConstants.kAngleErrorAllowed)
-          ));
+    if (reefLevel.get() != null) primaryCommandGroup.addCommands(
+        reefLevel.get()
+        .andThen(IntakeCommands.intakeRun(intake, () -> 1.0).alongWith(ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)).withTimeout(0.5))
+    );
 
     // Moves and grabs a coral out of the chosen coral station
-    if (coralStation.get() != null)
-      primaryCommandGroup.addCommands(new SequentialCommandGroup(
-          AutoDriveCommands.pathFindToCoralStation(coralStation.get(), constraints)
-              .deadlineFor(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist)),
-          ArmControlCommandGroups.coralStationUpCommandGroup(pivot, elevator, wrist),
-          new ParallelDeadlineGroup(
-              new WaitCommand(1.0),
-              IntakeCommands.intakeRun(intake, () -> -1.0),
-              ArmControlCommandGroups.holdCommandGroup(pivot, elevator, wrist)),
-          IntakeCommands.intakeRun(intake, () -> 0.0).withTimeout(0.0)));
+    if (coralStation.get() != null) primaryCommandGroup.addCommands(
+        // Moves
+        AutoDriveCommands.pathFindToCoralStation(coralStation.get(), constraints),
+
+        // Grabs
+        ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+        .andThen(IntakeCommands.intakeRun(intake, () -> 1.0).alongWith(ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)).withTimeout(0.5))
+
+    );
 
     return primaryCommandGroup;
   }
@@ -156,9 +147,9 @@ public class DynamicAutoCommands {
     firstReefSide.addOption("Back Right", 6);
 
     firstReefLevel.addDefaultOption("SKIP", null);
-    firstReefLevel.addOption("Level 2", ArmControlCommandGroups.level2UpCommandGroup(pivot, elevator, wrist));
-    firstReefLevel.addOption("Level 3", ArmControlCommandGroups.level3UpCommandGroup(pivot, elevator, wrist));
-    firstReefLevel.addOption("Level 4", ArmControlCommandGroups.level4UpCommandGroup(pivot, elevator, wrist));
+    firstReefLevel.addOption("Level 2", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL));
+    firstReefLevel.addOption("Level 3", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL));
+    firstReefLevel.addOption("Level 4", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL));
 
     firstCoralStation.addDefaultOption("SKIP", null);
     firstCoralStation.addOption("Left Side", true);
@@ -174,9 +165,9 @@ public class DynamicAutoCommands {
     secondReefSide.addOption("Back Right", 6);
 
     secondReefLevel.addDefaultOption("SKIP", null);
-    secondReefLevel.addOption("Level 2", ArmControlCommandGroups.level2UpCommandGroup(pivot, elevator, wrist));
-    secondReefLevel.addOption("Level 3", ArmControlCommandGroups.level3UpCommandGroup(pivot, elevator, wrist));
-    secondReefLevel.addOption("Level 4", ArmControlCommandGroups.level4UpCommandGroup(pivot, elevator, wrist));
+    secondReefLevel.addOption("Level 2", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL));
+    secondReefLevel.addOption("Level 3", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL));
+    secondReefLevel.addOption("Level 4", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL));
 
     secondCoralStation.addDefaultOption("SKIP", null);
     secondCoralStation.addOption("Left Side", true);
@@ -192,9 +183,9 @@ public class DynamicAutoCommands {
     thirdReefSide.addOption("Back Right", 6);
 
     thirdReefLevel.addDefaultOption("SKIP", null);
-    thirdReefLevel.addOption("Level 2", ArmControlCommandGroups.level2UpCommandGroup(pivot, elevator, wrist));
-    thirdReefLevel.addOption("Level 3", ArmControlCommandGroups.level3UpCommandGroup(pivot, elevator, wrist));
-    thirdReefLevel.addOption("Level 4", ArmControlCommandGroups.level4UpCommandGroup(pivot, elevator, wrist));
+    thirdReefLevel.addOption("Level 2", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL));
+    thirdReefLevel.addOption("Level 3", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL));
+    thirdReefLevel.addOption("Level 4", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL));
 
     thirdCoralStation.addDefaultOption("SKIP", null);
     thirdCoralStation.addOption("Left Side", true);

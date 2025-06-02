@@ -50,12 +50,14 @@ import frc.robot.commands.DynamicAutoCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.StateLoggingCommands;
+import frc.robot.commands.ArmControlCommands;
 import frc.robot.commands.AutoDriveCommands;
 import frc.robot.commands.PivotCommands;
-import frc.robot.commands.ArmControlCommandGroups;
 import frc.robot.commands.AutoScoreCommands;
 import frc.robot.commands.ControllerCommands;
 import frc.robot.commands.WristCommands;
+import frc.robot.commands.ArmControlCommands.ArmPosition;
+import frc.robot.commands.ArmControlCommands.ArmSystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -264,24 +266,24 @@ public class RobotContainer {
 				drive).ignoringDisable(true));
 
 		controller.a().whileTrue(
-			ArmControlCommandGroups.level2UpCommandGroup(pivot, elevator, wrist)
-			.andThen(ArmControlCommandGroups.holdAtLevel2CommandGroup(pivot, elevator, wrist)
+			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL)
+			.andThen(ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)
 			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2)))
 				.withName("level2UpAndHoldWithRumble"));
 		controller.b().whileTrue(
-			ArmControlCommandGroups.level3UpCommandGroup(pivot, elevator, wrist)
-			.andThen(ArmControlCommandGroups.holdAtLevel3CommandGroup(pivot, elevator, wrist)
+			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL)
+			.andThen(ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)
 			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2)))
 				.withName("level3UpAndHoldWithRumble"));
 		controller.y().whileTrue(
-			ArmControlCommandGroups.level4UpCommandGroup(pivot, elevator, wrist)
-			.andThen(ArmControlCommandGroups.holdAtLevel4CommandGroup(pivot, elevator, wrist)
+			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
+			.andThen(ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)
 			.alongWith(ControllerCommands.setRumble(controller, 1.0, 0.2)))
 				.withName("level4UpAndHoldWithRumble"));
 
-		controller.a().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
-		controller.b().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
-		controller.y().onFalse(ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist));
+		controller.a().onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL2));
+		controller.b().onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL3));
+		controller.y().onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL4));
 
 		controller.leftBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(true, null));
 		controller.rightBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(false, null));
@@ -338,7 +340,6 @@ public class RobotContainer {
 	}
 
 	public void teleopInit() {
-		ArmControlCommandGroups.retractCommandGroup(pivot, elevator, wrist).schedule();
+		ArmControlCommands.armDownCommand(pivot, elevator, wrist, null);
 	}
-
 }
