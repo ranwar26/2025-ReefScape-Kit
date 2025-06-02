@@ -58,6 +58,7 @@ import frc.robot.commands.ControllerCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.ArmControlCommands.ArmPosition;
 import frc.robot.commands.ArmControlCommands.ArmSystem;
+import frc.robot.commands.AutoDriveCommands.ReefSide;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -285,17 +286,17 @@ public class RobotContainer {
 		controller.b().onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL3));
 		controller.y().onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL4));
 
-		controller.leftBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(true, null));
-		controller.rightBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(false, null));
+		controller.leftBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive, true, null, false));
+		controller.rightBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive, false, null, false));
 
-		controller.povDown().onTrue(AutoDriveCommands.pathFindToReef(drive, 1, null,true));
-		controller.povDownLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, 2,null,true));
-		controller.povLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, 2,null,true));
-		controller.povDownRight().onTrue(AutoDriveCommands.pathFindToReef(drive, 3, null,true));
-		controller.povRight().onTrue(AutoDriveCommands.pathFindToReef(drive, 3, null,true));
-		controller.povUp().onTrue(AutoDriveCommands.pathFindToReef(drive, 4, null,true));
-		controller.povUpLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, 5, null,true));
-		controller.povUpRight().onTrue(AutoDriveCommands.pathFindToReef(drive, 6, null,true));
+		controller.povDown().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT, null,true));
+		controller.povDownLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_LEFT,null,true));
+		controller.povLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_LEFT,null,true));
+		controller.povDownRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_RIGHT, null,true));
+		controller.povRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_RIGHT, null,true));
+		controller.povUp().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK, null,true));
+		controller.povUpLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_LEFT, null,true));
+		controller.povUpRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_RIGHT, null,true));
 
 		controller.back().onTrue(AutoDriveCommands.pathFindToPose(
 			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(13.5, 6.5, new Rotation2d(Math.PI)) : new Pose2d(4.0, 1.5, new Rotation2d()),
@@ -329,7 +330,7 @@ public class RobotContainer {
 	public Command getAutonomousCommand() {
 
 		if(this.dynamicAutoCommand == null)
-			this.dynamicAutoCommand = DynamicAutoCommands.getDynamicAuto();
+			this.dynamicAutoCommand = DynamicAutoCommands.buildDynamicAuto();
 
 		if(useDynamicAuto.get()) {
 			return this.dynamicAutoCommand;

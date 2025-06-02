@@ -25,6 +25,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.WristConstants;
 import frc.robot.commands.ArmControlCommands.ArmPosition;
 import frc.robot.commands.ArmControlCommands.ArmSystem;
+import frc.robot.commands.AutoDriveCommands.ReefSide;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
@@ -42,23 +43,23 @@ public class DynamicAutoCommands {
   private static LoggedDashboardChooser<Pose2d> startingPose = new LoggedDashboardChooser<>(
       networkKeyPrefix + "Starting Pose");
 
-  private static LoggedDashboardChooser<Integer> firstReefSide = new LoggedDashboardChooser<>(
+  private static LoggedDashboardChooser<ReefSide> firstReefSide = new LoggedDashboardChooser<>(
       networkKeyPrefix + "First Reef Side");
-  private static LoggedDashboardChooser<Command> firstReefLevel = new LoggedDashboardChooser<>(
+  private static LoggedDashboardChooser<ArmPosition> firstReefLevel = new LoggedDashboardChooser<>(
       networkKeyPrefix + "First Reef Level");
   private static LoggedDashboardChooser<Boolean> firstCoralStation = new LoggedDashboardChooser<>(
       networkKeyPrefix + "First Coral Station");
 
-  private static LoggedDashboardChooser<Integer> secondReefSide = new LoggedDashboardChooser<>(
+  private static LoggedDashboardChooser<ReefSide> secondReefSide = new LoggedDashboardChooser<>(
       networkKeyPrefix + "Second Reef Side");
-  private static LoggedDashboardChooser<Command> secondReefLevel = new LoggedDashboardChooser<>(
+  private static LoggedDashboardChooser<ArmPosition> secondReefLevel = new LoggedDashboardChooser<>(
       networkKeyPrefix + "Second Reef Level");
   private static LoggedDashboardChooser<Boolean> secondCoralStation = new LoggedDashboardChooser<>(
       networkKeyPrefix + "Second Coral Station");
 
-  private static LoggedDashboardChooser<Integer> thirdReefSide = new LoggedDashboardChooser<>(
+  private static LoggedDashboardChooser<ReefSide> thirdReefSide = new LoggedDashboardChooser<>(
       networkKeyPrefix + "Third Reef Side");
-  private static LoggedDashboardChooser<Command> thirdReefLevel = new LoggedDashboardChooser<>(
+  private static LoggedDashboardChooser<ArmPosition> thirdReefLevel = new LoggedDashboardChooser<>(
       networkKeyPrefix + "Third Reef Level");
   private static LoggedDashboardChooser<Boolean> thirdCoralStation = new LoggedDashboardChooser<>(
       networkKeyPrefix + "Third Coral Station");
@@ -81,7 +82,7 @@ public class DynamicAutoCommands {
 
   }
 
-  public static Command getDynamicAuto() {
+  public static Command buildDynamicAuto() {
 
     SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
 
@@ -90,39 +91,51 @@ public class DynamicAutoCommands {
           drive.resetOdometry(startingPose.get());
         }));
 
-    primaryCommandGroup.addCommands(getCycle(firstReefSide, firstReefLevel, firstCoralStation));
-    primaryCommandGroup.addCommands(getCycle(secondReefSide, secondReefLevel, secondCoralStation));
-    primaryCommandGroup.addCommands(getCycle(thirdReefSide, thirdReefLevel, thirdCoralStation));
+    primaryCommandGroup.addCommands(getCycle(firstReefSide.get(), firstReefLevel.get(), firstCoralStation.get()));
+    primaryCommandGroup.addCommands(getCycle(secondReefSide.get(), secondReefLevel.get(), secondCoralStation.get()));
+    primaryCommandGroup.addCommands(getCycle(thirdReefSide.get(), thirdReefLevel.get(), thirdCoralStation.get()));
 
     return primaryCommandGroup.withName("dynamicAuto");
   }
 
-  private static Command getCycle(LoggedDashboardChooser<Integer> reefSide, LoggedDashboardChooser<Command> reefLevel,
-      LoggedDashboardChooser<Boolean> coralStation) {
+  private static Command getCycle(ReefSide reefSide, ArmPosition reefLevel, Boolean coralStation) {
 
     SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
 
     // Moves to the chosen reef side
-    if (reefSide.get() != null) primaryCommandGroup.addCommands(
-        AutoDriveCommands.pathFindToReef(drive, reefSide.get(), constraints, true)
+    primaryCommandGroup.addCommands(
+        AutoDriveCommands.pathFindToReef(drive, reefSide, constraints, false).deadlineFor(
+            ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION).andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.PIVOT))
+        )
     );
 
     // Scores on the chosen reef level
-    if (reefLevel.get() != null) primaryCommandGroup.addCommands(
-        reefLevel.get()
-        .andThen(IntakeCommands.intakeRun(intake, () -> 1.0).alongWith(ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)).withTimeout(0.5))
+    primaryCommandGroup.addCommands(
+        ArmControlCommands.armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL).deadlineFor(
+            AutoDriveCommands.pathFindToReef(drive, reefSide, constraints, true)
+        ),
+        Commands.waitSeconds(0.5).deadlineFor(
+            ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL).alongWith(IntakeCommands.intakeRun(intake, () -> 1.0))
+        )
     );
 
-    // Moves and grabs a coral out of the chosen coral station
-    if (coralStation.get() != null) primaryCommandGroup.addCommands(
-        // Moves
-        AutoDriveCommands.pathFindToCoralStation(coralStation.get(), constraints),
-
-        // Grabs
-        ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
-        .andThen(IntakeCommands.intakeRun(intake, () -> 1.0).alongWith(ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL)).withTimeout(0.5))
-
+    // Moves to the chosen coral station
+    primaryCommandGroup.addCommands(
+        AutoDriveCommands.pathFindToCoralStation(drive, coralStation, constraints, false).deadlineFor(
+            ArmControlCommands.armDownCommand(pivot, elevator, wrist, reefLevel).andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.PIVOT))
+        )
     );
+
+    // Grabs coral out of the station
+    primaryCommandGroup.addCommands(
+        ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL).deadlineFor(
+            AutoDriveCommands.pathFindToCoralStation(drive, coralStation, constraints, true)
+        ),
+        Commands.waitSeconds(0.5).deadlineFor(
+            ArmControlCommands.armHoldCommand(pivot, elevator, wrist, ArmSystem.ALL).alongWith(IntakeCommands.intakeRun(intake, () -> -1.0))
+        )
+    );
+
 
     return primaryCommandGroup;
   }
@@ -138,56 +151,56 @@ public class DynamicAutoCommands {
     startingPose.addOption("Right Post Cage", StartingPoses.rightPostCage);
 
     // ############ FIRST CYCLE ############
-    firstReefSide.addDefaultOption("SKIP", null);
-    firstReefSide.addOption("Front", 1);
-    firstReefSide.addOption("Front Left", 2);
-    firstReefSide.addOption("Front Right", 3);
-    firstReefSide.addOption("Back", 4);
-    firstReefSide.addOption("Back Left", 5);
-    firstReefSide.addOption("Back Right", 6);
+    firstReefSide.addDefaultOption("Please Pick One", null);
+    firstReefSide.addOption("Front", ReefSide.FRONT);
+    firstReefSide.addOption("Front Left", ReefSide.FRONT_LEFT);
+    firstReefSide.addOption("Front Right", ReefSide.FRONT_RIGHT);
+    firstReefSide.addOption("Back", ReefSide.BACK);
+    firstReefSide.addOption("Back Left", ReefSide.BACK_LEFT);
+    firstReefSide.addOption("Back Right", ReefSide.BACK_RIGHT);
 
-    firstReefLevel.addDefaultOption("SKIP", null);
-    firstReefLevel.addOption("Level 2", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL));
-    firstReefLevel.addOption("Level 3", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL));
-    firstReefLevel.addOption("Level 4", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL));
+    firstReefLevel.addDefaultOption("Please Pick One", null);
+    firstReefLevel.addOption("Level 2", ArmPosition.LEVEL2);
+    firstReefLevel.addOption("Level 3", ArmPosition.LEVEL3);
+    firstReefLevel.addOption("Level 4", ArmPosition.LEVEL4);
 
-    firstCoralStation.addDefaultOption("SKIP", null);
+    firstCoralStation.addDefaultOption("Please Pick One", null);
     firstCoralStation.addOption("Left Side", true);
     firstCoralStation.addOption("Right Side", false);
 
     // ############ SECOND CYCLE ############
-    secondReefSide.addDefaultOption("SKIP", null);
-    secondReefSide.addOption("Front", 1);
-    secondReefSide.addOption("Front Left", 2);
-    secondReefSide.addOption("Front Right", 3);
-    secondReefSide.addOption("Back", 4);
-    secondReefSide.addOption("Back Left", 5);
-    secondReefSide.addOption("Back Right", 6);
+    secondReefSide.addDefaultOption("Please Pick One", null);
+    secondReefSide.addOption("Front", ReefSide.FRONT);
+    secondReefSide.addOption("Front Left", ReefSide.FRONT_LEFT);
+    secondReefSide.addOption("Front Right", ReefSide.FRONT_RIGHT);
+    secondReefSide.addOption("Back", ReefSide.BACK);
+    secondReefSide.addOption("Back Left", ReefSide.BACK_LEFT);
+    secondReefSide.addOption("Back Right", ReefSide.BACK_RIGHT);
 
-    secondReefLevel.addDefaultOption("SKIP", null);
-    secondReefLevel.addOption("Level 2", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL));
-    secondReefLevel.addOption("Level 3", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL));
-    secondReefLevel.addOption("Level 4", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL));
+    secondReefLevel.addDefaultOption("Please Pick One", null);
+    secondReefLevel.addOption("Level 2", ArmPosition.LEVEL2);
+    secondReefLevel.addOption("Level 3", ArmPosition.LEVEL3);
+    secondReefLevel.addOption("Level 4", ArmPosition.LEVEL4);
 
-    secondCoralStation.addDefaultOption("SKIP", null);
+    secondCoralStation.addDefaultOption("Please Pick One", null);
     secondCoralStation.addOption("Left Side", true);
     secondCoralStation.addOption("Right Side", false);
 
     // ############ THIRD CYCLE ############
-    thirdReefSide.addDefaultOption("SKIP", null);
-    thirdReefSide.addOption("Front", 1);
-    thirdReefSide.addOption("Front Left", 2);
-    thirdReefSide.addOption("Front Right", 3);
-    thirdReefSide.addOption("Back", 4);
-    thirdReefSide.addOption("Back Left", 5);
-    thirdReefSide.addOption("Back Right", 6);
+    thirdReefSide.addDefaultOption("Please Pick One", null);
+    thirdReefSide.addOption("Front", ReefSide.FRONT);
+    thirdReefSide.addOption("Front Left", ReefSide.FRONT_LEFT);
+    thirdReefSide.addOption("Front Right", ReefSide.FRONT_RIGHT);
+    thirdReefSide.addOption("Back", ReefSide.BACK);
+    thirdReefSide.addOption("Back Left", ReefSide.BACK_LEFT);
+    thirdReefSide.addOption("Back Right", ReefSide.BACK_RIGHT);
 
-    thirdReefLevel.addDefaultOption("SKIP", null);
-    thirdReefLevel.addOption("Level 2", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL));
-    thirdReefLevel.addOption("Level 3", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL));
-    thirdReefLevel.addOption("Level 4", ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL));
+    thirdReefLevel.addDefaultOption("Please Pick One", null);
+    thirdReefLevel.addOption("Level 2", ArmPosition.LEVEL2);
+    thirdReefLevel.addOption("Level 3", ArmPosition.LEVEL3);
+    thirdReefLevel.addOption("Level 4", ArmPosition.LEVEL4);
 
-    thirdCoralStation.addDefaultOption("SKIP", null);
+    thirdCoralStation.addDefaultOption("Please Pick One", null);
     thirdCoralStation.addOption("Left Side", true);
     thirdCoralStation.addOption("Right Side", false);
 

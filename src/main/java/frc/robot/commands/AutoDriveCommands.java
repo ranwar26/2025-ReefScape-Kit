@@ -45,18 +45,12 @@ public class AutoDriveCommands {
     }
 
     /**
-     * 1 - front
-     * 2 - front left
-     * 3 - front right
-     * 4 - back
-     * 5 - back left
-     * 6 - back right
      * 
      * @param faceOfReef - the target side of the reef
      * @param constraints
      * @return
      */
-    public static Command pathFindToReef(Drive drive, int faceOfReef, PathConstraints constraints, boolean withPreciseMove) {
+    public static Command pathFindToReef(Drive drive, ReefSide faceOfReef, PathConstraints constraints, boolean withPreciseMove) {
 
         if(constraints == null) {
             constraints = new PathConstraints(DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxAngularSpeed, DriveConstants.maxAngularSpeed);
@@ -65,27 +59,27 @@ public class AutoDriveCommands {
         Pose2d targetPose;
 
         switch (faceOfReef) {
-            case 1:
+            case FRONT:
                 targetPose = ReefPositions.frontReefRobotPosition;
                 break;
-            case 2:
+            case FRONT_LEFT:
                 targetPose = ReefPositions.frontLeftReefRobotPosition;
                 break;
-            case 3:
+            case FRONT_RIGHT:
                 targetPose = ReefPositions.frontRightReefRobotPosition;
                 break;
-            case 4:
+            case BACK:
                 targetPose = ReefPositions.backReefRobotPosition;
                 break;
-            case 5:
+            case BACK_LEFT:
                 targetPose = ReefPositions.backLeftReefRobotPosition;
                 break;
-            case 6:
+            case BACK_RIGHT:
                 targetPose = ReefPositions.backRightReefRobotPosition;
                 break;
             default:
-            targetPose = new Pose2d();
-            break;
+                targetPose = new Pose2d();
+                break;
         }
 
         if(withPreciseMove) {
@@ -106,7 +100,7 @@ public class AutoDriveCommands {
             ).withName("pathFindToReef");
     }
 
-    public static Command pathFindToCoralStation(boolean leftStation, PathConstraints constraints) {
+    public static Command pathFindToCoralStation(Drive drive, boolean leftStation, PathConstraints constraints, boolean withPreciseMove) {
 
         if(constraints == null) {
             constraints = new PathConstraints(DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxAngularSpeed, DriveConstants.maxAngularSpeed);
@@ -114,6 +108,18 @@ public class AutoDriveCommands {
 
         Pose2d targetPose  = leftStation ? CoralPositions.leftCoralRobotPosition : CoralPositions.rightCoralRobotPosition;
 
+        if(withPreciseMove) {
+            return new SequentialCommandGroup(
+                AutoBuilder.pathfindToPose(
+                targetPose,
+                constraints
+                ),
+                preciseMoveToPose(
+                    drive,
+                    targetPose
+                )
+            ).withName("pathFindToCoralStation");
+        }
         return AutoBuilder.pathfindToPose(
             targetPose,
             constraints,
@@ -122,7 +128,7 @@ public class AutoDriveCommands {
     }
 
 
-    public static PIDController preciseMovePIDController = new PIDController(0.5, 0, 0.0);
+    private static PIDController preciseMovePIDController = new PIDController(0.5, 0, 0.0);
 
     /**
      * Only run when near the target, as it does not use pathfinding. 
@@ -164,6 +170,21 @@ public class AutoDriveCommands {
             () -> drive.stopWithX()
         )).withName("preciseMoveToPose");
 
+    }
+
+    public static enum ReefSide {
+
+        FRONT,
+
+        FRONT_LEFT,
+
+        FRONT_RIGHT,
+
+        BACK,
+
+        BACK_LEFT,
+
+        BACK_RIGHT
     }
 
 }

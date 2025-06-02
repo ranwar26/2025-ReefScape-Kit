@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.commands.ArmControlCommands.ArmPosition;
 import frc.robot.commands.ArmControlCommands.ArmSystem;
+import frc.robot.commands.AutoDriveCommands.ReefSide;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
@@ -32,7 +33,7 @@ public class AutoScoreCommands {
             // ################### GOING TO CORAL STATION ###################
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
-                AutoDriveCommands.pathFindToCoralStation(Math.random() < 0.5, null),
+                AutoDriveCommands.pathFindToCoralStation(drive, Math.random() < 0.5, null, true),
                 ArmControlCommands.armDownCommand(pivot, elevator, wrist, null),
                 IntakeCommands.intakeRun(intake, () -> 0.0)
             ));
@@ -57,7 +58,7 @@ public class AutoScoreCommands {
             // ################### GOING TO REEF ###################
 
             primaryCommand.addCommands(new ParallelDeadlineGroup(
-                AutoDriveCommands.pathFindToReef(drive, (int) (Math.random() * 6) + 1, null,true),
+                AutoDriveCommands.pathFindToReef(drive, getRandomSide(), null,true),
                 ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)
             ));
 
@@ -89,5 +90,26 @@ public class AutoScoreCommands {
         }
 
         return primaryCommand.withName("autoDriveAndScore");
+    }
+
+    public static ReefSide getRandomSide() {
+
+        switch ((int) (Math.random() * 6.0)) {
+            case 0:
+                return ReefSide.FRONT;
+            case 1:
+                return ReefSide.FRONT_LEFT;
+            case 2:
+                return ReefSide.FRONT_RIGHT;
+            case 3:
+                return ReefSide.BACK;
+            case 4:
+                return ReefSide.BACK_LEFT;
+            case 5:
+                return ReefSide.BACK_RIGHT;
+            default:
+                return ReefSide.FRONT;
+            
+        }
     }
 }
