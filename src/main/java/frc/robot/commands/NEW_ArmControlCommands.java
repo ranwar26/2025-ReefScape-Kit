@@ -70,6 +70,15 @@ public class NEW_ArmControlCommands {
     return returnCommand.withName("ArmUpCommand");
   }
 
+  /**
+   * Returns a command that brings the arm to it's home state from a given start state.
+   * 
+   * @param pivot The pivot subsystem
+   * @param elevator The Elevator subsystem
+   * @param wrist The Wrist subsystem
+   * @param fromState The starting or where the arm is coming from.
+   * @return A command with the given logic
+   */
   public static Command armDownCommand(Pivot pivot, Elevator elevator, Wrist wrist, ArmPosition fromState) {
     
     double[] subsystemTargets = getSubsystemPositions(fromState);
