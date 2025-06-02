@@ -10,6 +10,7 @@ import java.util.List;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ElevatorConstants;
@@ -106,6 +107,35 @@ public class NEW_ArmControlCommands {
     );
 
     return returnCommand.withName("ArmDownCommand");
+  }
+
+  /**
+   * Returns a command that forces subsystems to hold their current position (not their target!), until
+   * some other command calls them.
+   * 
+   * @param pivot The pivot subsystem
+   * @param elevator The elevator subsystem
+   * @param wrist The wrist subsystem
+   * @param controlledSystems which system to have hold
+   * @return A command with the given logic
+   */
+  public static Command armHoldCommand(Pivot pivot, Elevator elevator, Wrist wrist, ArmSystem... controlledSystems) {
+
+    List<ArmSystem> activeSystems = controlledSystemSetup(controlledSystems);
+
+    ParallelCommandGroup returnCommand = new ParallelCommandGroup();
+
+    if(activeSystems.contains(ArmSystem.PIVOT)) {
+      returnCommand.addCommands(PivotCommands.pivotHold(pivot));
+    }
+    if(activeSystems.contains(ArmSystem.ELEVATOR)) {
+      returnCommand.addCommands(ElevatorCommands.elevatorHold(elevator));
+    }
+    if(activeSystems.contains(ArmSystem.WRIST)) {
+      returnCommand.addCommands(WristCommands.wristHold(wrist));
+    }
+
+    return returnCommand;
   }
 
   /**
