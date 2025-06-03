@@ -341,6 +341,6 @@ public class RobotContainer {
 	}
 
 	public void teleopInit() {
-		ArmControlCommands.armDownCommand(pivot, elevator, wrist, null);
+		ArmControlCommands.armDownCommand(pivot, elevator, wrist, null).schedule();;
 	}
 }
