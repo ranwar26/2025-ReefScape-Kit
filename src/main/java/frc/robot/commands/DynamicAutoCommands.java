@@ -31,6 +31,8 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.util.Elastic;
+import frc.robot.util.Elastic.Notification;
 
 /** Add your docs here. */
 public class DynamicAutoCommands {
@@ -64,6 +66,12 @@ public class DynamicAutoCommands {
   private static LoggedDashboardChooser<Boolean> thirdCoralStation = new LoggedDashboardChooser<>(
       networkKeyPrefix + "Third Coral Station");
 
+  private static LoggedDashboardChooser<Integer> endAfterCycle = new LoggedDashboardChooser<>(
+    networkKeyPrefix + "End after cycle");
+
+  private static LoggedDashboardChooser<Pose2d> endingPose = new LoggedDashboardChooser<>(
+    networkKeyPrefix + "Ending Pose");
+
   private static Drive drive;
   private static Pivot pivot;
   private static Elevator elevator;
@@ -86,19 +94,36 @@ public class DynamicAutoCommands {
 
     SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
 
+    int totalCycles = endAfterCycle.get();
+
     primaryCommandGroup.addCommands(Commands.runOnce(
         () -> {
           drive.resetOdometry(startingPose.get());
         }));
 
-    primaryCommandGroup.addCommands(getCycle(firstReefSide.get(), firstReefLevel.get(), firstCoralStation.get()));
-    primaryCommandGroup.addCommands(getCycle(secondReefSide.get(), secondReefLevel.get(), secondCoralStation.get()));
-    primaryCommandGroup.addCommands(getCycle(thirdReefSide.get(), thirdReefLevel.get(), thirdCoralStation.get()));
+    primaryCommandGroup.addCommands(getCycle(firstReefSide.get(), firstReefLevel.get(), firstCoralStation.get(), totalCycles));
+    totalCycles--;
+    primaryCommandGroup.addCommands(getCycle(secondReefSide.get(), secondReefLevel.get(), secondCoralStation.get(), totalCycles));
+    totalCycles--;
+    primaryCommandGroup.addCommands(getCycle(thirdReefSide.get(), thirdReefLevel.get(), thirdCoralStation.get(), totalCycles));
+    totalCycles--;
 
-    return primaryCommandGroup.withName("dynamicAuto");
+
+
+    return primaryCommandGroup.andThen(
+      AutoDriveCommands.pathFindToPose(endingPose.get() == null ? () -> drive.getPose() : () -> endingPose.get(), constraints, 0)
+    ).withName("dynamicAuto");
   }
 
-  private static Command getCycle(ReefSide reefSide, ArmPosition reefLevel, Boolean coralStation) {
+  private static Command getCycle(ReefSide reefSide, ArmPosition reefLevel, Boolean coralStation, int cyclesLeft) {
+
+    if(cyclesLeft <= 0)
+      return Commands.waitSeconds(0.0);
+
+    if(reefSide == null || reefLevel == null || coralStation == null) {
+        Elastic.sendNotification(new Notification(Notification.NotificationLevel.ERROR, "AUTO CYCLE FAIL", "A dynamic auto cycle part was set as null"));
+        return Commands.waitSeconds(0.0);
+    }
 
     SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
 
@@ -148,13 +173,13 @@ public class DynamicAutoCommands {
 
   public static void chooserSetup() {
 
-    startingPose.addDefaultOption("Center", StartingPoses.center);
-    startingPose.addOption("Left Wall Cage", StartingPoses.leftWallCage);
-    startingPose.addOption("Left Center Cage", StartingPoses.leftCenterCage);
-    startingPose.addOption("Left Post Cage", StartingPoses.leftPostCage);
-    startingPose.addOption("Right Wall Cage", StartingPoses.rightWallCage);
-    startingPose.addOption("Right Center Cage", StartingPoses.rightCenterCage);
-    startingPose.addOption("Right Post Cage", StartingPoses.rightPostCage);
+    startingPose.addDefaultOption("Center", FieldPoses.center);
+    startingPose.addOption("Left Wall Cage", FieldPoses.leftWallCage);
+    startingPose.addOption("Left Center Cage", FieldPoses.leftCenterCage);
+    startingPose.addOption("Left Post Cage", FieldPoses.leftPostCage);
+    startingPose.addOption("Right Wall Cage", FieldPoses.rightWallCage);
+    startingPose.addOption("Right Center Cage", FieldPoses.rightCenterCage);
+    startingPose.addOption("Right Post Cage", FieldPoses.rightPostCage);
 
     // ############ FIRST CYCLE ############
     firstReefSide.addDefaultOption("Please Pick One", null);
@@ -210,9 +235,23 @@ public class DynamicAutoCommands {
     thirdCoralStation.addOption("Left Side", true);
     thirdCoralStation.addOption("Right Side", false);
 
+    endAfterCycle.addDefaultOption("Three", 3);
+    endAfterCycle.addOption("Two", 2);
+    endAfterCycle.addOption("One", 1);
+    endAfterCycle.addOption("Zero", 0);
+
+    endingPose.addDefaultOption("No end pose", null);
+    endingPose.addOption("Center", FieldPoses.center);
+    endingPose.addOption("Left Wall Cage", FieldPoses.leftWallCage);
+    endingPose.addOption("Left Center Cage", FieldPoses.leftCenterCage);
+    endingPose.addOption("Left Post Cage", FieldPoses.leftPostCage);
+    endingPose.addOption("Right Wall Cage", FieldPoses.rightWallCage);
+    endingPose.addOption("Right Center Cage", FieldPoses.rightCenterCage);
+    endingPose.addOption("Right Post Cage", FieldPoses.rightPostCage);
+
   }
 
-  public static class StartingPoses {
+  public static class FieldPoses {
 
     /** Blue side */
     public static final Pose2d leftWallCage_BlueSide = new Pose2d(7.1, 7.3, new Rotation2d());
