@@ -105,7 +105,9 @@ public class DynamicAutoCommands {
     // Moves to the chosen reef side
     primaryCommandGroup.addCommands(
         AutoDriveCommands.pathFindToReef(drive, reefSide, constraints, false).deadlineFor(
-            ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION).andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.PIVOT))
+            ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)
+            .andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.PIVOT)
+                .alongWith(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HOME, ArmSystem.ELEVATOR, ArmSystem.WRIST)))
         )
     );
 
@@ -116,13 +118,16 @@ public class DynamicAutoCommands {
         ),
         Commands.waitSeconds(0.5).deadlineFor(
             ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL).alongWith(IntakeCommands.intakeRun(intake, () -> 1.0))
-        )
+        ),
+        IntakeCommands.intakeRun(intake, () -> 0.0).withTimeout(0.0)
     );
 
     // Moves to the chosen coral station
     primaryCommandGroup.addCommands(
         AutoDriveCommands.pathFindToCoralStation(drive, coralStation, constraints, false).deadlineFor(
-            ArmControlCommands.armDownCommand(pivot, elevator, wrist, reefLevel).andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.PIVOT))
+            ArmControlCommands.armDownCommand(pivot, elevator, wrist, reefLevel)
+            .andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.PIVOT)
+                .alongWith(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HOME, ArmSystem.ELEVATOR, ArmSystem.WRIST)))
         )
     );
 
@@ -133,7 +138,8 @@ public class DynamicAutoCommands {
         ),
         Commands.waitSeconds(0.5).deadlineFor(
             ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL).alongWith(IntakeCommands.intakeRun(intake, () -> -1.0))
-        )
+        ),
+        IntakeCommands.intakeRun(intake, () -> 0.0).withTimeout(0.0)
     );
 
 

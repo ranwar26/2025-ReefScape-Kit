@@ -105,13 +105,16 @@ public class ArmControlCommands {
     ));
 
     returnCommand.addCommands(new ParallelDeadlineGroup(
-      ElevatorCommands.elevatorToHome(elevator, false),
-      PivotCommands.pivotToTarget(pivot, pivotTarget, false)
+      ElevatorCommands.elevatorToHome(elevator, true),
+      PivotCommands.pivotToTarget(pivot, pivotTarget, false),
+      WristCommands.wristToHome(wrist, false)
     ));
 
-    returnCommand.addCommands(
-      PivotCommands.pivotToHome(pivot, false)
-    );
+    returnCommand.addCommands(new ParallelCommandGroup(
+      PivotCommands.pivotToHome(pivot, true),
+      ElevatorCommands.elevatorToHome(elevator, false),
+      WristCommands.wristToHome(wrist, false)
+    ));
 
     return returnCommand.withName("ArmDownCommand");
   }
