@@ -60,11 +60,14 @@ public class ArmControlCommands {
     }
 
     if(activeSystems.contains(ArmSystem.ELEVATOR)) {
+      targetStateOne.addCommands(ElevatorCommands.elevatorHold(elevator));
       targetStateTwo.setDeadline(ElevatorCommands.elevatorToTarget(elevator, elevatorTarget, true));
       targetStateThree.addCommands(ElevatorCommands.elevatorToTarget(elevator, elevatorTarget, false));
     }
 
     if(activeSystems.contains(ArmSystem.WRIST)) {
+      targetStateOne.addCommands(WristCommands.wristHold(wrist));
+      targetStateTwo.addCommands(WristCommands.wristHold(wrist));
       targetStateThree.setDeadline(WristCommands.wristToTarget(wrist, wristTarget, true));
     }
 
@@ -143,6 +146,7 @@ public class ArmControlCommands {
    * @param pivot The pivot subsystem
    * @param elevator The elevator subsystem
    * @param wrist The wrist subsystem
+   * @param holdPosition the target position to hold at
    * @param controlledSystems which system to have hold
    * @return A command with the given logic
    */
@@ -194,6 +198,9 @@ public class ArmControlCommands {
         break;
       case CORAL_STATION:
         returnArray = new double[]{PivotConstants.kCoralStationAngle, ElevatorConstants.kCoralStationLength, WristConstants.kCoralStationAngle};
+        break;
+      case HOME:
+        returnArray = new double[]{PivotConstants.kHomeAngle, ElevatorConstants.kHomeLength, WristConstants.kCoralStationAngle};
         break;
       
     }
@@ -256,6 +263,9 @@ public class ArmControlCommands {
     LEVEL4,
 
     /** Coral station */
-    CORAL_STATION
+    CORAL_STATION,
+
+    /** The Home State */
+    HOME
   }
 }
