@@ -110,7 +110,7 @@ public class ArmControlCommands {
       WristCommands.wristToHome(wrist, false)
     ));
 
-    returnCommand.addCommands(new ParallelCommandGroup(
+    returnCommand.addCommands(new ParallelDeadlineGroup(
       PivotCommands.pivotToHome(pivot, true),
       ElevatorCommands.elevatorToHome(elevator, false),
       WristCommands.wristToHome(wrist, false)
