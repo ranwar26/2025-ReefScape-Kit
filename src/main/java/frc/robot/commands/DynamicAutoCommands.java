@@ -78,6 +78,14 @@ public class DynamicAutoCommands {
   private static Wrist wrist;
   private static Intake intake;
 
+  /**  TODO: doc this
+   * 
+   * @param drive
+   * @param pivot
+   * @param elevator
+   * @param wrist
+   * @param intake
+   */
   public static void setupDynamicAuto(Drive drive, Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
 
     DynamicAutoCommands.drive = drive;
@@ -90,6 +98,10 @@ public class DynamicAutoCommands {
 
   }
 
+  /** TODO: doc this
+   * 
+   * @return
+   */
   public static Command buildDynamicAuto() {
 
     SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
@@ -108,13 +120,21 @@ public class DynamicAutoCommands {
     primaryCommandGroup.addCommands(getCycle(thirdReefSide.get(), thirdReefLevel.get(), thirdCoralStation.get(), totalCycles));
     totalCycles--;
 
-
-
     return primaryCommandGroup.andThen(
       AutoDriveCommands.pathFindToPose(endingPose.get() == null ? () -> drive.getPose() : () -> endingPose.get(), constraints, 0)
+      .alongWith(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL).withTimeout(0.0)
+        .andThen(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)))
     ).withName("dynamicAuto");
   }
 
+  /** TODO: doc this
+   * 
+   * @param reefSide
+   * @param reefLevel
+   * @param coralStation
+   * @param cyclesLeft
+   * @return
+   */
   private static Command getCycle(ReefSide reefSide, ArmPosition reefLevel, Boolean coralStation, int cyclesLeft) {
 
     if(cyclesLeft <= 0)
@@ -131,8 +151,8 @@ public class DynamicAutoCommands {
     primaryCommandGroup.addCommands(
         AutoDriveCommands.pathFindToReef(drive, reefSide, constraints, false).deadlineFor(
             ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)
-            .andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.PIVOT)
-                .alongWith(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HOME, ArmSystem.ELEVATOR, ArmSystem.WRIST)))
+            .andThen(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HOME, ArmSystem.ELEVATOR, ArmSystem.WRIST)),
+            ArmControlCommands.armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.PIVOT)
         )
     );
 
@@ -151,8 +171,8 @@ public class DynamicAutoCommands {
     primaryCommandGroup.addCommands(
         AutoDriveCommands.pathFindToCoralStation(drive, coralStation, constraints, false).deadlineFor(
             ArmControlCommands.armDownCommand(pivot, elevator, wrist, reefLevel)
-            .andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.PIVOT)
-                .alongWith(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HOME, ArmSystem.ELEVATOR, ArmSystem.WRIST)))
+            .andThen(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HOME, ArmSystem.ELEVATOR, ArmSystem.WRIST)),
+            ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.PIVOT)
         )
     );
 
