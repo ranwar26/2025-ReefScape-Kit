@@ -70,6 +70,7 @@ import frc.robot.subsystems.pivot.PivotIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIO;
 import frc.robot.subsystems.wrist.WristIOReal;
@@ -135,12 +136,9 @@ public class RobotContainer {
 						new ModuleIOSim(),
 						new ModuleIOSim(),
 						new ModuleIOSim());
-				// vision = new Vision(drive::addVisionMeasurement,
-				// new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
-				// new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
 				vision = new Vision(drive::addVisionMeasurement,
-				new VisionIO() {},
-				new VisionIO() {});
+				new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+				new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
 
 				pivot = new Pivot(new PivotIOSim());
 				elevator = new Elevator(new ElevatorIOSim());
@@ -308,7 +306,7 @@ public class RobotContainer {
 		controller.leftStick().whileTrue(Commands.runOnce(() -> {}, drive));
 
 		// Used for demoing robot
-		controller.rightStick().onTrue(AutoScoreCommands.autoDriveAndScore(drive, pivot, elevator, wrist, intake));
+		// controller.rightStick().onTrue(AutoScoreCommands.autoDriveAndScore(drive, pivot, elevator, wrist, intake));
 	}
 
 	/**
