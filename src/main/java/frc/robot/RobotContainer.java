@@ -13,12 +13,6 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -30,35 +24,31 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.Constants.WristConstants;
 import frc.robot.FieldConstants.CagePosition;
+import frc.robot.commands.ArmControlCommands;
+import frc.robot.commands.ArmControlCommands.ArmPosition;
+import frc.robot.commands.ArmControlCommands.ArmSystem;
+import frc.robot.commands.AutoDriveCommands;
+import frc.robot.commands.AutoDriveCommands.ReefSide;
+import frc.robot.commands.AutoScoreCommands;
+import frc.robot.commands.ControllerCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DynamicAutoCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.IntakeCommands;
-import frc.robot.commands.StateLoggingCommands;
-import frc.robot.commands.ArmControlCommands;
-import frc.robot.commands.AutoDriveCommands;
 import frc.robot.commands.PivotCommands;
-import frc.robot.commands.AutoScoreCommands;
-import frc.robot.commands.ControllerCommands;
+import frc.robot.commands.StateLoggingCommands;
 import frc.robot.commands.WristCommands;
-import frc.robot.commands.ArmControlCommands.ArmPosition;
-import frc.robot.commands.ArmControlCommands.ArmSystem;
-import frc.robot.commands.AutoDriveCommands.ReefSide;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -85,7 +75,6 @@ import frc.robot.subsystems.wrist.WristIO;
 import frc.robot.subsystems.wrist.WristIOReal;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.util.Elastic;
-import frc.robot.util.Elastic.Notification;
 
 /**
  * This class is where the bulk of the robot should be declared. Since

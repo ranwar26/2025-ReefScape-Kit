@@ -14,15 +14,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.WristConstants;
 import frc.robot.commands.ArmControlCommands.ArmPosition;
 import frc.robot.commands.ArmControlCommands.ArmSystem;
 import frc.robot.commands.AutoDriveCommands.ReefSide;
@@ -78,13 +71,14 @@ public class DynamicAutoCommands {
   private static Wrist wrist;
   private static Intake intake;
 
-  /**  TODO: doc this
+  /**  
+   * Sets up the subsystem and dashboard choosers for the Dynamic Auto system
    * 
-   * @param drive
-   * @param pivot
-   * @param elevator
-   * @param wrist
-   * @param intake
+   * @param drive the drive subsystem
+   * @param pivot the pivot subsystem
+   * @param elevator the elevator subsystem
+   * @param wrist the wrist subsystem
+   * @param intake the intake subsystem
    */
   public static void setupDynamicAuto(Drive drive, Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
 
@@ -98,9 +92,11 @@ public class DynamicAutoCommands {
 
   }
 
-  /** TODO: doc this
+  /** 
+   * Assembles the dashboard chooser's data into a command with arm and drive control. NOTE: calling this method a
+   * second time will throw an error, but there is no plan to fix this, as an auto command should only be call once.
    * 
-   * @return
+   * @return The command with this given logic.
    */
   public static Command buildDynamicAuto() {
 
@@ -127,13 +123,15 @@ public class DynamicAutoCommands {
     ).withName("dynamicAuto");
   }
 
-  /** TODO: doc this
+  /**
+   * Converters the given reef side, reef level, and coral station of a cycle into a command which contains the
+   * auto drive, arm control, and intake movements.
    * 
-   * @param reefSide
-   * @param reefLevel
-   * @param coralStation
-   * @param cyclesLeft
-   * @return
+   * @param reefSide the target reef side
+   * @param reefLevel the target reef level
+   * @param coralStation the target coral station (true = left)
+   * @param cyclesLeft How many more cycle are need.
+   * @return The command with the given logic
    */
   private static Command getCycle(ReefSide reefSide, ArmPosition reefLevel, Boolean coralStation, int cyclesLeft) {
 
@@ -191,6 +189,9 @@ public class DynamicAutoCommands {
     return primaryCommandGroup;
   }
 
+  /**
+   * Adds all the dashboard choosers and their default, selectable options
+   */
   public static void chooserSetup() {
 
     startingPose.addDefaultOption("Center", FieldPoses.center);

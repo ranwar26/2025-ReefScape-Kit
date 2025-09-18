@@ -93,8 +93,6 @@ public class ArmControlCommands {
 
     double pivotTarget = subsystemTargets[0];
     double elevatorTarget = subsystemTargets[1];
-    double wristTarget = subsystemTargets[2];
-
 
     SequentialCommandGroup returnCommand = new SequentialCommandGroup();
     
