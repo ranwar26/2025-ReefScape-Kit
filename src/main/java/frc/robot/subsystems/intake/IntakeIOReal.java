@@ -6,6 +6,9 @@ package frc.robot.subsystems.intake;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import frc.robot.Constants.IntakeConstants;
+
 import com.revrobotics.spark.SparkMax;
 
 /** Add your docs here. */
@@ -16,7 +19,7 @@ public class IntakeIOReal implements IntakeIO {
 
   public IntakeIOReal() {
 
-    this.m_intakeMotor = new SparkMax(0, MotorType.kBrushless); // TODO: set motor ID
+    this.m_intakeMotor = new SparkMax(IntakeConstants.kMotorID, MotorType.kBrushless);
     this.m_encoder = m_intakeMotor.getEncoder();
   }
 

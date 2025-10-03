@@ -25,7 +25,7 @@ public class WristIOReal implements WristIO {
 
   public WristIOReal() {
 
-    this.m_wristMotor = new SparkMax(0, MotorType.kBrushless); // TODO: set motor ID
+    this.m_wristMotor = new SparkMax(WristConstants.kMotorID, MotorType.kBrushless);
     this.m_encoder = m_wristMotor.getEncoder();
 
     this.m_wristPIDController = new PIDController(

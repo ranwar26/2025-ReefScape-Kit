@@ -26,8 +26,8 @@ public class ElevatorIOReal implements ElevatorIO {
 
     public ElevatorIOReal() {
 
-        this.m_leftMotor = new SparkMax(0, MotorType.kBrushless); // TODO: set motor ID
-        this.m_rightMotor = new SparkMax(0, MotorType.kBrushless);
+        this.m_leftMotor = new SparkMax(ElevatorConstants.kLeftMotorID, MotorType.kBrushless);
+        this.m_rightMotor = new SparkMax(ElevatorConstants.kRightMotorID, MotorType.kBrushless);
 
         this.m_rightEncoder = this.m_rightMotor.getEncoder();
 

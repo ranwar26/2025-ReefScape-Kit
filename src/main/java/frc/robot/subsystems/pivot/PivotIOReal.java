@@ -27,8 +27,8 @@ public class PivotIOReal implements PivotIO {
 
     public PivotIOReal() {
 
-        this.m_leftMotor = new SparkMax(0, MotorType.kBrushless); // TODO: set motor ID
-        this.m_rightMotor = new SparkMax(0, MotorType.kBrushless);
+        this.m_leftMotor = new SparkMax(PivotConstants.kLeftMotorID, MotorType.kBrushless);
+        this.m_rightMotor = new SparkMax(PivotConstants.kRightMotorID, MotorType.kBrushless);
 
         this.m_rightEncoder = this.m_rightMotor.getEncoder();
         this.m_rightEncoder.setPosition(this.m_rightMotor.getAbsoluteEncoder().getPosition() * (Math.PI / 2.0));

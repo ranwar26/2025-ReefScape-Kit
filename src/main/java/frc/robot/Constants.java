@@ -61,11 +61,11 @@ public final class Constants {
           new Translation2d(-trackWidth / 2.0, -wheelBase / 2.0)
         };
 
-    // Zeroed rotation values for each module, see setup instructions //TODO: get these values and implement them
-    public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0.0);
+    // Zeroed rotation values for each module, see setup instructions.
+    public static final Rotation2d frontLeftZeroRotation = new Rotation2d(-Math.PI / 2.0);
     public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.0);
-    public static final Rotation2d backLeftZeroRotation = new Rotation2d(0.0);
-    public static final Rotation2d backRightZeroRotation = new Rotation2d(0.0);
+    public static final Rotation2d backLeftZeroRotation = new Rotation2d(Math.PI);
+    public static final Rotation2d backRightZeroRotation = new Rotation2d(Math.PI / 2.0);
 
     // SPARK MAX CAN IDs
     public static final int frontLeftDriveCanId = 7;
@@ -82,7 +82,7 @@ public final class Constants {
     public static final int driveMotorCurrentLimit = 40;
     public static final double wheelRadiusMeters = Units.inchesToMeters(1.5);
     public static final double driveMotorReduction =
-        (45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
+        (45.0 * 22.0) / (13.0 * 15.0); // MAXSwerve with 13 pinion teeth and 22 spur teeth
     public static final DCMotor driveGearbox = DCMotor.getNEO(1);
 
     // Drive encoder configuration
@@ -113,7 +113,7 @@ public final class Constants {
     public static final double turnEncoderVelocityFactor = (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
 
     // Turn PID configuration
-    public static final double turnKp = 8.0;
+    public static final double turnKp = 2.0;
     public static final double turnKd = 0.4;
     public static final double turnSimP = 8.0;
     public static final double turnSimD = 0.5;
@@ -179,6 +179,9 @@ public class VisionConstants {
 
   public final class PivotConstants {
 
+    public static final int kLeftMotorID = 10;
+    public static final int kRightMotorID = 11;
+
     public static final DCMotor motorGearbox = DCMotor.getNEO(1);
 
     public static final double motorToPivotAngleRatio = 213.33;
@@ -208,9 +211,12 @@ public class VisionConstants {
 
   public final class ElevatorConstants {
 
+    public static final int kLeftMotorID = 12;
+    public static final int kRightMotorID = 13;
+
     public static final DCMotor motorGearbox = DCMotor.getNEO(1);
 
-    public static final double motorToWheelRatio = 5.0; // TODO: recheck this value
+    public static final double motorToWheelRatio = 3.0;
 
     public static final double kRealP = 2.7;
     public static final double kRealI = 0.0;
@@ -237,10 +243,11 @@ public class VisionConstants {
 
   public final class WristConstants {
 
+    public static final int kMotorID = 14;
+
     public static final DCMotor motorGearbox = DCMotor.getNEO(1);
 
-    public static final double motorToWheelRatio = 1.0; // TODO: recheck this value
-
+    public static final double motorToWheelRatio = 48.0;
     public static final double kRealP = 0.4;
     public static final double kRealI = 0.001;
     public static final double kRealD = 0.0;
@@ -265,6 +272,8 @@ public class VisionConstants {
   }
 
   public final class IntakeConstants {
+
+    public static final int kMotorID = 15;
 
     public static final DCMotor motorGearbox = DCMotor.getNEO(1);
 
