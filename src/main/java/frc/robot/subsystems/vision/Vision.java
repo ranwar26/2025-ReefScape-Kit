@@ -65,18 +65,17 @@ public class Vision extends SubsystemBase {
         return null;
     }
 
-    // All initial capacity values are based on max capacity during a 60 sec sim
     // Initialize logging values
-    List<Pose3d> allTagPoses = new ArrayList<>(5);
-    List<Pose3d> allRobotPoses = new ArrayList<>(5);
-    List<Pose3d> allRobotPosesAccepted = new ArrayList<>(5);
-    List<Pose3d> allRobotPosesRejected = new ArrayList<>(1);
+    List<Pose3d> allTagPoses = new ArrayList<>();
+    List<Pose3d> allRobotPoses = new ArrayList<>();
+    List<Pose3d> allRobotPosesAccepted = new ArrayList<>();
+    List<Pose3d> allRobotPosesRejected = new ArrayList<>();
 
     // Initialize logging values
-    List<Pose3d> tagPoses = new ArrayList<>(4);
-    List<Pose3d> robotPoses = new ArrayList<>(2);
-    List<Pose3d> robotPosesAccepted = new ArrayList<>(2);
-    List<Pose3d> robotPosesRejected = new ArrayList<>(1);
+    List<Pose3d> tagPoses = new ArrayList<>();
+    List<Pose3d> robotPoses = new ArrayList<>();
+    List<Pose3d> robotPosesAccepted = new ArrayList<>();
+    List<Pose3d> robotPosesRejected = new ArrayList<>();
 
     @Override
     public void periodic() {
