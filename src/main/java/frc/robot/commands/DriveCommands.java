@@ -13,6 +13,12 @@
 
 package frc.robot.commands;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -29,11 +35,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.drive.Drive;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.DoubleSupplier;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -102,6 +103,9 @@ public class DriveCommands {
 
     double targetAngle = Math.atan2(x, y);
     targetAngle = (Math.toDegrees(targetAngle) - 90) % 360;
+
+    // This should digitally "notch" the joystick to the 6 sides of the reef. TODO: Test this
+    // targetAngle = (Math.round(targetAngle / 60.0) * 60.0) % 360.0;
 
     double theta = Math.abs(targetAngle - currentAngle) % 360;
     double shorterTheta = theta > 180 ? 360 - theta : theta;
