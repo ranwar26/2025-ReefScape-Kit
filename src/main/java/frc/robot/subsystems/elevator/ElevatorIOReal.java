@@ -61,6 +61,8 @@ public class ElevatorIOReal implements ElevatorIO {
         double speed = this.m_elevatorPIDController.calculate(getCurrentLength(), length);
         double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
 
+        volts += ElevatorConstants.kRealG;
+
         this.m_leftMotor.setVoltage(volts);
         this.m_rightMotor.setVoltage(volts);
     }

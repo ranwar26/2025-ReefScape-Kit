@@ -192,14 +192,14 @@ public class VisionConstants {
     public static final double kRealP = 1.2;
     public static final double kRealI = 0.0;
     public static final double kRealD = 0.0;
-    public static final double kSimP = 5.0;
-    public static final double kSimI = 0.2;
-    public static final double kSimD = 0.4;
+    public static final double kSimP = 1.2;
+    public static final double kSimI = 0.0;
+    public static final double kSimD = 0.0;
 
     // Target angle in degrees converted to radians
     public static final double kHomeAngle = Math.toRadians(40.0);
 
-    public static final double kLevel1Angle = Math.toRadians(0.0);
+    public static final double kLevel1Angle = Math.toRadians(40.0);
     public static final double kLevel2Angle = Math.toRadians(60.0);
     public static final double kLevel3Angle = Math.toRadians(72.0);
     public static final double kLevel4Angle = Math.toRadians(80.0);
@@ -224,12 +224,16 @@ public class VisionConstants {
     public static final int kMaxCurrentLimit = 60;
     public static final double kMaxVoltage = 12;
 
-    public static final double kRealP = 2.7;
+    public static final double kRealP = 2.0;
     public static final double kRealI = 0.0;
     public static final double kRealD = 0.0;
-    public static final double kSimP = 0.9;
-    public static final double kSimI = 1.2;
-    public static final double kSimD = 0.2;
+    public static final double kSimP = 2.0;
+    public static final double kSimI = 0.0;
+    public static final double kSimD = 0.0;
+
+    // These are the voltages of the motors to overcome gravity to reduce sliding
+    public static final double kRealG = 0.0; //TODO: Test this value
+    public static final double kSimG = 1.5;
 
     // Target length in meters
     public static final double kHomeLength = 0.659;
@@ -261,9 +265,9 @@ public class VisionConstants {
     public static final double kRealP = 0.4;
     public static final double kRealI = 0.0;
     public static final double kRealD = 0.0;
-    public static final double kSimP = 0.9;
+    public static final double kSimP = 0.4;
     public static final double kSimI = 0.0;
-    public static final double kSimD = 0.3;
+    public static final double kSimD = 0.0;
 
     // Target angle in degrees converted to radians
     public static final double kHomeAngle = Math.toRadians(0.0);

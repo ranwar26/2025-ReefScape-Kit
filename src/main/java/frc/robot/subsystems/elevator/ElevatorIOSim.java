@@ -60,6 +60,7 @@ public class ElevatorIOSim implements ElevatorIO {
     this.targetLength = length;
     double speed = this.m_elevatorPIDController.calculate(getCurrentLength() - length);
     this.appliedVolts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
+    this.appliedVolts += ElevatorConstants.kSimG;
 
   }
 
