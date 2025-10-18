@@ -5,11 +5,13 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 
 import frc.robot.Constants.IntakeConstants;
-
-import com.revrobotics.spark.SparkMax;
+import frc.robot.MotorConfigs.IntakeConfig;
 
 /** Add your docs here. */
 public class IntakeIOReal implements IntakeIO {
@@ -21,6 +23,8 @@ public class IntakeIOReal implements IntakeIO {
 
     this.m_intakeMotor = new SparkMax(IntakeConstants.kMotorID, MotorType.kBrushless);
     this.m_encoder = m_intakeMotor.getEncoder();
+
+    this.m_intakeMotor.configure(IntakeConfig.intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override

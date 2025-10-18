@@ -5,13 +5,15 @@
 package frc.robot.subsystems.pivot;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants.PivotConstants;
-
-import com.revrobotics.spark.SparkMax;
+import frc.robot.MotorConfigs.PivotConfig;
 
 /** Add your docs here. */
 public class PivotIOReal implements PivotIO {
@@ -33,6 +35,8 @@ public class PivotIOReal implements PivotIO {
         this.m_rightEncoder = this.m_rightMotor.getEncoder();
         this.m_rightEncoder.setPosition(this.m_rightMotor.getAbsoluteEncoder().getPosition() * (Math.PI / 2.0));
 
+        this.m_leftMotor.configure(PivotConfig.leftPivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        this.m_rightMotor.configure(PivotConfig.rightPivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         this.m_pivotPIDController = new PIDController(
         PivotConstants.kRealP,
@@ -61,7 +65,7 @@ public class PivotIOReal implements PivotIO {
         if(MathUtil.isNear(this.getCurrentAngle(), angle, Math.toRadians(0.1), 0.0, 2.0 * Math.PI) && volts > 6.0)
             volts = 0.0;
 
-        this.m_leftMotor.setVoltage(-volts);
+        this.m_leftMotor.setVoltage(volts);
         this.m_rightMotor.setVoltage(volts);
     }
 

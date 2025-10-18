@@ -24,7 +24,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
     this.elevatorSim = new ElevatorSim(
       DCMotor.getNEO(2),
-      ElevatorConstants.motorToWheelRatio,
+      ElevatorConstants.motorToDrumRatio,
       8.02,
       0.06,
       0.659,

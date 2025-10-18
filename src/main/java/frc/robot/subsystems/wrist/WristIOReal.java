@@ -5,13 +5,15 @@
 package frc.robot.subsystems.wrist;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants.WristConstants;
-
-import com.revrobotics.spark.SparkMax;
+import frc.robot.MotorConfigs.WristConfig;
 
 /** Add your docs here. */
 public class WristIOReal implements WristIO {
@@ -27,6 +29,8 @@ public class WristIOReal implements WristIO {
 
     this.m_wristMotor = new SparkMax(WristConstants.kMotorID, MotorType.kBrushless);
     this.m_encoder = m_wristMotor.getEncoder();
+
+    this.m_wristMotor.configure(WristConfig.wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     this.m_wristPIDController = new PIDController(
       WristConstants.kRealP,

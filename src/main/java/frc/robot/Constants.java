@@ -186,6 +186,9 @@ public class VisionConstants {
 
     public static final double motorToPivotAngleRatio = 213.33;
 
+    public static final int kMaxCurrentLimit = 20;
+    public static final double kMaxVoltage = 12;
+
     public static final double kRealP = 1.2;
     public static final double kRealI = 0.0;
     public static final double kRealD = 0.0;
@@ -216,7 +219,10 @@ public class VisionConstants {
 
     public static final DCMotor motorGearbox = DCMotor.getNEO(1);
 
-    public static final double motorToWheelRatio = 3.0;
+    public static final double motorToDrumRatio = 7.2;
+
+    public static final int kMaxCurrentLimit = 60;
+    public static final double kMaxVoltage = 12;
 
     public static final double kRealP = 2.7;
     public static final double kRealI = 0.0;
@@ -248,8 +254,12 @@ public class VisionConstants {
     public static final DCMotor motorGearbox = DCMotor.getNEO(1);
 
     public static final double motorToWheelRatio = 48.0;
+
+    public static final int kMaxCurrentLimit = 60;
+    public static final double kMaxVoltage = 12;
+
     public static final double kRealP = 0.4;
-    public static final double kRealI = 0.001;
+    public static final double kRealI = 0.0;
     public static final double kRealD = 0.0;
     public static final double kSimP = 0.9;
     public static final double kSimI = 0.0;
@@ -278,6 +288,9 @@ public class VisionConstants {
     public static final DCMotor motorGearbox = DCMotor.getNEO(1);
 
     public static final double motorToWheelRatio = 3.0;
+
+    public static final int kMaxCurrentLimit = 40;
+    public static final double kMaxVoltage = 12;
   }
 
   public final class OIConstants {

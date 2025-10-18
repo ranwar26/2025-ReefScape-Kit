@@ -56,12 +56,15 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOReal;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotIO;
+import frc.robot.subsystems.pivot.PivotIOReal;
 import frc.robot.subsystems.pivot.PivotIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
@@ -69,6 +72,7 @@ import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIO;
+import frc.robot.subsystems.wrist.WristIOReal;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.util.Elastic;
 
@@ -117,15 +121,10 @@ public class RobotContainer {
 					new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
 					new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
 
-				// pivot = new Pivot(new PivotIOReal());
-				// elevator = new Elevator(new ElevatorIOReal());
-				// wrist = new Wrist(new WristIOReal());
-				// intake = new Intake(new IntakeIOReal());
-
-				pivot = new Pivot(new PivotIO() {});
-				elevator = new Elevator(new ElevatorIO() {});
-				wrist = new Wrist(new WristIO() {});
-				intake = new Intake(new IntakeIO() {});
+				pivot = new Pivot(new PivotIOReal());
+				elevator = new Elevator(new ElevatorIOReal());
+				wrist = new Wrist(new WristIOReal());
+				intake = new Intake(new IntakeIOReal());
 
 				break;
 

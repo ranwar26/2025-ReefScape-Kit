@@ -7,7 +7,12 @@ package frc.robot;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.WristConstants;
 
 /** Add your docs here. */
 public final class MotorConfigs {
@@ -71,6 +76,78 @@ public final class MotorConfigs {
           .appliedOutputPeriodMs(20)
           .busVoltagePeriodMs(20)
           .outputCurrentPeriodMs(20);
+    }
+  }
+
+  public static final class PivotConfig {
+    public static final SparkMaxConfig leftPivotConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig rightPivotConfig = new SparkMaxConfig();
+
+    static {
+      leftPivotConfig.inverted(false);
+      rightPivotConfig.inverted(true);
+
+      // Changes all inputs and outputs from motor rotations to pivot angle in radians
+      double positionConversionFactorRelative = (2.0 * Math.PI) / PivotConstants.motorToPivotAngleRatio;
+      leftPivotConfig.encoder.positionConversionFactor(positionConversionFactorRelative);
+      rightPivotConfig.encoder.positionConversionFactor(positionConversionFactorRelative);
+    
+      rightPivotConfig.absoluteEncoder.inverted(true);
+
+      leftPivotConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(PivotConstants.kMaxCurrentLimit)
+          .voltageCompensation(PivotConstants.kMaxVoltage);
+      rightPivotConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(PivotConstants.kMaxCurrentLimit)
+          .voltageCompensation(PivotConstants.kMaxVoltage);
+    }
+  }
+
+  public static final class ElevatorConfig {
+    public static final SparkMaxConfig leftElevatorConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig rightElevatorConfig = new SparkMaxConfig();
+
+    static {
+      leftElevatorConfig.inverted(false);
+      rightElevatorConfig.inverted(true);
+
+      // Turns inputs and outputs from motor rotation into the extension
+      // 0.02425 is r (2.0 * Math.PI * 0.02425) = 0.15236724 meters, 0.16269 seems to
+      // be a better conversion?
+      double positionConversionFactor = (0.16269) / ElevatorConstants.motorToDrumRatio;
+
+      leftElevatorConfig.encoder.positionConversionFactor(positionConversionFactor);
+      rightElevatorConfig.encoder.positionConversionFactor(positionConversionFactor);
+
+      leftElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstants.kMaxCurrentLimit)
+          .voltageCompensation(ElevatorConstants.kMaxVoltage);
+      rightElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstants.kMaxCurrentLimit)
+          .voltageCompensation(ElevatorConstants.kMaxVoltage);
+    }
+  }
+
+  public static final class WristConfig {
+    public static final SparkMaxConfig wristConfig = new SparkMaxConfig();
+
+    static {
+      wristConfig.inverted(true);
+
+      // Changes all inputs and outputs from motor rotations to pivot angle in radians
+      double positionConversionFactorRelative = (2 * Math.PI) / WristConstants.motorToWheelRatio;
+
+      wristConfig.encoder.positionConversionFactor(positionConversionFactorRelative);
+
+      wristConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(WristConstants.kMaxCurrentLimit)
+          .voltageCompensation(WristConstants.kMaxVoltage);
+    }
+  }
+
+  public static final class IntakeConfig {
+    public static final SparkMaxConfig intakeConfig = new SparkMaxConfig();
+
+    static {
+      intakeConfig.inverted(false);
+
+      intakeConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(IntakeConstants.kMaxCurrentLimit)
+          .voltageCompensation(IntakeConstants.kMaxVoltage);
     }
   }
 }
