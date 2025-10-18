@@ -79,4 +79,8 @@ public class PivotIOSim implements PivotIO {
         return this.pivotArmSim.getAngleRads();
     }
 
+    @Override
+    public void resetPID() {
+        this.m_pivotPIDController.reset();
+    }
 }

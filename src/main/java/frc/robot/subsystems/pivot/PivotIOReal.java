@@ -78,4 +78,9 @@ public class PivotIOReal implements PivotIO {
     public double getCurrentAngle() {
         return this.m_rightEncoder.getPosition();
     }
+
+    @Override
+    public void resetPID() {
+        this.m_pivotPIDController.reset();
+    }
 }

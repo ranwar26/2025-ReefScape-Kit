@@ -48,4 +48,6 @@ public interface WristIO {
     return 0.0;
   };
 
+  public default void resetPID() {
+  }
 }

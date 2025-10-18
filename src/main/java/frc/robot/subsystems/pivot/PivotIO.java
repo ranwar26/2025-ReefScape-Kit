@@ -49,4 +49,10 @@ public interface PivotIO {
     public default double getCurrentAngle() {
         return 0.0;
     };
+
+    /**
+     * resets the PID controller
+     */
+    public default void resetPID() {
+    }
 }

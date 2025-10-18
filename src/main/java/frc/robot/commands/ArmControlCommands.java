@@ -51,6 +51,12 @@ public class ArmControlCommands {
     ParallelDeadlineGroup targetStateTwo = new ParallelDeadlineGroup(Commands.waitSeconds(0.0));
     ParallelDeadlineGroup targetStateThree = new ParallelDeadlineGroup(Commands.waitSeconds(0.0));
 
+    returnCommand.addCommands(Commands.runOnce(() -> {
+      pivot.resetPID();
+      elevator.resetPID();
+      wrist.resetPID();
+    }));
+
     returnCommand.addCommands(targetStateOne, targetStateTwo, targetStateThree);
 
     if(activeSystems.contains(ArmSystem.PIVOT)) {
@@ -95,6 +101,12 @@ public class ArmControlCommands {
     double elevatorTarget = subsystemTargets[1];
 
     SequentialCommandGroup returnCommand = new SequentialCommandGroup();
+
+    returnCommand.addCommands(Commands.runOnce(() -> {
+      pivot.resetPID();
+      elevator.resetPID();
+      wrist.resetPID();
+    }));
     
     returnCommand.addCommands(new ParallelDeadlineGroup(
       WristCommands.wristToHome(wrist, true),
@@ -120,6 +132,12 @@ public class ArmControlCommands {
   private static Command armDownUnknownCommand(Pivot pivot, Elevator elevator, Wrist wrist) {
 
     SequentialCommandGroup returnCommand = new SequentialCommandGroup();
+
+    returnCommand.addCommands(Commands.runOnce(() -> {
+      pivot.resetPID();
+      elevator.resetPID();
+      wrist.resetPID();
+    }));
     
     returnCommand.addCommands(new ParallelDeadlineGroup(
       WristCommands.wristToHome(wrist, true),
@@ -162,6 +180,12 @@ public class ArmControlCommands {
     List<ArmSystem> activeSystems = controlledSystemSetup(controlledSystems);
 
     ParallelCommandGroup returnCommand = new ParallelCommandGroup();
+
+    returnCommand.addCommands(Commands.runOnce(() -> {
+      pivot.resetPID();
+      elevator.resetPID();
+      wrist.resetPID();
+    }));
 
     if(activeSystems.contains(ArmSystem.PIVOT)) {
       returnCommand.addCommands(PivotCommands.pivotToTarget(pivot, pivotHold, false));

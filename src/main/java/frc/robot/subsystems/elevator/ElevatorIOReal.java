@@ -75,4 +75,9 @@ public class ElevatorIOReal implements ElevatorIO {
         return this.m_rightEncoder.getPosition();
     }
 
+    @Override
+    public void resetPID() {
+        this.m_elevatorPIDController.reset();
+    }
+
 }

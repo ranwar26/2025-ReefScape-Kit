@@ -49,4 +49,11 @@ public class Elevator extends SubsystemBase {
     return this.io.getCurrentLength();
   }
 
+  /**
+   * resets the PID controller
+   */
+  public void resetPID() {
+    this.io.resetPID();
+  }
+
 }

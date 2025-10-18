@@ -72,4 +72,9 @@ public class WristIOSim implements WristIO {
     return this.m_wristMotor.getAngularPositionRad();
   }
 
+  @Override
+  public void resetPID() {
+    this.m_wristPIDController.reset();
+  }
+
 }

@@ -73,4 +73,9 @@ public class ElevatorIOSim implements ElevatorIO {
     return this.elevatorSim.getPositionMeters();
   }
 
+  @Override
+  public void resetPID() {
+      this.m_elevatorPIDController.reset();
+  }
+
 }

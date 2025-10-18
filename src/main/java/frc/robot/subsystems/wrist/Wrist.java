@@ -47,4 +47,11 @@ public class Wrist extends SubsystemBase {
   public double getCurrentAngle() {
     return this.io.getCurrentAngle();
   }
+
+  /**
+   * resets the PID controller
+   */
+  public void resetPID() {
+    this.io.resetPID();
+  }
 }

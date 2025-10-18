@@ -68,4 +68,9 @@ public class WristIOReal implements WristIO {
     return this.m_encoder.getPosition();
   }
 
+  @Override
+  public void resetPID() {
+    this.m_wristPIDController.reset();
+  }
+
 }
