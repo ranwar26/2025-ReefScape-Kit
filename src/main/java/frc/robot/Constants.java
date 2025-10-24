@@ -242,6 +242,7 @@ public class VisionConstants {
     public static final double kLevel2Length = 0.849;
     public static final double kLevel3Length = 1.169;
     public static final double kLevel4Length = 1.959;
+    public static final double kPastStage2 = 1.5;
     public static final double kCoralStationLength = 0.689;
 
     // The number of meter the elevator has to move to active the second stage.
@@ -262,10 +263,10 @@ public class VisionConstants {
     public static final int kMaxCurrentLimit = 60;
     public static final double kMaxVoltage = 12;
 
-    public static final double kRealP = 0.4;
+    public static final double kRealP = 0.2;
     public static final double kRealI = 0.0;
     public static final double kRealD = 0.0;
-    public static final double kSimP = 0.4;
+    public static final double kSimP = 0.2;
     public static final double kSimI = 0.0;
     public static final double kSimD = 0.0;
 
@@ -282,7 +283,7 @@ public class VisionConstants {
     public static final double kLowerAlgaeRemove = Math.toRadians(155.0);
 
     // The error limit before a command will end.
-    public static final double kAngleErrorAllowed = Math.toRadians(1.0);
+    public static final double kAngleErrorAllowed = Math.toRadians(10.0);
   }
 
   public final class IntakeConstants {

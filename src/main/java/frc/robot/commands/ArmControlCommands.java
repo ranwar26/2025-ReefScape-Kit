@@ -221,6 +221,9 @@ public class ArmControlCommands {
       case LEVEL4:
         returnArray = new double[]{PivotConstants.kLevel4Angle, ElevatorConstants.kLevel4Length, WristConstants.kLevel4Angle};
         break;
+      case PAST_STAGE2:
+        returnArray = new double[]{PivotConstants.kLevel2Angle, ElevatorConstants.kPastStage2, WristConstants.kLevel1Angle};
+        break;
       case CORAL_STATION:
         returnArray = new double[]{PivotConstants.kCoralStationAngle, ElevatorConstants.kCoralStationLength, WristConstants.kCoralStationAngle};
         break;
@@ -286,6 +289,8 @@ public class ArmControlCommands {
 
     /** Reef level 4 */
     LEVEL4,
+
+    PAST_STAGE2,
 
     /** Coral station */
     CORAL_STATION,

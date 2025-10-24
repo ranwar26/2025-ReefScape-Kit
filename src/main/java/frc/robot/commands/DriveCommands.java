@@ -104,8 +104,8 @@ public class DriveCommands {
     double targetAngle = Math.atan2(x, y);
     targetAngle = (Math.toDegrees(targetAngle) - 90) % 360;
 
-    // This should digitally "notch" the joystick to the 6 sides of the reef.
-    targetAngle = (Math.round(targetAngle / 60.0) * 60.0) % 360.0;
+    // // This should digitally "notch" the joystick to the 6 sides of the reef. Don't need this.
+    // targetAngle = (Math.round(targetAngle / 60.0) * 60.0) % 360.0;
 
     double theta = Math.abs(targetAngle - currentAngle) % 360;
     double shorterTheta = theta > 180 ? 360 - theta : theta;
