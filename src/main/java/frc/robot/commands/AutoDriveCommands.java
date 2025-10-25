@@ -14,10 +14,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.AutoDriveConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.FieldConstants.CoralPositions;
 import frc.robot.FieldConstants.ReefPositions;
@@ -136,11 +136,9 @@ public class AutoDriveCommands {
 
         double[] deltaValues = new double[2];
 
-        Pose2d maxErrorPose = new Pose2d(0.01, 0.01, new Rotation2d());
-
         BooleanSupplier isWithinError = () ->
-            Math.abs(drive.getPose().minus(targetPose).getX()) < maxErrorPose.getX() &&
-            Math.abs(drive.getPose().minus(targetPose).getY()) < maxErrorPose.getY();
+            Math.abs(drive.getPose().minus(targetPose).getX()) < AutoDriveConstants.maxErrorPose.getX() &&
+            Math.abs(drive.getPose().minus(targetPose).getY()) < AutoDriveConstants.maxErrorPose.getY();
 
         Debouncer debouncer = new Debouncer(0.1, DebounceType.kBoth);
 

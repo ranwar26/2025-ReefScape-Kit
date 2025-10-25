@@ -18,6 +18,7 @@ import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -301,6 +302,11 @@ public class VisionConstants {
   public final class OIConstants {
 
     public static final double kDriveDeadband = 0.05;
+  }
+
+  public final class AutoDriveConstants {
+
+    public static final Pose2d maxErrorPose = new Pose2d(0.05, 0.05, new Rotation2d());
   }
 
 }
