@@ -123,7 +123,7 @@ public class AutoDriveCommands {
     }
 
 
-    private static PIDController preciseMovePIDController = new PIDController(0.5, 0, 0.0);
+    private static PIDController preciseMovePIDController = new PIDController(0.5, 0.1, 0.0);
 
     /**
      * Only run when near the target, as it does not use pathfinding. 
@@ -159,7 +159,9 @@ public class AutoDriveCommands {
             () -> targetPose.getRotation().getCos(),
             () -> targetPose.getRotation().getSin()
             ).withTimeout(0.02)
-        ).repeatedly().until(() -> debouncer.calculate(isWithinError.getAsBoolean())).andThen(Commands.runOnce(
+        ).repeatedly().until(() -> debouncer.calculate(isWithinError.getAsBoolean()))
+        .beforeStarting(() -> preciseMovePIDController.reset())
+        .andThen(Commands.runOnce(
             () -> drive.stopWithX()
         )).withName("preciseMoveToPose");
 
