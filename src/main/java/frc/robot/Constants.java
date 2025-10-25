@@ -278,6 +278,7 @@ public class VisionConstants {
     public static final double kLevel2Angle = Math.toRadians(168.0);
     public static final double kLevel3Angle = Math.toRadians(180.0);
     public static final double kLevel4Angle = Math.toRadians(192.0);
+    public static final double kPastStage2 = Math.toRadians(90.0);
     public static final double kCoralStationAngle = Math.toRadians(26.0);
 
     public static final double kUpperAlgaeRemove = Math.toRadians(157.0);

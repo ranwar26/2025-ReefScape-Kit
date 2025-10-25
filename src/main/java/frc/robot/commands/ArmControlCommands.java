@@ -222,7 +222,7 @@ public class ArmControlCommands {
         returnArray = new double[]{PivotConstants.kLevel4Angle, ElevatorConstants.kLevel4Length, WristConstants.kLevel4Angle};
         break;
       case PAST_STAGE2:
-        returnArray = new double[]{PivotConstants.kLevel2Angle, ElevatorConstants.kPastStage2, WristConstants.kLevel1Angle};
+        returnArray = new double[]{PivotConstants.kLevel3Angle, ElevatorConstants.kPastStage2, WristConstants.kPastStage2};
         break;
       case CORAL_STATION:
         returnArray = new double[]{PivotConstants.kCoralStationAngle, ElevatorConstants.kCoralStationLength, WristConstants.kCoralStationAngle};
