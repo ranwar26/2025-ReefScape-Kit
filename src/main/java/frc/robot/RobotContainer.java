@@ -239,8 +239,6 @@ public class RobotContainer {
 				new Elastic.Notification(Elastic.Notification.NotificationLevel.INFO, "All Systems Go!", "All Warmups, Bindings, Logging, and Sim Commands have been setup!")
 				)))
 				.ignoringDisable(true).withName("WarmupCommand").schedule();
-
-		drive.resetOdometry(new Pose2d(7.1, 4.0, new Rotation2d()));
 	}
 
 	/**
@@ -259,10 +257,6 @@ public class RobotContainer {
 		controller.start().onTrue(Commands.runOnce(
 				() -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
 				drive).ignoringDisable(true));
-
-			// controller.a().whileTrue(WristCommands.wristToTarget(wrist, WristConstants.kLevel2Angle, false));
-			// controller.b().whileTrue(WristCommands.wristToTarget(wrist, WristConstants.kLevel3Angle, false));
-			// controller.y().whileTrue(WristCommands.wristToTarget(wrist, WristConstants.kLevel4Angle, false));
 
 		controller.a().whileTrue(
 			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.PIVOT, ArmSystem.ELEVATOR)
