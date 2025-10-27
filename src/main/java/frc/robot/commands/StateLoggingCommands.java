@@ -29,41 +29,35 @@ public class StateLoggingCommands {
 
     // Part for the current arm
     private static LoggedMechanism2d mechanismCurrent = new LoggedMechanism2d(5, 5.0);
-    private static LoggedMechanismLigament2d pivotPartCurrent = new LoggedMechanismLigament2d("pivot", 0.059, 0);
-    private static LoggedMechanismLigament2d elevatorPartCurrent = new LoggedMechanismLigament2d("elevator", 0.0, -90);
+    private static LoggedMechanismLigament2d elevatorPartCurrent = new LoggedMechanismLigament2d("elevator", 0.0, 0);
     private static LoggedMechanismLigament2d gripperPartCurrent = new LoggedMechanismLigament2d("gripper", 0.388, 0);
     private static LoggedMechanismLigament2d intakePartCurrent = new LoggedMechanismLigament2d("intake", 0.05, 0);
 
     // Part for the target arm
     private static LoggedMechanism2d mechanismTarget = new LoggedMechanism2d(5, 5.0);
-    private static LoggedMechanismLigament2d pivotPartTarget = new LoggedMechanismLigament2d("pivot", 0.059, 0);
-    private static LoggedMechanismLigament2d elevatorPartTarget = new LoggedMechanismLigament2d("elevator", 0.0, -90);
+    private static LoggedMechanismLigament2d elevatorPartTarget = new LoggedMechanismLigament2d("elevator", 0.0, 0);
     private static LoggedMechanismLigament2d gripperPartTarget = new LoggedMechanismLigament2d("gripper", 0.388, 0);
     private static LoggedMechanismLigament2d intakePartTarget = new LoggedMechanismLigament2d("intake", 0.05, 0);
 
     static {
-        mechanismCurrent.getRoot("root", 2.5 - 0.193, 0.337).append(pivotPartCurrent).append(elevatorPartCurrent).append(gripperPartCurrent)
+        mechanismCurrent.getRoot("root", 2.5 - 0.193, 0.337).append(elevatorPartCurrent).append(gripperPartCurrent)
                 .append(intakePartCurrent);
 
-        pivotPartCurrent.setColor(new Color8Bit(0, 255, 0));
         elevatorPartCurrent.setColor(new Color8Bit(0, 255, 0));
         gripperPartCurrent.setColor(new Color8Bit(0, 255, 0));
         intakePartCurrent.setColor(new Color8Bit(0, 255, 0));
 
-        pivotPartCurrent.setLineWeight(4.0);
         elevatorPartCurrent.setLineWeight(4.0);
         gripperPartCurrent.setLineWeight(4.0);
         intakePartCurrent.setLineWeight(4.0);
 
-        mechanismTarget.getRoot("root", 2.5 - 0.193, 0.337).append(pivotPartTarget).append(elevatorPartTarget).append(gripperPartTarget)
+        mechanismTarget.getRoot("root", 2.5 - 0.193, 0.337).append(elevatorPartTarget).append(gripperPartTarget)
                 .append(intakePartTarget);
 
-        pivotPartTarget.setColor(new Color8Bit(255, 0, 0));
         elevatorPartTarget.setColor(new Color8Bit(255, 0, 0));
         gripperPartTarget.setColor(new Color8Bit(255, 0, 0));
         intakePartTarget.setColor(new Color8Bit(255, 0, 0));
 
-        elevatorPartTarget.setLineWeight(3.9);
         elevatorPartTarget.setLineWeight(3.9);
         gripperPartTarget.setLineWeight(3.9);
         intakePartTarget.setLineWeight(3.9);
@@ -82,7 +76,7 @@ public class StateLoggingCommands {
 
         return Commands.run(
                 () -> {
-                    pivotPartCurrent.setAngle(Math.toDegrees(pivot.getCurrentAngle() + 90.0));
+                    elevatorPartCurrent.setAngle(Math.toDegrees(pivot.getCurrentAngle()));
 
                     elevatorPartCurrent.setLength(elevator.getCurrentLength());
 
@@ -108,7 +102,7 @@ public class StateLoggingCommands {
 
         return Commands.run(
                 () -> {
-                    pivotPartTarget.setAngle(Math.toDegrees(pivot.getTargetAngle()));
+                    elevatorPartTarget.setAngle(Math.toDegrees(pivot.getTargetAngle()));
 
                     elevatorPartTarget.setLength(elevator.getTargetLength());
 
