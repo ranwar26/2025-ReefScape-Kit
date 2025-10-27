@@ -230,7 +230,9 @@ public class ArmControlCommands {
       case HOME:
         returnArray = new double[]{PivotConstants.kHomeAngle, ElevatorConstants.kHomeLength, WristConstants.kCoralStationAngle};
         break;
-      
+      case CAGE:
+        returnArray = new double[]{PivotConstants.kCageStowAngle, ElevatorConstants.kHomeLength, WristConstants.kCoralStationAngle};
+        break;
     }
 
     return returnArray;
@@ -290,12 +292,16 @@ public class ArmControlCommands {
     /** Reef level 4 */
     LEVEL4,
 
+    /** Elevator starts stage 2 */
     PAST_STAGE2,
 
     /** Coral station */
     CORAL_STATION,
 
     /** The Home State */
-    HOME
+    HOME,
+
+    /** The cage grab position */
+    CAGE
   }
 }
