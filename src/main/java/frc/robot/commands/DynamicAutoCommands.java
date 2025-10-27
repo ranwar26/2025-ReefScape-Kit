@@ -150,13 +150,10 @@ public class DynamicAutoCommands {
         AutoDriveCommands
         .pathFindToReef(drive, reefSide, constraints, false)
         .deadlineFor(ArmControlCommands
-            .armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)
+            .armUpCommand(pivot, elevator, wrist, ArmPosition.STAND_BY, ArmSystem.ALL)
+            .repeatedly()
             .deadlineFor(IntakeCommands
                 .intakeRun(intake, () -> 0.0)
-            )
-            .andThen(ArmControlCommands
-                .armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.PIVOT)
-                .repeatedly()
             )
         )
     );
@@ -181,10 +178,11 @@ public class DynamicAutoCommands {
     primaryCommandGroup.addCommands(
         AutoDriveCommands.
             pathFindToCoralStation(drive, coralStation, constraints, false)
-            .deadlineFor(ArmControlCommands
-                .armDownCommand(pivot, elevator, wrist, reefLevel)
-                .alongWith(IntakeCommands
-                    .intakeRun(intake, () -> 0.0)
+            .deadlineFor(IntakeCommands
+                .intakeRun(intake, () -> 0.0)
+                .alongWith(ArmControlCommands
+                    .armUpCommand(pivot, elevator, wrist, ArmPosition.STAND_BY, ArmSystem.ALL)
+                    .repeatedly()
                 )
         )
     );

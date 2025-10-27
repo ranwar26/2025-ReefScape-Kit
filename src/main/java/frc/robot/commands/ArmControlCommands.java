@@ -233,6 +233,9 @@ public class ArmControlCommands {
       case CAGE:
         returnArray = new double[]{PivotConstants.kCageStowAngle, ElevatorConstants.kHomeLength, WristConstants.kCoralStationAngle};
         break;
+      case STAND_BY:
+        returnArray = new double[]{PivotConstants.kLevel3Angle, ElevatorConstants.kHomeLength, WristConstants.kLevel1Angle};
+        break;
     }
 
     return returnArray;
@@ -302,6 +305,9 @@ public class ArmControlCommands {
     HOME,
 
     /** The cage grab position */
-    CAGE
+    CAGE,
+
+    /** A hold position for DynamicAuto */
+    STAND_BY
   }
 }
