@@ -155,10 +155,9 @@ public class DynamicAutoCommands {
                 .intakeRun(intake, () -> 0.0)
             )
             .andThen(ArmControlCommands
-            .armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HOME, ArmSystem.ELEVATOR, ArmSystem.WRIST))
-            .alongWith(ArmControlCommands
-            .armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.PIVOT))
-            
+                .armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.PIVOT)
+                .repeatedly()
+            )
         )
     );
 
