@@ -206,7 +206,7 @@ public class VisionConstants {
     public static final double kLevel4Angle = Math.toRadians(80.0);
     public static final double kCoralStationAngle = Math.toRadians(74.0);
 
-    public static final double kUpperAlgaeRemove = Math.toRadians(67.0);
+    public static final double kHigherAlgaeRemove = Math.toRadians(67.0);
     public static final double kLowerAlgaeRemove = Math.toRadians(59.0);
 
     public static final double kCageStowAngle = Math.toRadians(85.0);
@@ -283,7 +283,7 @@ public class VisionConstants {
     public static final double kPastStage2 = Math.toRadians(90.0);
     public static final double kCoralStationAngle = Math.toRadians(26.0);
 
-    public static final double kUpperAlgaeRemove = Math.toRadians(157.0);
+    public static final double kHigherAlgaeRemove = Math.toRadians(157.0);
     public static final double kLowerAlgaeRemove = Math.toRadians(155.0);
 
     // The error limit before a command will end.

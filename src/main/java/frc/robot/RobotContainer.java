@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.VisionConstants;
@@ -95,6 +96,15 @@ public class RobotContainer {
 
 	// Controller
 	private final CommandXboxController controller = new CommandXboxController(0);
+	private final XboxController buttonBox = new XboxController(1);
+
+	private final JoystickButton level2Place = new JoystickButton(this.buttonBox, 4);
+  private final JoystickButton level3Place = new JoystickButton(this.buttonBox, 5);
+  private final JoystickButton level4Place = new JoystickButton(this.buttonBox, 6);
+  private final JoystickButton coralStationGrab = new JoystickButton(this.buttonBox, 3);
+  private final JoystickButton higherAlgaeRemove = new JoystickButton(this.buttonBox, 2);
+  private final JoystickButton lowerAlgaeRemove = new JoystickButton(this.buttonBox, 1);
+	private final JoystickButton cageStow = new JoystickButton(this.buttonBox, 7);
 
 	// Dashboard inputs
 	private final LoggedDashboardChooser<Command> autoChooser;
@@ -259,7 +269,7 @@ public class RobotContainer {
 				drive).ignoringDisable(true));
 
 		controller.a().whileTrue(
-			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.PIVOT, ArmSystem.ELEVATOR)
+			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
 			.andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL))
 			.andThen(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL)
 			.alongWith(ControllerCommands.setRumble(controller, 0.2, 0.2)))
@@ -314,6 +324,110 @@ public class RobotContainer {
 
 		// Used for demoing robot
 		// controller.rightStick().onTrue(AutoScoreCommands.autoDriveAndScore(drive, pivot, elevator, wrist, intake));
+
+
+		// ########## Button Box ##########
+
+		level2Place.whileTrue(
+			ArmControlCommands
+			.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
+			.andThen(ArmControlCommands
+				.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL)
+			)
+			.andThen(ArmControlCommands
+				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL)
+				.alongWith(ControllerCommands
+					.setRumble(controller, 0.2, 0.2)
+				)
+			)
+			.withName("level2UpAndHoldWithRumble")
+		);
+
+		level3Place.whileTrue(
+			ArmControlCommands
+			.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
+			.andThen(ArmControlCommands
+				.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL)
+			)
+			.andThen(ArmControlCommands
+				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL)
+				.alongWith(ControllerCommands
+					.setRumble(controller, 0.2, 0.2)
+				)
+			)
+			.withName("level3UpAndHoldWithRumble"));
+
+		level4Place.whileTrue(
+			ArmControlCommands
+			.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
+			.andThen(ArmControlCommands
+				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
+				.alongWith(ControllerCommands
+					.setRumble(controller, 0.2, 0.2)
+				)
+			)
+			.withName("level4UpAndHoldWithRumble")
+		);
+
+		level2Place.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL2));
+		level3Place.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL3));
+		level4Place.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL4));
+
+		coralStationGrab.whileTrue(
+			ArmControlCommands
+			.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+			.andThen(ArmControlCommands
+				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+				.alongWith(IntakeCommands
+					.intakeRun(intake, () -> -1.0)
+				)
+			)
+			.withName("CoralStationGrab")
+		);
+
+		coralStationGrab.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION));
+
+		cageStow.toggleOnTrue(
+			ArmControlCommands
+			.armUpCommand(pivot, elevator, wrist, ArmPosition.CAGE, ArmSystem.ALL)
+			.repeatedly()
+		);
+
+		cageStow.toggleOnFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CAGE));
+
+		lowerAlgaeRemove.whileTrue(
+			ArmControlCommands
+			.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
+			.andThen(ArmControlCommands
+				.armUpCommand(pivot, elevator, wrist, ArmPosition.LOWER_ALGAE_REMOVE, ArmSystem.ALL)
+			)
+			.andThen(ArmControlCommands
+				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LOWER_ALGAE_REMOVE, ArmSystem.ALL)
+				.alongWith(IntakeCommands
+					.intakeRun(intake, () -> 1.0)
+				)
+			)
+			.withName("LowerAlgaeRemove")
+		);
+
+		lowerAlgaeRemove.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LOWER_ALGAE_REMOVE));
+
+		higherAlgaeRemove.whileTrue(
+			ArmControlCommands
+			.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
+			.andThen(ArmControlCommands
+				.armUpCommand(pivot, elevator, wrist, ArmPosition.HIGHER_ALGAE_REMOVE, ArmSystem.ALL)
+			)
+			.andThen(ArmControlCommands
+				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HIGHER_ALGAE_REMOVE, ArmSystem.ALL)
+				.alongWith(IntakeCommands
+					.intakeRun(intake, () -> 1.0)
+				)
+			)
+			.withName("HigherAlgaeRemove")
+		);
+
+		higherAlgaeRemove.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.HIGHER_ALGAE_REMOVE));
 	}
 
 	/**
@@ -335,6 +449,6 @@ public class RobotContainer {
 	}
 
 	public void teleopInit() {
-		ArmControlCommands.armDownCommand(pivot, elevator, wrist, null).schedule();;
+		ArmControlCommands.armDownCommand(pivot, elevator, wrist, null).schedule();
 	}
 }

@@ -227,6 +227,12 @@ public class ArmControlCommands {
       case CORAL_STATION:
         returnArray = new double[]{PivotConstants.kCoralStationAngle, ElevatorConstants.kCoralStationLength, WristConstants.kCoralStationAngle};
         break;
+      case LOWER_ALGAE_REMOVE:
+        returnArray = new double[]{PivotConstants.kLowerAlgaeRemove, ElevatorConstants.kLevel2Length, WristConstants.kLowerAlgaeRemove};
+        break;
+      case HIGHER_ALGAE_REMOVE:
+        returnArray = new double[]{PivotConstants.kHigherAlgaeRemove, ElevatorConstants.kLevel3Length, WristConstants.kHigherAlgaeRemove};
+        break;
       case HOME:
         returnArray = new double[]{PivotConstants.kHomeAngle, ElevatorConstants.kHomeLength, WristConstants.kCoralStationAngle};
         break;
@@ -300,6 +306,12 @@ public class ArmControlCommands {
 
     /** Coral station */
     CORAL_STATION,
+
+    /** Lower Algae */
+    LOWER_ALGAE_REMOVE,
+
+    /** Higher Algae */
+    HIGHER_ALGAE_REMOVE,
 
     /** The Home State */
     HOME,
