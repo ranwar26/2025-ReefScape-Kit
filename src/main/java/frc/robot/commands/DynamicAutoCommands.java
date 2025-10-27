@@ -147,42 +147,63 @@ public class DynamicAutoCommands {
 
     // Moves to the chosen reef side
     primaryCommandGroup.addCommands(
-        AutoDriveCommands.pathFindToReef(drive, reefSide, constraints, false).deadlineFor(
-            ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)
-            .andThen(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HOME, ArmSystem.ELEVATOR, ArmSystem.WRIST)),
-            ArmControlCommands.armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.PIVOT)
+        AutoDriveCommands
+        .pathFindToReef(drive, reefSide, constraints, false)
+        .deadlineFor(ArmControlCommands
+            .armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)
+            .deadlineFor(IntakeCommands
+                .intakeRun(intake, () -> 0.0)
+            )
+            .andThen(ArmControlCommands
+            .armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HOME, ArmSystem.ELEVATOR, ArmSystem.WRIST))
+            .alongWith(ArmControlCommands
+            .armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.PIVOT))
+            
         )
     );
 
     // Scores on the chosen reef level
     primaryCommandGroup.addCommands(
-        ArmControlCommands.armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL).deadlineFor(
-            AutoDriveCommands.pathFindToReef(drive, reefSide, constraints, true)
-        ),
-        Commands.waitSeconds(0.5).deadlineFor(
-            ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL).alongWith(IntakeCommands.intakeRun(intake, () -> 1.0))
-        ),
-        IntakeCommands.intakeRun(intake, () -> 0.0).withTimeout(0.0)
+        ArmControlCommands
+        .armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL)
+        .deadlineFor(AutoDriveCommands
+            .pathFindToReef(drive, reefSide, constraints, true)
+        )
+        .andThen(IntakeCommands
+            .intakeRun(intake, () -> 1.0)
+            .withTimeout(0.5)
+            .deadlineFor(ArmControlCommands
+                .armHoldAtCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL)
+            )
+        )
     );
 
     // Moves to the chosen coral station
     primaryCommandGroup.addCommands(
-        AutoDriveCommands.pathFindToCoralStation(drive, coralStation, constraints, false).deadlineFor(
-            ArmControlCommands.armDownCommand(pivot, elevator, wrist, reefLevel)
-            .andThen(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HOME, ArmSystem.ELEVATOR, ArmSystem.WRIST)),
-            ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.PIVOT)
+        AutoDriveCommands.
+            pathFindToCoralStation(drive, coralStation, constraints, false)
+            .deadlineFor(ArmControlCommands
+                .armDownCommand(pivot, elevator, wrist, reefLevel)
+                .alongWith(IntakeCommands
+                    .intakeRun(intake, () -> 0.0)
+                )
         )
     );
 
     // Grabs coral out of the station
     primaryCommandGroup.addCommands(
-        ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL).deadlineFor(
-            AutoDriveCommands.pathFindToCoralStation(drive, coralStation, constraints, true)
-        ),
-        Commands.waitSeconds(0.5).deadlineFor(
-            ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL).alongWith(IntakeCommands.intakeRun(intake, () -> -1.0))
-        ),
-        IntakeCommands.intakeRun(intake, () -> 0.0).withTimeout(0.0)
+        ArmControlCommands
+        .armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+        .deadlineFor(AutoDriveCommands
+            .pathFindToCoralStation(drive, coralStation, constraints, true)
+        )
+        .andThen(IntakeCommands
+            .intakeRun(intake, () -> -1.0)
+            .withTimeout(1.0)
+            .deadlineFor(ArmControlCommands
+                .armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+            )
+        )
     );
 
 
