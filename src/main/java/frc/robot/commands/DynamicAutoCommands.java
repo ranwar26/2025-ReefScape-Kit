@@ -116,10 +116,16 @@ public class DynamicAutoCommands {
         primaryCommandGroup.addCommands(getCycle(thirdReefSide.get(), thirdReefLevel.get(), thirdCoralStation.get(), totalCycles));
         totalCycles--;
 
-        return primaryCommandGroup.andThen(
-        AutoDriveCommands.pathFindToPose(endingPose.get() == null ? () -> drive.getPose() : () -> endingPose.get(), constraints, 0)
-        .alongWith(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL).withTimeout(0.0)
-            .andThen(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)))
+        return primaryCommandGroup
+        .andThen(AutoDriveCommands
+            .pathFindToPose(endingPose.get() == null ? () -> drive.getPose() : () -> endingPose.get(), constraints, 0)
+            .alongWith(ArmControlCommands
+                .armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+                .withTimeout(0.0)
+                .andThen(ArmControlCommands
+                    .armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)
+                )
+            )
         ).withName("dynamicAuto");
     }
 

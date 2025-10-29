@@ -266,10 +266,10 @@ public class VisionConstants {
     public static final int kMaxCurrentLimit = 60;
     public static final double kMaxVoltage = 12;
 
-    public static final double kRealP = 0.2;
+    public static final double kRealP = 0.6;
     public static final double kRealI = 0.0;
     public static final double kRealD = 0.0;
-    public static final double kSimP = 0.2;
+    public static final double kSimP = 0.6;
     public static final double kSimI = 0.0;
     public static final double kSimD = 0.0;
 
