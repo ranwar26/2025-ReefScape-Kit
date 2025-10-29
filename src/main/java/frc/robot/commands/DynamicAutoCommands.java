@@ -173,9 +173,12 @@ public class DynamicAutoCommands {
             )
             .andThen(IntakeCommands
                 .intakeRun(intake, () -> 1.0)
-                .withTimeout(0.5)
+                .withTimeout(0.33)
                 .deadlineFor(ArmControlCommands
                     .armHoldAtCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL)
+                    .alongWith(AutoDriveCommands
+                        .pathFindToReef(drive, reefSide, constraints, true)
+                    )
                 )
             )
         );
@@ -187,8 +190,12 @@ public class DynamicAutoCommands {
                 .deadlineFor(IntakeCommands
                     .intakeRun(intake, () -> 0.0)
                     .alongWith(ArmControlCommands
-                        .armUpCommand(pivot, elevator, wrist, ArmPosition.STAND_BY, ArmSystem.ALL)
-                        .repeatedly()
+                        .armDownCommand(pivot, elevator, wrist, reefLevel)
+                        .until(() -> wrist.getCurrentAngle() - Math.PI/2.0 < 0.0)
+                        .andThen(ArmControlCommands
+                            .armUpCommand(pivot, elevator, wrist, ArmPosition.STAND_BY, ArmSystem.ALL)
+                            .repeatedly()
+                        )
                     )
             )
         );
@@ -205,6 +212,9 @@ public class DynamicAutoCommands {
                 .withTimeout(1.0)
                 .deadlineFor(ArmControlCommands
                     .armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+                    .alongWith(AutoDriveCommands
+                        .pathFindToCoralStation(drive, coralStation, constraints, true)
+                    )
                 )
             )
         );
@@ -299,22 +309,22 @@ public class DynamicAutoCommands {
     public static class FieldPoses {
 
         /** Blue side */
-        public static final Pose2d leftWallCage_BlueSide = new Pose2d(7.1, 7.3, new Rotation2d());
-        public static final Pose2d leftCenterCage_BlueSide = new Pose2d(7.1, 6.2, new Rotation2d());
-        public static final Pose2d leftPostCage_BlueSide = new Pose2d(7.1, 5.1, new Rotation2d());
-        public static final Pose2d center_BlueSide = new Pose2d(7.1, 4.0, new Rotation2d());
-        public static final Pose2d rightWallCage_BlueSide = new Pose2d(7.1, 0.8, new Rotation2d());
-        public static final Pose2d rightCenterCage_BlueSide = new Pose2d(7.1, 1.9, new Rotation2d());
-        public static final Pose2d rightPostCage_BlueSide = new Pose2d(7.1, 3.0, new Rotation2d());
+        public static final Pose2d leftWallCage_BlueSide = new Pose2d(7.1, 7.3, new Rotation2d(Math.PI));
+        public static final Pose2d leftCenterCage_BlueSide = new Pose2d(7.1, 6.2, new Rotation2d(Math.PI));
+        public static final Pose2d leftPostCage_BlueSide = new Pose2d(7.1, 5.1, new Rotation2d(Math.PI));
+        public static final Pose2d center_BlueSide = new Pose2d(7.1, 4.0, new Rotation2d(Math.PI));
+        public static final Pose2d rightWallCage_BlueSide = new Pose2d(7.1, 0.8, new Rotation2d(Math.PI));
+        public static final Pose2d rightCenterCage_BlueSide = new Pose2d(7.1, 1.9, new Rotation2d(Math.PI));
+        public static final Pose2d rightPostCage_BlueSide = new Pose2d(7.1, 3.0, new Rotation2d(Math.PI));
 
         /** Red Side */
-        public static final Pose2d leftWallCage_RedSide = new Pose2d(10.4, 0.8, new Rotation2d());
-        public static final Pose2d leftCenterCage_RedSide = new Pose2d(10.4, 1.9, new Rotation2d());
-        public static final Pose2d leftPostCage_RedSide = new Pose2d(10.4, 3.0, new Rotation2d());
-        public static final Pose2d center_RedSide = new Pose2d(10.4, 4.0, new Rotation2d());
-        public static final Pose2d rightWallCage_RedSide = new Pose2d(10.4, 7.3, new Rotation2d());
-        public static final Pose2d rightCenterCage_RedSide = new Pose2d(10.4, 6.2, new Rotation2d());
-        public static final Pose2d rightPostCage_RedSide = new Pose2d(10.4, 5.1, new Rotation2d());
+        public static final Pose2d leftWallCage_RedSide = new Pose2d(10.4, 0.8, new Rotation2d(Math.PI));
+        public static final Pose2d leftCenterCage_RedSide = new Pose2d(10.4, 1.9, new Rotation2d(Math.PI));
+        public static final Pose2d leftPostCage_RedSide = new Pose2d(10.4, 3.0, new Rotation2d(Math.PI));
+        public static final Pose2d center_RedSide = new Pose2d(10.4, 4.0, new Rotation2d(Math.PI));
+        public static final Pose2d rightWallCage_RedSide = new Pose2d(10.4, 7.3, new Rotation2d(Math.PI));
+        public static final Pose2d rightCenterCage_RedSide = new Pose2d(10.4, 6.2, new Rotation2d(Math.PI));
+        public static final Pose2d rightPostCage_RedSide = new Pose2d(10.4, 5.1, new Rotation2d(Math.PI));
 
         /** Our team side */
         public static final Pose2d leftWallCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue

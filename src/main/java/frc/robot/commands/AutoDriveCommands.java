@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -123,7 +124,8 @@ public class AutoDriveCommands {
     }
 
 
-    private static PIDController preciseMovePIDController = new PIDController(0.5, 0.1, 0.0);
+    private static PIDController preciseXMovePIDController = new PIDController(1.0, 0.1, 0.0);
+    private static PIDController preciseYMovePIDController = new PIDController(1.0, 0.1, 0.0);
 
     /**
      * Only run when near the target, as it does not use pathfinding. 
@@ -136,9 +138,11 @@ public class AutoDriveCommands {
 
         double[] deltaValues = new double[2];
 
+        Pose2d maxErrorPose = DriverStation.isAutonomous() ? AutoDriveConstants.maxErrorPoseAuto : AutoDriveConstants.maxErrorPoseTeleop;
+
         BooleanSupplier isWithinError = () ->
-            Math.abs(drive.getPose().minus(targetPose).getX()) < AutoDriveConstants.maxErrorPose.getX() &&
-            Math.abs(drive.getPose().minus(targetPose).getY()) < AutoDriveConstants.maxErrorPose.getY();
+            Math.abs(drive.getPose().minus(targetPose).getX()) < maxErrorPose.getX() &&
+            Math.abs(drive.getPose().minus(targetPose).getY()) < maxErrorPose.getY();
 
         Debouncer debouncer = new Debouncer(0.1, DebounceType.kBoth);
 
@@ -154,13 +158,16 @@ public class AutoDriveCommands {
             DriveCommands.driveAtAngle(
             drive,
             () -> 1.0,
-            () -> preciseMovePIDController.calculate(deltaValues[0]),
-            () -> preciseMovePIDController.calculate(deltaValues[1]),
+            () -> preciseXMovePIDController.calculate(deltaValues[0]),
+            () -> preciseYMovePIDController.calculate(deltaValues[1]),
             () -> targetPose.getRotation().getCos(),
             () -> targetPose.getRotation().getSin()
             ).withTimeout(0.02)
         ).repeatedly().until(() -> debouncer.calculate(isWithinError.getAsBoolean()))
-        .beforeStarting(() -> preciseMovePIDController.reset())
+        .beforeStarting(() -> {
+            preciseXMovePIDController.reset();
+            preciseYMovePIDController.reset();
+        })
         .andThen(Commands.runOnce(
             () -> drive.stopWithX()
         )).withName("preciseMoveToPose");

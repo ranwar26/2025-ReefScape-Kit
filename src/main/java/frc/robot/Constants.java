@@ -309,7 +309,9 @@ public class VisionConstants {
 
   public final class AutoDriveConstants {
 
-    public static final Pose2d maxErrorPose = new Pose2d(0.05, 0.05, new Rotation2d());
+    // Spilt due to autos never waiting on pose line, so more time to line up.
+    public static final Pose2d maxErrorPoseTeleop = new Pose2d(0.05, 0.05, new Rotation2d());
+    public static final Pose2d maxErrorPoseAuto = new Pose2d(0.01, 0.01, new Rotation2d());
   }
 
 }
