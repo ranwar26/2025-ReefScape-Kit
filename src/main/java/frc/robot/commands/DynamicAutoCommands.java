@@ -62,9 +62,6 @@ public class DynamicAutoCommands {
     private static LoggedDashboardChooser<Integer> endAfterCycle = new LoggedDashboardChooser<>(
         networkKeyPrefix + "End after cycle");
 
-    private static LoggedDashboardChooser<Pose2d> endingPose = new LoggedDashboardChooser<>(
-        networkKeyPrefix + "Ending Pose");
-
     private static Drive drive;
     private static Pivot pivot;
     private static Elevator elevator;
@@ -117,14 +114,11 @@ public class DynamicAutoCommands {
         totalCycles--;
 
         return primaryCommandGroup
-        .andThen(AutoDriveCommands
-            .pathFindToPose(endingPose.get() == null ? () -> drive.getPose() : () -> endingPose.get(), constraints, 0)
-            .alongWith(ArmControlCommands
-                .armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
-                .withTimeout(0.0)
-                .andThen(ArmControlCommands
-                    .armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)
-                )
+        .andThen(ArmControlCommands
+            .armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+            .withTimeout(0.0)
+            .andThen(ArmControlCommands
+                .armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)
             )
         ).withName("dynamicAuto");
     }
@@ -294,15 +288,6 @@ public class DynamicAutoCommands {
         endAfterCycle.addOption("Two", 2);
         endAfterCycle.addOption("One", 1);
         endAfterCycle.addOption("Zero", 0);
-
-        endingPose.addDefaultOption("No end pose", null);
-        endingPose.addOption("Center", FieldPoses.center);
-        endingPose.addOption("Left Wall Cage", FieldPoses.leftWallCage);
-        endingPose.addOption("Left Center Cage", FieldPoses.leftCenterCage);
-        endingPose.addOption("Left Post Cage", FieldPoses.leftPostCage);
-        endingPose.addOption("Right Wall Cage", FieldPoses.rightWallCage);
-        endingPose.addOption("Right Center Cage", FieldPoses.rightCenterCage);
-        endingPose.addOption("Right Post Cage", FieldPoses.rightPostCage);
 
     }
 
