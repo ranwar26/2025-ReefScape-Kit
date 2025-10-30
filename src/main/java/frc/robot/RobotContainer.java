@@ -23,7 +23,6 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -262,7 +261,7 @@ public class RobotContainer {
 	private void configureButtonBindings() {
 
 		// Point all wheel towards the center of the robot.
-		controller.x().whileTrue(Commands.runOnce(drive::stopWithX, drive));
+		controller.x().whileTrue(Commands.run(drive::stopWithX, drive));
 
 		controller.start().onTrue(Commands.runOnce(
 				() -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
@@ -295,9 +294,9 @@ public class RobotContainer {
 
 		controller.povDown().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT, null,true));
 		controller.povDownLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_LEFT,null,true));
-		controller.povLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_LEFT,null,true));
+		// controller.povLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_LEFT,null,true));
 		controller.povDownRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_RIGHT, null,true));
-		controller.povRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_RIGHT, null,true));
+		// controller.povRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_RIGHT, null,true));
 		controller.povUp().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK, null,true));
 		controller.povUpLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_LEFT, null,true));
 		controller.povUpRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_RIGHT, null,true));
@@ -311,16 +310,8 @@ public class RobotContainer {
 		PathConstraints.unlimitedConstraints(12.0), 0))
 		);
 
-		controller.x().onTrue(AutoDriveCommands.pathFindToPose(
-			() -> new Pose2d(
-				CagePosition.alliedCages.get(0).getFirst().interpolate(CagePosition.alliedCages.get(0).getSecond(), 0.5),
-				new Rotation2d()
-				).transformBy(new Transform2d(-2.0, 0.0, new Rotation2d())
-			),
-			PathConstraints.unlimitedConstraints(12.0), 0));
-
 		// Used to stop any path finding happing
-		controller.leftStick().whileTrue(Commands.runOnce(() -> {}, drive));
+		controller.leftStick().onTrue(Commands.runOnce(() -> {}, drive));
 
 		// Used for demoing robot
 		// controller.rightStick().onTrue(AutoScoreCommands.autoDriveAndScore(drive, pivot, elevator, wrist, intake));

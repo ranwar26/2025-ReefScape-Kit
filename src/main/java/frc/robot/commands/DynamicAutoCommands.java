@@ -167,7 +167,7 @@ public class DynamicAutoCommands {
             )
             .andThen(IntakeCommands
                 .intakeRun(intake, () -> 1.0)
-                .withTimeout(0.33)
+                .withTimeout(0.5)
                 .deadlineFor(ArmControlCommands
                     .armHoldAtCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL)
                     .alongWith(AutoDriveCommands
@@ -203,7 +203,7 @@ public class DynamicAutoCommands {
             )
             .andThen(IntakeCommands
                 .intakeRun(intake, () -> -1.0)
-                .withTimeout(1.0)
+                .withTimeout(2.0)
                 .deadlineFor(ArmControlCommands
                     .armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
                     .alongWith(AutoDriveCommands
