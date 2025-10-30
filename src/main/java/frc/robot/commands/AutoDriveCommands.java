@@ -82,7 +82,8 @@ public class AutoDriveCommands {
             return new SequentialCommandGroup(
                 AutoBuilder.pathfindToPose(
                 targetPose,
-                constraints
+                constraints,
+                0.0
                 ),
                 preciseMoveToPose(
                     drive,
@@ -92,7 +93,8 @@ public class AutoDriveCommands {
         }
         return AutoBuilder.pathfindToPose(
                 targetPose,
-                constraints
+                constraints,
+                0.0
             ).withName("pathFindToReef");
     }
 
@@ -108,7 +110,8 @@ public class AutoDriveCommands {
             return new SequentialCommandGroup(
                 AutoBuilder.pathfindToPose(
                 targetPose,
-                constraints
+                constraints,
+                0.0
                 ),
                 preciseMoveToPose(
                     drive,
@@ -144,7 +147,7 @@ public class AutoDriveCommands {
             Math.abs(drive.getPose().minus(targetPose).getX()) < maxErrorPose.getX() &&
             Math.abs(drive.getPose().minus(targetPose).getY()) < maxErrorPose.getY();
 
-        Debouncer debouncer = new Debouncer(0.1, DebounceType.kBoth);
+        Debouncer debouncer = new Debouncer(0.25, DebounceType.kBoth);
 
         return new SequentialCommandGroup(
             Commands.runOnce(
@@ -156,14 +159,17 @@ public class AutoDriveCommands {
                 }
             ),
             DriveCommands.driveAtAngle(
-            drive,
-            () -> 1.0,
-            () -> preciseXMovePIDController.calculate(deltaValues[0]),
-            () -> preciseYMovePIDController.calculate(deltaValues[1]),
-            () -> targetPose.getRotation().getCos(),
-            () -> targetPose.getRotation().getSin()
-            ).withTimeout(0.02)
-        ).repeatedly().until(() -> debouncer.calculate(isWithinError.getAsBoolean()))
+                drive,
+                () -> 1.0,
+                () -> preciseXMovePIDController.calculate(deltaValues[0]),
+                () -> preciseYMovePIDController.calculate(deltaValues[1]),
+                () -> targetPose.getRotation().getCos(),
+                () -> targetPose.getRotation().getSin()
+            )
+            .withTimeout(0.02)
+        )
+        .repeatedly()
+        .until(() -> debouncer.calculate(isWithinError.getAsBoolean()))
         .beforeStarting(() -> {
             preciseXMovePIDController.reset();
             preciseYMovePIDController.reset();
