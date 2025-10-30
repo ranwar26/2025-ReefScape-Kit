@@ -236,7 +236,7 @@ public class VisionConstants {
 
     // These are the voltages of the motors to overcome gravity to reduce sliding
     public static final double kRealG = 0.1; //TODO: Test this value
-    public static final double kSimG = 1.5;
+    public static final double kSimG = 2.45;
 
     // Target length in meters
     public static final double kHomeLength = 0.659;
