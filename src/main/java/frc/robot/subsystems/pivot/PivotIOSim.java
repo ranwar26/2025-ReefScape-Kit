@@ -62,12 +62,6 @@ public class PivotIOSim implements PivotIO {
 		double speed = this.m_pivotPIDController.calculate(this.pivotArmSim.getAngleRads(), angle);
 		double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
 
-		// If the pivot is under 0.1 degrees of error AND trying to apply more than 6
-		// volt, then don't apply those 6 volts
-		if (MathUtil.isNear(this.pivotArmSim.getAngleRads(), angle, Math.toRadians(0.1), 0.0, 2.0 * Math.PI)
-				&& volts > 6.0)
-			volts = 0.0;
-
 		this.appliedVolts = volts;
 	}
 

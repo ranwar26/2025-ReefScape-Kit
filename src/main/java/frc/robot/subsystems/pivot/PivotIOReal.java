@@ -77,13 +77,6 @@ public class PivotIOReal implements PivotIO {
 		double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
 		volts += PivotConstants.kRealG;
 
-		// TODO: check if these (sim/real and elevator) are even needed
-		// If the pivot is under 0.1 degrees of error AND trying to apply more than 6
-		// volt, then don't apply those 6 volts
-		if (MathUtil.isNear(this.m_rightEncoder.getPosition(), angle, Math.toRadians(0.1), 0.0, 2.0 * Math.PI)
-				&& volts > 6.0)
-			volts = 0.0;
-
 		this.m_leftMotor.setVoltage(volts);
 		this.m_rightMotor.setVoltage(volts);
 	}
