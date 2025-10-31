@@ -19,27 +19,25 @@ public class WristCommands {
   /**
    * Gives the wrist subsystem a target angle
    *
-   * @param wrist the wrist subsystem
-   * @param targetAngle the angle to be achieved
+   * @param wrist             the wrist subsystem
+   * @param targetAngle       the angle to be achieved
    * @param allowEndCondition whether the end condition is used
    * @return the command with the given logic
    */
   public static Command wristToTarget(Wrist wrist, DoubleSupplier targetAngle, boolean allowEndCondition) {
 
     Command returnCommand = Commands.runEnd(
-      () -> {
-        wrist.setTargetAngle(targetAngle.getAsDouble());
-      },
-      () -> {
-        wrist.setTargetAngle(wrist.getCurrentAngle());
-      },
-      wrist
-      )
-      .until(allowEndCondition ?
-        () -> Math.abs(wrist.getCurrentAngle() - targetAngle.getAsDouble()) < WristConstants.kAngleErrorAllowed :
-        () -> false
-      )
-      .withName("wristToTarget");
+        () -> {
+          wrist.setTargetAngle(targetAngle.getAsDouble());
+        },
+        () -> {
+          wrist.setTargetAngle(wrist.getCurrentAngle());
+        },
+        wrist)
+        .until(allowEndCondition
+            ? () -> Math.abs(wrist.getCurrentAngle() - targetAngle.getAsDouble()) < WristConstants.kAngleErrorAllowed
+            : () -> false)
+        .withName("wristToTarget");
 
     return returnCommand;
   }
@@ -47,8 +45,8 @@ public class WristCommands {
   /**
    * Gives the wrist subsystem a target angle
    *
-   * @param wrist the wrist subsystem
-   * @param targetAngle the angle to be achieved
+   * @param wrist             the wrist subsystem
+   * @param targetAngle       the angle to be achieved
    * @param allowEndCondition whether the end condition is used
    * @return the command with the given logic
    */

@@ -21,7 +21,9 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.wrist.Wrist;
 
-/** Add your docs here. */
+/**
+ * A class containing commands for logging multi-subsystem parts of the robot
+ */
 public class StateLoggingCommands {
 
     // Part for the current arm
@@ -66,11 +68,11 @@ public class StateLoggingCommands {
 
     /**
      * Updates the arm mechanism's current position and rotation
-     * 
-     * @param pivot the pivot subsystem
+     *
+     * @param pivot    the pivot subsystem
      * @param elevator the elevator subsystem
-     * @param wrist the wrist subsystem
-     * @param intake the intake subsystem
+     * @param wrist    the wrist subsystem
+     * @param intake   the intake subsystem
      * @return the command with the Logic
      */
     public static Command mechanismRunCurrent(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
@@ -92,11 +94,11 @@ public class StateLoggingCommands {
 
     /**
      * Updates the arm mechanism's target position and rotation
-     * 
-     * @param pivot the pivot subsystem
+     *
+     * @param pivot    the pivot subsystem
      * @param elevator the elevator subsystem
-     * @param wrist the wrist subsystem
-     * @param intake the intake subsystem
+     * @param wrist    the wrist subsystem
+     * @param intake   the intake subsystem
      * @return the command with the Logic
      */
     public static Command mechanismRunTarget(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
@@ -123,19 +125,19 @@ public class StateLoggingCommands {
 
     public static Command logCommands() {
 
-        CommandScheduler.getInstance().onCommandInitialize(new Consumer<Command>() {
+        CommandScheduler.getInstance().onCommandInitialize(new Consumer<Command>() { // Add the new commands
             @Override
             public void accept(Command command) {
                 activeCommands.add(command);
             }
         });
-        CommandScheduler.getInstance().onCommandFinish(new Consumer<Command>() {
+        CommandScheduler.getInstance().onCommandFinish(new Consumer<Command>() { // Remove the finished commands
             @Override
             public void accept(Command command) {
                 activeCommands.remove(command);
             }
         });
-        CommandScheduler.getInstance().onCommandInterrupt(new Consumer<Command>() {
+        CommandScheduler.getInstance().onCommandInterrupt(new Consumer<Command>() {// Remove the interrupted commands
             @Override
             public void accept(Command command) {
                 activeCommands.remove(command);
@@ -145,8 +147,8 @@ public class StateLoggingCommands {
         return Commands.run(() -> {
             allCommandNames.clear();
 
+            // for each active command, add each of their names to the logged list
             for (Command command : activeCommands) {
-
                 allCommandNames.add(command.getName());
             }
 

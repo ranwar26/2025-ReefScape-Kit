@@ -63,8 +63,8 @@ public class DriveCommands {
   /**
    * Turns the position of a joystick into a x, y velocity
    *
-   * @param x - x position of the joystick
-   * @param y - y position of the joystick
+   * @param x x position of the joystick
+   * @param y y position of the joystick
    * @return x, y velocity
    */
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
@@ -83,20 +83,20 @@ public class DriveCommands {
 
   /**
    * Turns the position of a joystick into a a rotational speed
-   * 
-   * @param x - x position of the joystick
-   * @param y - y position of the joystick
-   * @param rawGyroAngle - Current gyro angle in degrees
-   * @return - the rotational speed in radians
+   *
+   * @param x            x position of the joystick
+   * @param y            y position of the joystick
+   * @param rawGyroAngle Current gyro angle in degrees
+   * @return the rotational speed in radians
    */
   private static Rotation2d getAngularSpeedFromJoysticks(double x, double y, double rawGyroAngle) {
 
-    //Checks if any rotation input is being given
+    // Checks if any rotation input is being given
     if (Math.abs(x) < OIConstants.kDriveDeadband && Math.abs(y) < OIConstants.kDriveDeadband) {
       return new Rotation2d(0.0);
     }
 
-    //put angle between 0 and 359 degrees
+    // put angle between 0 and 359 degrees
     double currentAngle = Math.abs(rawGyroAngle % 360);
     if (rawGyroAngle < 0) {
       currentAngle = 360 - currentAngle;
@@ -107,7 +107,8 @@ public class DriveCommands {
     double targetAngle = Math.atan2(x, y);
     targetAngle = (Math.toDegrees(targetAngle) - 90) % 360;
 
-    // // This should digitally "notch" the joystick to the 6 sides of the reef. Don't need this.
+    // // This should digitally "notch" the joystick to the 6 sides of the reef.
+    // Don't need this.
     // targetAngle = (Math.round(targetAngle / 60.0) * 60.0) % 360.0;
 
     double theta = Math.abs(targetAngle - currentAngle) % 360;
@@ -131,14 +132,14 @@ public class DriveCommands {
   /**
    * Field relative drive command using joystick for linear control and PID for
    * angular control.
-   * 
-   * @param drive - the drive subsystem
-   * @param throttleSupplier - the throttle of the robot speed
-   * @param xSupplier - x speed of the robot
-   * @param ySupplier - y speed of the robot
-   * @param xAngleSupplier - x component of the angle
-   * @param yAngleSupplier - y component of the angle
-   * @return - the command with the logic of this method
+   *
+   * @param drive            the drive subsystem
+   * @param throttleSupplier the throttle of the robot speed
+   * @param xSupplier        x speed of the robot
+   * @param ySupplier        y speed of the robot
+   * @param xAngleSupplier   x component of the angle
+   * @param yAngleSupplier   y component of the angle
+   * @return the command with the logic of this method
    */
   public static Command driveAtAngle(
       Drive drive,
@@ -192,9 +193,9 @@ public class DriveCommands {
         // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians())).withName("driveAtAngle");
 
-        returnCommand.setSubsystem("Drive");
+    returnCommand.setSubsystem("Drive");
 
-        return returnCommand;
+    return returnCommand;
   }
 
   /**
@@ -258,7 +259,8 @@ public class DriveCommands {
                   System.out.println("********** Drive FF Characterization Results **********");
                   System.out.println("\tkS: " + formatter.format(kS));
                   System.out.println("\tkV: " + formatter.format(kV));
-                })).withName("feedforwardCharacterization");
+                }))
+        .withName("feedforwardCharacterization");
   }
 
   /** Measures the robot's wheel radius by spinning in a circle. */
@@ -327,7 +329,8 @@ public class DriveCommands {
                               + " meters, "
                               + formatter.format(Units.metersToInches(wheelRadius))
                               + " inches");
-                    }))).withName("wheelRadiusCharacterization");
+                    })))
+        .withName("wheelRadiusCharacterization");
   }
 
   private static class WheelRadiusCharacterizationState {

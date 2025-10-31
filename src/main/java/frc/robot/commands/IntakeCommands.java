@@ -10,23 +10,25 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.intake.Intake;
 
-/** Add your docs here. */
+/**
+ * A class containing intake commands
+ */
 public class IntakeCommands {
 
   /**
    * Runs the intake a speed percentage
-   * 
-   * @param intake - the intake subsystem
-   * @param speedPercentage - the percentage the intake should run at
+   *
+   * @param intake          the intake subsystem
+   * @param speedPercentage the percentage the intake should run at
    * @return - the command with the logic
    */
   public static Command intakeRun(Intake intake, DoubleSupplier speedPercentage) {
 
     return Commands.run(
-      () -> {
-        intake.setIntakePercentage(speedPercentage.getAsDouble());
-      },
-      intake)
-      .withName("intakeRun");
+        () -> {
+          intake.setIntakePercentage(speedPercentage.getAsDouble());
+        },
+        intake)
+        .withName("intakeRun");
   }
 }

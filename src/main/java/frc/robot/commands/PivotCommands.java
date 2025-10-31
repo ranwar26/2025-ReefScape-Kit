@@ -19,27 +19,25 @@ public class PivotCommands {
   /**
    * Gives the pivot subsystem a target angle
    *
-   * @param pivot the pivot subsystem
-   * @param targetAngle the angle to achieve
+   * @param pivot             the pivot subsystem
+   * @param targetAngle       the angle to achieve
    * @param allowEndCondition whether the end condition is used
    * @return Command with the given logic
    */
   public static Command pivotToTarget(Pivot pivot, DoubleSupplier targetAngle, boolean allowEndCondition) {
 
     Command returnCommand = Commands.runEnd(
-      () -> {
-        pivot.setTargetAngle(targetAngle.getAsDouble());
-      },
-      () -> {
-        pivot.setTargetAngle(pivot.getCurrentAngle());
-      },
-      pivot
-    )
-    .until(allowEndCondition ?
-      () -> Math.abs(pivot.getCurrentAngle() - targetAngle.getAsDouble()) < PivotConstants.kAngleErrorAllowed :
-      () -> false
-    )
-    .withName("pivotToTarget");
+        () -> {
+          pivot.setTargetAngle(targetAngle.getAsDouble());
+        },
+        () -> {
+          pivot.setTargetAngle(pivot.getCurrentAngle());
+        },
+        pivot)
+        .until(allowEndCondition
+            ? () -> Math.abs(pivot.getCurrentAngle() - targetAngle.getAsDouble()) < PivotConstants.kAngleErrorAllowed
+            : () -> false)
+        .withName("pivotToTarget");
 
     return returnCommand;
   }
@@ -47,8 +45,8 @@ public class PivotCommands {
   /**
    * Gives the pivot subsystem a target angle
    *
-   * @param pivot the pivot subsystem
-   * @param targetAngle the angle to achieve
+   * @param pivot             the pivot subsystem
+   * @param targetAngle       the angle to achieve
    * @param allowEndCondition whether the end condition is used
    * @return Command with the given logic
    */

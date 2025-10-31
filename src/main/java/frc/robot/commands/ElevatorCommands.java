@@ -19,27 +19,26 @@ public class ElevatorCommands {
   /**
    * Gives the elevator subsystem a target length
    *
-   * @param elevator the elevator subsystem
-   * @param targetLength the length to be achieved
+   * @param elevator          the elevator subsystem
+   * @param targetLength      the length to be achieved
    * @param allowEndCondition whether the end condition of the command is to be
    * @return the command with the logic
    */
   public static Command elevatorToTarget(Elevator elevator, DoubleSupplier targetLength, boolean allowEndCondition) {
 
     Command returnCommand = Commands.runEnd(
-      () -> {
-        elevator.setTargetLength(targetLength.getAsDouble());
-      },
-      () -> {
-        elevator.setTargetLength(elevator.getCurrentLength());
-      },
-      elevator
-    )
-    .until(allowEndCondition ?
-      () -> Math.abs(elevator.getCurrentLength() - targetLength.getAsDouble()) < ElevatorConstants.kLengthErrorAllowed :
-      () -> false
-    )
-    .withName("elevatorToTarget");
+        () -> {
+          elevator.setTargetLength(targetLength.getAsDouble());
+        },
+        () -> {
+          elevator.setTargetLength(elevator.getCurrentLength());
+        },
+        elevator)
+        .until(allowEndCondition
+            ? () -> Math
+                .abs(elevator.getCurrentLength() - targetLength.getAsDouble()) < ElevatorConstants.kLengthErrorAllowed
+            : () -> false)
+        .withName("elevatorToTarget");
 
     return returnCommand;
   }
@@ -47,8 +46,8 @@ public class ElevatorCommands {
   /**
    * Gives the elevator subsystem a target length
    *
-   * @param elevator the elevator subsystem
-   * @param targetLength the length to be achieved
+   * @param elevator          the elevator subsystem
+   * @param targetLength      the length to be achieved
    * @param allowEndCondition whether the end condition of the command is to be
    * @return the command with the logic
    */
