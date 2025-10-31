@@ -34,12 +34,12 @@ public class WristCommands {
         wrist.setTargetAngle(wrist.getCurrentAngle());
       },
       wrist
-      );
-
-    if(allowEndCondition)
-      returnCommand.until(() -> Math.abs(wrist.getCurrentAngle() - targetAngle.getAsDouble()) < WristConstants.kAngleErrorAllowed);
-
-    returnCommand.withName("wristToTarget");
+      )
+      .until(allowEndCondition ?
+        () -> Math.abs(wrist.getCurrentAngle() - targetAngle.getAsDouble()) < WristConstants.kAngleErrorAllowed :
+        () -> false
+      )
+      .withName("wristToTarget");
 
     return returnCommand;
   }

@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -21,8 +20,6 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.wrist.Wrist;
-import frc.robot.util.Elastic;
-import frc.robot.util.Elastic.Notification;
 
 /** Add your docs here. */
 public class StateLoggingCommands {
@@ -123,15 +120,6 @@ public class StateLoggingCommands {
     private static final List<Command> activeCommands = new ArrayList<>();
 
     private static final List<String> allCommandNames = new ArrayList<>();
-    private static final List<String> driveCommandNames = new ArrayList<>();
-    private static final List<String> pivotCommandNames = new ArrayList<>();
-    private static final List<String> elevatorCommandNames = new ArrayList<>();
-    private static final List<String> wristCommandNames = new ArrayList<>();
-    private static final List<String> intakeCommandNames = new ArrayList<>();
-
-    private static final List<List<String>> allSubsystemCommandNames = new ArrayList<>(
-            Arrays.asList(driveCommandNames, pivotCommandNames, elevatorCommandNames, wristCommandNames,
-                    intakeCommandNames));
 
     public static Command logCommands() {
 
@@ -156,52 +144,13 @@ public class StateLoggingCommands {
 
         return Commands.run(() -> {
             allCommandNames.clear();
-            driveCommandNames.clear();
-            pivotCommandNames.clear();
-            elevatorCommandNames.clear();
-            wristCommandNames.clear();
-            intakeCommandNames.clear();
 
-            for (Command command : activeCommands.toArray(new Command[0])) {
+            for (Command command : activeCommands) {
 
                 allCommandNames.add(command.getName());
-
-                switch (command.getSubsystem()) { //TODO: Remove logging to which subsystem a command belongs to
-                    case "Drive":
-                        driveCommandNames.add(command.getName());
-                        break;
-                    case "Pivot":
-                        pivotCommandNames.add(command.getName());
-                        break;
-                    case "Elevator":
-                        elevatorCommandNames.add(command.getName());
-                        break;
-                    case "Wrist":
-                        wristCommandNames.add(command.getName());
-                        break;
-                    case "Intake":
-                        intakeCommandNames.add(command.getName());
-                        break;
-                }
             }
 
-            for (List<String> subsystemCommandNames : allSubsystemCommandNames) {
-                if (subsystemCommandNames.size() > 1) {
-                    Elastic.sendNotification(new Notification(Notification.NotificationLevel.WARNING, "Double Command",
-                            "Currently " + subsystemCommandNames.size() + " commands are running on a subsystem, with names: " + subsystemCommandNames.toString()));
-
-                    System.out.println( "Warning: " +
-                            "Currently " + subsystemCommandNames.size() + " commands are running on a subsystem, with names: " + subsystemCommandNames.toString());
-
-                }
-            }
-
-            Logger.recordOutput("Active Commands/All", allCommandNames.toArray(new String[0]));
-            Logger.recordOutput("Active Commands/Subsystem/DriveCommands", driveCommandNames.toArray(new String[0]));
-            Logger.recordOutput("Active Commands/Subsystem/PivotCommands", pivotCommandNames.toArray(new String[0]));
-            Logger.recordOutput("Active Commands/Subsystem/ElevatorCommands", elevatorCommandNames.toArray(new String[0]));
-            Logger.recordOutput("Active Commands/Subsystem/WristCommands", wristCommandNames.toArray(new String[0]));
-            Logger.recordOutput("Active Commands/Subsystem/IntakeCommands", intakeCommandNames.toArray(new String[0]));
+            Logger.recordOutput("Active Commands", allCommandNames.toArray(new String[0]));
         }).ignoringDisable(true).withName("CommandLoggerCommand");
     }
 

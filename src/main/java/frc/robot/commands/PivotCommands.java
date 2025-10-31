@@ -34,12 +34,12 @@ public class PivotCommands {
         pivot.setTargetAngle(pivot.getCurrentAngle());
       },
       pivot
-    );
-
-    if(allowEndCondition)
-      returnCommand.until(() -> Math.abs(pivot.getCurrentAngle() - targetAngle.getAsDouble()) < PivotConstants.kAngleErrorAllowed);
-
-    returnCommand.withName("pivotToTarget");
+    )
+    .until(allowEndCondition ?
+      () -> Math.abs(pivot.getCurrentAngle() - targetAngle.getAsDouble()) < PivotConstants.kAngleErrorAllowed :
+      () -> false
+    )
+    .withName("pivotToTarget");
 
     return returnCommand;
   }

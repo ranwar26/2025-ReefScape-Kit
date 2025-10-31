@@ -34,12 +34,12 @@ public class ElevatorCommands {
         elevator.setTargetLength(elevator.getCurrentLength());
       },
       elevator
-    );
-
-    if(allowEndCondition) // Add the end condition if needed
-      returnCommand.until(() -> Math.abs(elevator.getCurrentLength() - targetLength.getAsDouble()) < ElevatorConstants.kLengthErrorAllowed);
-
-    returnCommand.withName("elevatorToTarget");
+    )
+    .until(allowEndCondition ?
+      () -> Math.abs(elevator.getCurrentLength() - targetLength.getAsDouble()) < ElevatorConstants.kLengthErrorAllowed :
+      () -> false
+    )
+    .withName("elevatorToTarget");
 
     return returnCommand;
   }

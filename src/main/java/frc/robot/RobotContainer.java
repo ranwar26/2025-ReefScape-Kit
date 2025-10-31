@@ -260,7 +260,7 @@ public class RobotContainer {
 		controller.axisGreaterThan(2, 0.1).whileTrue(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
 
 		// Point all wheel towards the center of the robot.
-		controller.x().whileTrue(Commands.run(drive::stopWithX, drive));
+		controller.x().whileTrue(Commands.run(drive::stopWithX, drive).withName("stopWithX"));
 
 		controller.start().onTrue(Commands.runOnce(
 				() -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
