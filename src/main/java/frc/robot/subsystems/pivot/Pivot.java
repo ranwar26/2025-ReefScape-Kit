@@ -36,7 +36,7 @@ public class Pivot extends SubsystemBase {
   }
 
   public double getTargetAngle() {
-    return this.io.getTargetAngle();
+    return this.inputs.targetPosition;
   }
 
   /**
@@ -45,7 +45,7 @@ public class Pivot extends SubsystemBase {
    * @return - the current angle of the pivot
    */
   public double getCurrentAngle() {
-    return this.io.getCurrentAngle();
+    return this.inputs.position;
   }
   
   /**

@@ -72,23 +72,13 @@ public class ElevatorIOReal implements ElevatorIO {
     @Override
     public void setTargetLength(double length) {
         this.targetLength = length;
-        double speed = this.m_elevatorPIDController.calculate(getCurrentLength(), length);
+        double speed = this.m_elevatorPIDController.calculate(this.m_rightEncoder.getPosition(), length);
         double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
 
         volts += ElevatorConstants.kRealG;
 
         this.m_leftMotor.setVoltage(volts);
         this.m_rightMotor.setVoltage(volts);
-    }
-
-    @Override
-    public double getTargetLength() {
-        return this.targetLength;
-    }
-
-    @Override
-    public double getCurrentLength() {
-        return this.m_rightEncoder.getPosition();
     }
 
     @Override

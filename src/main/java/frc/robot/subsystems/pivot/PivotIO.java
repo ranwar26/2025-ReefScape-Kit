@@ -22,7 +22,7 @@ public interface PivotIO {
 
     /**
    * Tell the pivot to move to the target length
-   * 
+   *
    * @param angle - the target angle
    */
     public default void updateInputs(PivotIOInputs inputs) {
@@ -35,20 +35,6 @@ public interface PivotIO {
      */
     public default void setTargetAngle(double angle) {
     }
-
-    
-    public default double getTargetAngle() {
-        return 0.0;
-    }
-
-    /**
-     * get the current angle of the pivot
-     * 
-     * @return - the current angle of the pivot
-     */
-    public default double getCurrentAngle() {
-        return 0.0;
-    };
 
     /**
      * resets the PID controller

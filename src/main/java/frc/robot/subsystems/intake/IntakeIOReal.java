@@ -41,13 +41,4 @@ public class IntakeIOReal implements IntakeIO {
     this.m_intakeMotor.setVoltage(volts);
   }
 
-  @Override
-  public double getCurrentVolts() {
-    return this.m_intakeMotor.getAppliedOutput() * this.m_intakeMotor.getBusVoltage();
-  }
-
-  @Override
-  public double getCurrentAngle() {
-    return this.m_encoder.getPosition();
-  }
 }

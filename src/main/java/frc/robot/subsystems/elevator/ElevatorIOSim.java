@@ -58,20 +58,10 @@ public class ElevatorIOSim implements ElevatorIO {
   @Override
   public void setTargetLength(double length) {
     this.targetLength = length;
-    double speed = this.m_elevatorPIDController.calculate(getCurrentLength() - length);
+    double speed = this.m_elevatorPIDController.calculate(this.elevatorSim.getPositionMeters() - length);
     this.appliedVolts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
     this.appliedVolts += ElevatorConstants.kSimG;
 
-  }
-
-  @Override
-    public double getTargetLength() {
-        return this.targetLength;
-    }
-
-  @Override
-  public double getCurrentLength() {
-    return this.elevatorSim.getPositionMeters();
   }
 
   @Override

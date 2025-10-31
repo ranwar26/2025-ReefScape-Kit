@@ -59,7 +59,7 @@ public class PivotIOSim implements PivotIO {
     @Override
     public void setTargetAngle(double angle) {
         this.targetAngle = angle;
-        double speed = this.m_pivotPIDController.calculate(getCurrentAngle(), angle);
+        double speed = this.m_pivotPIDController.calculate(this.pivotArmSim.getAngleRads(), angle);
         double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
 
         //If the pivot is under 0.1 degrees of error AND trying to apply more than 6 volt, then don't apply those 6 volts
@@ -67,16 +67,6 @@ public class PivotIOSim implements PivotIO {
             volts = 0.0;
 
         this.appliedVolts = volts;
-    }
-
-    @Override
-    public double getTargetAngle() {
-        return this.targetAngle;
-    }
-
-    @Override
-    public double getCurrentAngle() {
-        return this.pivotArmSim.getAngleRads();
     }
 
     @Override

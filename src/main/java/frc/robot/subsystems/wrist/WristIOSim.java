@@ -56,20 +56,10 @@ public class WristIOSim implements WristIO {
   @Override
   public void setTargetAngle(double angle) {
     this.targetAngle = angle;
-    double speed = this.m_wristPIDController.calculate(getCurrentAngle(), angle);
+    double speed = this.m_wristPIDController.calculate(this.m_wristMotor.getAngularPositionRad(), angle);
     double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
 
     this.appliedVolts = volts;
-  }
-
-  @Override
-    public double getTargetAngle() {
-        return this.targetAngle;
-    }
-
-  @Override
-  public double getCurrentAngle() {
-    return this.m_wristMotor.getAngularPositionRad();
   }
 
   @Override

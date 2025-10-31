@@ -4,9 +4,10 @@
 
 package frc.robot.subsystems.intake;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
 
@@ -40,7 +41,7 @@ public class Intake extends SubsystemBase {
    * @return double - the volts
    */
   public double getCurrentVolts() {
-    return this.io.getCurrentVolts();
+    return this.inputs.appliedVolts;
   }
 
   /**
@@ -50,6 +51,6 @@ public class Intake extends SubsystemBase {
    * @return - the current angle of the intake
    */
   public double getCurrentAngle() {
-    return this.io.getCurrentAngle();
+    return this.inputs.position;
   }
 }

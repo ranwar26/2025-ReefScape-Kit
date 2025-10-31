@@ -37,7 +37,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getTargetLength() {
-    return this.io.getTargetLength();
+    return this.inputs.targetPosition;
   }
 
   /**
@@ -46,7 +46,7 @@ public class Elevator extends SubsystemBase {
    * @return - the current length of the side picked
    */
   public double getCurrentLength() {
-    return this.io.getCurrentLength();
+    return this.inputs.position;
   }
 
   /**

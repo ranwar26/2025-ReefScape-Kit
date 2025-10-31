@@ -38,24 +38,6 @@ public interface ElevatorIO {
     }
 
     /**
-     * gets the current target of the elevator
-     * 
-     * @return - the target length
-     */
-    public default double getTargetLength() {
-        return 0.0;
-    }
-
-    /**
-     * gets the current length of the elevator
-     * 
-     * @return - the current length of the side picked
-     */
-    public default double getCurrentLength() {
-        return 0.0;
-    };
-
-    /**
      * resets the PID controller
      */
     public default void resetPID() {
