@@ -7,62 +7,50 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.wrist.Wrist;
 
-/** Add your docs here. */
+/**
+ * A class containing wrist commands
+ */
 public class WristCommands {
 
   /**
    * Gives the wrist subsystem a target angle
-   * 
-   * @param wrist - the wrist subsystem
-   * @param targetAngle - the angle to be achieved
-   * @param allowEndCondition
-   * @return - the command with the given logic
+   *
+   * @param wrist the wrist subsystem
+   * @param targetAngle the angle to be achieved
+   * @param allowEndCondition whether the end condition is used
+   * @return the command with the given logic
    */
   public static Command wristToTarget(Wrist wrist, DoubleSupplier targetAngle, boolean allowEndCondition) {
 
-    Command returnCommand;
+    Command returnCommand = Commands.runEnd(
+      () -> {
+        wrist.setTargetAngle(targetAngle.getAsDouble());
+      },
+      () -> {
+        wrist.setTargetAngle(wrist.getCurrentAngle());
+      },
+      wrist
+      );
 
-    if(allowEndCondition) {
-      returnCommand = new FunctionalCommand(
-        () -> {},
-        () -> {
-          wrist.setTargetAngle(targetAngle.getAsDouble());
-        },
-        interrupted -> {
-          wrist.setTargetAngle(wrist.getCurrentAngle());
-        },
-        () -> Math.abs(wrist.getCurrentAngle() - targetAngle.getAsDouble()) < WristConstants.kAngleErrorAllowed,
-        wrist).withName("wristToTarget");
+    if(allowEndCondition)
+      returnCommand.until(() -> Math.abs(wrist.getCurrentAngle() - targetAngle.getAsDouble()) < WristConstants.kAngleErrorAllowed);
 
-    } else {
-      returnCommand = new FunctionalCommand(
-        () -> {},
-        () -> {
-          wrist.setTargetAngle(targetAngle.getAsDouble());
-        },
-        interrupted -> {
-          wrist.setTargetAngle(wrist.getCurrentAngle());
-        },
-        () -> false,
-        wrist).withName("wristToTarget");
-    }
-
-    returnCommand.setSubsystem("Wrist");
+    returnCommand.withName("wristToTarget");
 
     return returnCommand;
   }
 
   /**
    * Gives the wrist subsystem a target angle
-   * 
-   * @param wrist - the wrist subsystem
-   * @param targetAngle - the angle to be achieved
-   * @param allowEndCondition
-   * @return - the command with the given logic
+   *
+   * @param wrist the wrist subsystem
+   * @param targetAngle the angle to be achieved
+   * @param allowEndCondition whether the end condition is used
+   * @return the command with the given logic
    */
   public static Command wristToTarget(Wrist wrist, double targetAngle, boolean allowEndCondition) {
     return wristToTarget(wrist, () -> targetAngle, allowEndCondition);
@@ -70,34 +58,21 @@ public class WristCommands {
 
   /**
    * Sends the wrist back to home
-   * 
-   * @param wrist - the wrist subsystem
-   * @return - the command with the given logic
+   *
+   * @param wrist the wrist subsystem
+   * @return the command with the given logic
    */
   public static Command wristToHome(Wrist wrist, boolean allowEndCondition) {
-    Command returnCommand = wristToTarget(wrist, WristConstants.kHomeAngle, allowEndCondition).withName("wristToHome");
-    returnCommand.setSubsystem("Wrist");
-    return returnCommand;
+    return wristToTarget(wrist, WristConstants.kHomeAngle, allowEndCondition).withName("wristToHome");
   }
 
   /**
    * Hold the wrist at current angle
-   * 
-   * @param wrist - the wrist subsystem
-   * @return - the command with the given logic
+   *
+   * @param wrist the wrist subsystem
+   * @return the command with the given logic
    */
   public static Command wristHold(Wrist wrist) {
-    double[] target = new double[1];
-
-    return new FunctionalCommand(
-        () -> {
-          target[0] = wrist.getCurrentAngle();
-        },
-        () -> {
-          wrist.setTargetAngle(target[0]);
-        },
-        interrupted -> {},
-        () -> false,
-        wrist).withName("wristHold");
+    return wristToTarget(wrist, wrist.getCurrentAngle(), false).withName("wristHold");
   }
 }

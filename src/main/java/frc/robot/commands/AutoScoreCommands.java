@@ -19,7 +19,9 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.wrist.Wrist;
 
-/** Add your docs here. */
+/**
+ * This class is used for deming, so no docs (It's also outdated).
+ */
 public class AutoScoreCommands {
 
     // For Demoing use only

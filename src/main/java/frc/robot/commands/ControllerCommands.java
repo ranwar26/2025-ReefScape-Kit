@@ -10,9 +10,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-/** Add your docs here. */
+/**
+ * A class for controller commands
+ */
 public class ControllerCommands {
 
+    /**
+     * Sets the controllers rumble for a time, then stopping it
+     * 
+     * @param controller the controller
+     * @param rumbleValue the strength of the rumble (0.0-1.0)
+     * @param time the amount of time (Sec) the command should run
+     * @return A command with the given logic
+     */
     public static Command setRumble(CommandXboxController controller, double rumbleValue, double time) {
         double[] endTime = new double[1];
 

@@ -36,6 +36,9 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.drive.Drive;
 
+/**
+ * A class containing drive commands
+ */
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
   private static final double ANGLE_KP = 0.01;

@@ -39,6 +39,10 @@ public class StateLoggingCommands {
     private static LoggedMechanismLigament2d gripperPartTarget = new LoggedMechanismLigament2d("gripper", 0.388, 0);
     private static LoggedMechanismLigament2d intakePartTarget = new LoggedMechanismLigament2d("intake", 0.05, 0);
 
+    /**
+     * Sets up the ligaments. Current as green and target as red with
+     * target be a little smaller to avoid Z-clipping
+     */
     static {
         mechanismCurrent.getRoot("root", 2.5 - 0.193, 0.337).append(elevatorPartCurrent).append(gripperPartCurrent)
                 .append(intakePartCurrent);
@@ -64,12 +68,12 @@ public class StateLoggingCommands {
     }
 
     /**
-     * Updates the arm mechanism's position and rotation
+     * Updates the arm mechanism's current position and rotation
      * 
-     * @param pivot    - the pivot subsystem
-     * @param elevator - the elevator subsystem
-     * @param wrist    - the wrist subsystem
-     * @param intake   - the intake subsystem
+     * @param pivot the pivot subsystem
+     * @param elevator the elevator subsystem
+     * @param wrist the wrist subsystem
+     * @param intake the intake subsystem
      * @return the command with the Logic
      */
     public static Command mechanismRunCurrent(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
@@ -86,16 +90,16 @@ public class StateLoggingCommands {
 
                     Logger.recordOutput("Arm System/Current", mechanismCurrent);
 
-                }).withName("mechanismRunCurrent");
+                }).withName("mechanismRunCurrent").ignoringDisable(true);
     }
 
     /**
-     * Updates the arm mechanism's position and rotation
+     * Updates the arm mechanism's target position and rotation
      * 
-     * @param pivot    - the pivot subsystem
-     * @param elevator - the elevator subsystem
-     * @param wrist    - the wrist subsystem
-     * @param intake   - the intake subsystem
+     * @param pivot the pivot subsystem
+     * @param elevator the elevator subsystem
+     * @param wrist the wrist subsystem
+     * @param intake the intake subsystem
      * @return the command with the Logic
      */
     public static Command mechanismRunTarget(Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
@@ -112,7 +116,7 @@ public class StateLoggingCommands {
 
                     Logger.recordOutput("Arm System/Target", mechanismTarget);
 
-                }).withName("mechanismRunTarget");
+                }).withName("mechanismRunTarget").ignoringDisable(true);
     }
 
     // ########## Commands Logging ##########
@@ -162,7 +166,7 @@ public class StateLoggingCommands {
 
                 allCommandNames.add(command.getName());
 
-                switch (command.getSubsystem()) {
+                switch (command.getSubsystem()) { //TODO: Remove logging to which subsystem a command belongs to
                     case "Drive":
                         driveCommandNames.add(command.getName());
                         break;

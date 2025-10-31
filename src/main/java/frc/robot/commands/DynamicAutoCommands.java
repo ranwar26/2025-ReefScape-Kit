@@ -27,7 +27,11 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.Notification;
 
-/** Add your docs here. */
+/**
+ * A class containing the building logic and dashboard choosers for the dynamic auto.
+ * A type of auto that is build at the start of the match to alow for adapting around
+ * other robots
+ */
 public class DynamicAutoCommands {
 
     public static final String networkKeyPrefix = "Dynamic Auto/";
@@ -91,21 +95,26 @@ public class DynamicAutoCommands {
 
     /**
      * Assembles the dashboard chooser's data into a command with arm and drive control. NOTE: calling this method a
-     * second time will throw an error, but there is no plan to fix this, as an auto command should only be call once.
+     * second time will work, but there is no plan to fix this, as an auto command should only be call once.
      *
      * @return The command with this given logic.
      */
     public static Command buildDynamicAuto() {
 
+        // The main auto command
         SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
 
+        //Number of cycles to score
         int totalCycles = endAfterCycle.get();
 
+        // Sets the starting pose of the robot
         primaryCommandGroup.addCommands(Commands.runOnce(
             () -> {
             drive.resetOdometry(startingPose.get());
-            }));
+            }
+        ));
 
+        // builds each cycle
         primaryCommandGroup.addCommands(getCycle(firstReefSide.get(), firstReefLevel.get(), firstCoralStation.get(), totalCycles));
         totalCycles--;
         primaryCommandGroup.addCommands(getCycle(secondReefSide.get(), secondReefLevel.get(), secondCoralStation.get(), totalCycles));
@@ -113,6 +122,7 @@ public class DynamicAutoCommands {
         primaryCommandGroup.addCommands(getCycle(thirdReefSide.get(), thirdReefLevel.get(), thirdCoralStation.get(), totalCycles));
         totalCycles--;
 
+        // Appends an arm down command to the command
         return primaryCommandGroup
         .andThen(ArmControlCommands
             .armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
@@ -135,12 +145,14 @@ public class DynamicAutoCommands {
      */
     private static Command getCycle(ReefSide reefSide, ArmPosition reefLevel, Boolean coralStation, int cyclesLeft) {
 
+        // If no cycles are left, return an empty command
         if(cyclesLeft <= 0)
-        return Commands.waitSeconds(0.0);
+            return Commands.none();
 
+        // Some data way missing, tell at the drivers, then skip the cycle.
         if(reefSide == null || reefLevel == null || coralStation == null) {
             Elastic.sendNotification(new Notification(Notification.NotificationLevel.ERROR, "AUTO CYCLE FAIL", "A dynamic auto cycle part was set as null"));
-            return Commands.waitSeconds(0.0);
+            return Commands.none();
         }
 
         SequentialCommandGroup primaryCommandGroup = new SequentialCommandGroup();
@@ -222,6 +234,7 @@ public class DynamicAutoCommands {
      */
     public static void chooserSetup() {
 
+        // ############ STARTING POSE ############
         startingPose.addDefaultOption("Center", FieldPoses.center);
         startingPose.addOption("Left Wall Cage", FieldPoses.leftWallCage);
         startingPose.addOption("Left Center Cage", FieldPoses.leftCenterCage);
@@ -284,6 +297,7 @@ public class DynamicAutoCommands {
         thirdCoralStation.addOption("Left Side", true);
         thirdCoralStation.addOption("Right Side", false);
 
+        // ############ HOW MANY CYCLES ############
         endAfterCycle.addDefaultOption("Three", 3);
         endAfterCycle.addOption("Two", 2);
         endAfterCycle.addOption("One", 1);

@@ -4,10 +4,11 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.intake.Intake;
-import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class IntakeCommands {
@@ -21,14 +22,11 @@ public class IntakeCommands {
    */
   public static Command intakeRun(Intake intake, DoubleSupplier speedPercentage) {
 
-    Command returnCommand = Commands.run(
-        () -> {
-          intake.setIntakePercentage(speedPercentage.getAsDouble());
-        },
-        intake).withName("intakeRun");
-
-    returnCommand.setSubsystem("Intake");
-
-    return returnCommand;
+    return Commands.run(
+      () -> {
+        intake.setIntakePercentage(speedPercentage.getAsDouble());
+      },
+      intake)
+      .withName("intakeRun");
   }
 }
