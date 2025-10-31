@@ -17,75 +17,79 @@ import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.MotorConfigs.PivotConfig;
 
-/** Add your docs here. */
+/**
+ * The real implementation of the pivot
+ */
 public class PivotIOReal implements PivotIO {
 
-    private SparkMax m_leftMotor;
-    private SparkMax m_rightMotor;
+	private SparkMax m_leftMotor;
+	private SparkMax m_rightMotor;
 
-    private RelativeEncoder m_rightEncoder;
+	private RelativeEncoder m_rightEncoder;
 
-    private PIDController m_pivotPIDController;
+	private PIDController m_pivotPIDController;
 
-    private double m_targetAngle;
+	private double m_targetAngle;
 
-    public PivotIOReal() {
+	public PivotIOReal() {
 
-        this.m_leftMotor = new SparkMax(PivotConstants.kLeftMotorID, MotorType.kBrushless);
-        this.m_rightMotor = new SparkMax(PivotConstants.kRightMotorID, MotorType.kBrushless);
+		this.m_leftMotor = new SparkMax(PivotConstants.kLeftMotorID, MotorType.kBrushless);
+		this.m_rightMotor = new SparkMax(PivotConstants.kRightMotorID, MotorType.kBrushless);
 
-        tryUntilOk(
-            m_leftMotor,
-            5,
-            () -> this.m_leftMotor.configure(PivotConfig.leftPivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-        );
-        tryUntilOk(
-            m_leftMotor,
-            5,
-            () -> this.m_rightMotor.configure(PivotConfig.rightPivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-        );
+		tryUntilOk(
+				m_leftMotor,
+				5,
+				() -> this.m_leftMotor.configure(PivotConfig.leftPivotConfig, ResetMode.kResetSafeParameters,
+						PersistMode.kPersistParameters));
+		tryUntilOk(
+				m_leftMotor,
+				5,
+				() -> this.m_rightMotor.configure(PivotConfig.rightPivotConfig, ResetMode.kResetSafeParameters,
+						PersistMode.kPersistParameters));
 
-        this.m_rightEncoder = this.m_rightMotor.getEncoder();
-        tryUntilOk(
-            m_rightMotor,
-            5,
-            () -> m_rightEncoder.setPosition(this.m_rightMotor.getAbsoluteEncoder().getPosition() * (Math.PI / 2.0))
-        );
+		this.m_rightEncoder = this.m_rightMotor.getEncoder();
+		tryUntilOk(
+				m_rightMotor,
+				5,
+				() -> m_rightEncoder
+						.setPosition(this.m_rightMotor.getAbsoluteEncoder().getPosition() * (Math.PI / 2.0)));
 
-        this.m_pivotPIDController = new PIDController(
-            PivotConstants.kRealP,
-            PivotConstants.kRealI,
-            PivotConstants.kRealD
-        );
-    }
+		this.m_pivotPIDController = new PIDController(
+				PivotConstants.kRealP,
+				PivotConstants.kRealI,
+				PivotConstants.kRealD);
+	}
 
-    @Override
-    public void updateInputs(PivotIOInputs inputs) {
-        inputs.position = this.m_rightEncoder.getPosition();
-        inputs.targetPosition = this.m_targetAngle;
-        inputs.errorPosition = Math.abs(this.m_targetAngle - this.m_rightEncoder.getPosition());
-        inputs.velocity = this.m_rightEncoder.getVelocity();
-        inputs.appliedVolts = this.m_rightMotor.getAppliedOutput() * this.m_rightMotor.getBusVoltage();
-        inputs.currentAmps = this.m_rightMotor.getOutputCurrent();
-    }
+	@Override
+	public void updateInputs(PivotIOInputs inputs) {
+		inputs.currentPosition = this.m_rightEncoder.getPosition();
+		inputs.targetPosition = this.m_targetAngle;
+		inputs.errorPosition = Math.abs(this.m_targetAngle - this.m_rightEncoder.getPosition());
+		inputs.velocity = this.m_rightEncoder.getVelocity();
+		inputs.appliedVolts = this.m_rightMotor.getAppliedOutput() * this.m_rightMotor.getBusVoltage();
+		inputs.currentAmps = this.m_rightMotor.getOutputCurrent();
+	}
 
-    @Override
-    public void setTargetAngle(double angle) {
-        this.m_targetAngle = angle;
-        double speed = this.m_pivotPIDController.calculate(this.m_rightEncoder.getPosition(), angle);
-        double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
-        volts += PivotConstants.kRealG;
+	@Override
+	public void setTargetAngle(double angle) {
+		this.m_targetAngle = angle;
+		double speed = this.m_pivotPIDController.calculate(this.m_rightEncoder.getPosition(), angle);
+		double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
+		volts += PivotConstants.kRealG;
 
-        //If the pivot is under 0.1 degrees of error AND trying to apply more than 6 volt, then don't apply those 6 volts
-        if(MathUtil.isNear(this.m_rightEncoder.getPosition(), angle, Math.toRadians(0.1), 0.0, 2.0 * Math.PI) && volts > 6.0)
-            volts = 0.0;
+		// TODO: check if these (sim/real and elevator) are even needed
+		// If the pivot is under 0.1 degrees of error AND trying to apply more than 6
+		// volt, then don't apply those 6 volts
+		if (MathUtil.isNear(this.m_rightEncoder.getPosition(), angle, Math.toRadians(0.1), 0.0, 2.0 * Math.PI)
+				&& volts > 6.0)
+			volts = 0.0;
 
-        this.m_leftMotor.setVoltage(volts);
-        this.m_rightMotor.setVoltage(volts);
-    }
+		this.m_leftMotor.setVoltage(volts);
+		this.m_rightMotor.setVoltage(volts);
+	}
 
-    @Override
-    public void resetPID() {
-        this.m_pivotPIDController.reset();
-    }
+	@Override
+	public void resetPID() {
+		this.m_pivotPIDController.reset();
+	}
 }

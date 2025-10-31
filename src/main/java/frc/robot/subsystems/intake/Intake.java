@@ -9,6 +9,9 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * A class that hold the IO of the intake
+ */
 public class Intake extends SubsystemBase {
 
   private IntakeIO io;
@@ -28,8 +31,8 @@ public class Intake extends SubsystemBase {
 
   /**
    * Set the intake target speed
-   * 
-   * @param percentage - the percentage of intake's speed
+   *
+   * @param percentage the percentage of intake's speed
    */
   public void setIntakePercentage(double percentage) {
     this.io.setIntakeVolts(MathUtil.clamp(percentage, -1.0, 1.0) * 12.0);
@@ -37,8 +40,8 @@ public class Intake extends SubsystemBase {
 
   /**
    * Returns the current Volts
-   * 
-   * @return double - the volts
+   *
+   * @return double the volts
    */
   public double getCurrentVolts() {
     return this.inputs.appliedVolts;
@@ -47,8 +50,8 @@ public class Intake extends SubsystemBase {
   /**
    * Gets the current angle of the intake
    * (Not very useful, but useful for see if the intake is moving)
-   * 
-   * @return - the current angle of the intake
+   *
+   * @return the current angle of the intake
    */
   public double getCurrentAngle() {
     return this.inputs.position;

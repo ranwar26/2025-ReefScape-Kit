@@ -8,11 +8,13 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * A class that holds the IO of the elevator
+ */
 public class Elevator extends SubsystemBase {
 
   private ElevatorIO io;
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-
 
   /** Creates a new elevator. */
   public Elevator(ElevatorIO io) {
@@ -29,28 +31,33 @@ public class Elevator extends SubsystemBase {
 
   /**
    * Tell the elevator to move to the target length
-   * 
-   * @param length - the target length
+   *
+   * @param length the target length
    */
   public void setTargetLength(double length) {
     this.io.setTargetLength(length);
   }
 
+  /**
+   * Gets the elevator's target length
+   *
+   * @return the target length
+   */
   public double getTargetLength() {
     return this.inputs.targetPosition;
   }
 
   /**
-   * get the current Length of the elevator
-   * 
-   * @return - the current length of the side picked
+   * Gets the elevators' current length
+   *
+   * @return the current length of the elevator
    */
   public double getCurrentLength() {
-    return this.inputs.position;
+    return this.inputs.currentPosition;
   }
 
   /**
-   * resets the PID controller
+   * Resets the PID controller
    */
   public void resetPID() {
     this.io.resetPID();

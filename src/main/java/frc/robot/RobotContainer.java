@@ -132,11 +132,6 @@ public class RobotContainer {
 				wrist = new Wrist(new WristIOReal());
 				intake = new Intake(new IntakeIOReal());
 
-				// pivot = new Pivot(new PivotIO() {});
-				// elevator = new Elevator(new ElevatorIO() {});
-
-				// intake = new Intake(new IntakeIO() {});
-
 				break;
 
 			case SIM:
@@ -238,7 +233,7 @@ public class RobotContainer {
 		DynamicAutoCommands.setupDynamicAuto(drive, pivot, elevator, wrist, intake);
 		StateLoggingCommands.mechanismRunCurrent(pivot, elevator, wrist, intake)
 			.alongWith(StateLoggingCommands.mechanismRunTarget(pivot, elevator, wrist, intake))
-				.withName("mechanismCommands").schedule();
+				.withName("mechanismCommands").schedule(); // Combined to avoid an extra command being logged
 
 		PathfindingCommand.warmupCommand()
 			.andThen(Commands.runOnce(() -> Elastic.sendNotification(
@@ -257,6 +252,7 @@ public class RobotContainer {
 	 */
 	private void configureButtonBindings() {
 
+		// Allows the the default command to pull in.
 		controller.axisGreaterThan(2, 0.1).whileTrue(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
 
 		// Point all wheel towards the center of the robot.
@@ -266,6 +262,7 @@ public class RobotContainer {
 				() -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
 				drive).ignoringDisable(true));
 
+		// These are on the button box, so consider changing (or keeping them for testing).
 		controller.a().whileTrue(
 			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
 			.andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL))
@@ -291,21 +288,17 @@ public class RobotContainer {
 		controller.leftBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive, true, null, true));
 		controller.rightBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive, false, null, true));
 
-		controller.povDown().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT, null,true));
-		controller.povDownLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_LEFT,null,true));
-		// controller.povLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_LEFT,null,true));
-		controller.povDownRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_RIGHT, null,true));
-		// controller.povRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_RIGHT, null,true));
-		controller.povUp().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK, null,true));
-		controller.povUpLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_LEFT, null,true));
-		controller.povUpRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_RIGHT, null,true));
+		controller.povDown().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT, null, true));
+		controller.povDownLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_LEFT,null, true));
+		// controller.povLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_LEFT, null, true));
+		controller.povDownRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_RIGHT, null, true));
+		// controller.povRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_RIGHT, null, true));
+		controller.povUp().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK, null, true));
+		controller.povUpLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_LEFT, null, true));
+		controller.povUpRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_RIGHT, null, true));
 
 		// Used to stop any path finding happing
 		controller.leftStick().onTrue(Commands.runOnce(() -> {}, drive));
-
-		// Used for demoing robot
-		// controller.rightStick().onTrue(AutoScoreCommands.autoDriveAndScore(drive, pivot, elevator, wrist, intake));
-
 
 		// ########## Button Box ##########
 

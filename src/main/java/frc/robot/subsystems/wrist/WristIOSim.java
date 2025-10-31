@@ -10,7 +10,9 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants.WristConstants;
 
-/** Add your docs here. */
+/**
+ * The sim implementation of the wrist
+ */
 public class WristIOSim implements WristIO {
 
   private DCMotorSim m_wristMotor;
@@ -44,9 +46,9 @@ public class WristIOSim implements WristIO {
     // Adds hard stops
     this.m_wristMotor.setAngle(MathUtil.clamp(this.m_wristMotor.getAngularPositionRad(), Math.toRadians(0.0), Math.toRadians(200.0)));
 
-    inputs.position = this.m_wristMotor.getAngularPositionRad();
+    inputs.currentPosition = this.m_wristMotor.getAngularPositionRad();
     inputs.targetPosition = this.targetAngle;
-    inputs.errorPosition = Math.abs(inputs.targetPosition - inputs.position);
+    inputs.errorPosition = Math.abs(inputs.targetPosition - inputs.currentPosition);
     inputs.velocity = this.m_wristMotor.getAngularVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = this.m_wristMotor.getCurrentDrawAmps();

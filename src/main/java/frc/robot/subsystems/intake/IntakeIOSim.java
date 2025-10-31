@@ -8,6 +8,9 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants.IntakeConstants;
 
+/**
+ * The sim implementation of the intake
+ */
 public class IntakeIOSim implements IntakeIO {
 
   private DCMotorSim m_intakeMotor;
@@ -16,11 +19,10 @@ public class IntakeIOSim implements IntakeIO {
 
   public IntakeIOSim() {
 
-    this.m_intakeMotor =
-        new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                IntakeConstants.motorGearbox, 0.025, IntakeConstants.motorToWheelRatio),
-            IntakeConstants.motorGearbox);
+    this.m_intakeMotor = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(
+            IntakeConstants.motorGearbox, 0.025, IntakeConstants.motorToWheelRatio),
+        IntakeConstants.motorGearbox);
   }
 
   @Override

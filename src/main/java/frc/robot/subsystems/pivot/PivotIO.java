@@ -6,12 +6,14 @@ package frc.robot.subsystems.pivot;
 
 import org.littletonrobotics.junction.AutoLog;
 
-/** Add your docs here. */
+/**
+ * An interface for the pivot IO
+ */
 public interface PivotIO {
 
     @AutoLog
     public static class PivotIOInputs {
-        public double position = 0.0;
+        public double currentPosition = 0.0;
         public double targetPosition = 0.0;
         public double errorPosition = 0.0;
         public double velocity = 0.0;
@@ -23,21 +25,21 @@ public interface PivotIO {
     /**
    * Tell the pivot to move to the target length
    *
-   * @param angle - the target angle
+   * @param angle the target angle
    */
     public default void updateInputs(PivotIOInputs inputs) {
     }
 
     /**
      * Sets the motors at the given voltage
-     * 
-     * @param volts - the number of volt
+     *
+     * @param volts the number of volt
      */
     public default void setTargetAngle(double angle) {
     }
 
     /**
-     * resets the PID controller
+     * Resets the PID controller
      */
     public default void resetPID() {
     }

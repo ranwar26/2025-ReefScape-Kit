@@ -10,7 +10,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants.ElevatorConstants;
 
-/** Add your docs here. */
+/**
+ * The sim implementation of the elevator
+ */
 public class ElevatorIOSim implements ElevatorIO {
 
   private ElevatorSim elevatorSim;
@@ -23,21 +25,19 @@ public class ElevatorIOSim implements ElevatorIO {
   public ElevatorIOSim() {
 
     this.elevatorSim = new ElevatorSim(
-      DCMotor.getNEO(2),
-      ElevatorConstants.motorToDrumRatio,
-      13.0,
-      0.06,
-      0.659,
-      2.0,
-      true,
-      0.659
-      );
+        DCMotor.getNEO(2),
+        ElevatorConstants.motorToDrumRatio,
+        13.0,
+        0.06,
+        0.659,
+        2.0,
+        true,
+        0.659);
 
-    this.m_elevatorPIDController =new PIDController(
+    this.m_elevatorPIDController = new PIDController(
         ElevatorConstants.kSimP,
         ElevatorConstants.kSimI,
-        ElevatorConstants.kSimD
-    );
+        ElevatorConstants.kSimD);
   }
 
   @Override
@@ -46,7 +46,7 @@ public class ElevatorIOSim implements ElevatorIO {
     this.elevatorSim.setInputVoltage(this.appliedVolts);
     this.elevatorSim.update(0.02);
 
-    inputs.position = this.elevatorSim.getPositionMeters();
+    inputs.currentPosition = this.elevatorSim.getPositionMeters();
     inputs.targetPosition = this.targetLength;
     inputs.errorPosition = Math.abs(this.targetLength - this.elevatorSim.getPositionMeters());
     inputs.velocity = this.elevatorSim.getVelocityMetersPerSecond();
@@ -66,7 +66,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void resetPID() {
-      this.m_elevatorPIDController.reset();
+    this.m_elevatorPIDController.reset();
   }
 
 }

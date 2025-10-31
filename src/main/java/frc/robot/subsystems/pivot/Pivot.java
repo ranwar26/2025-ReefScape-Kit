@@ -8,6 +8,9 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * A class that hold the IO of the pivot
+ */
 public class Pivot extends SubsystemBase {
 
   private PivotIO io;
@@ -28,8 +31,8 @@ public class Pivot extends SubsystemBase {
 
   /**
    * Tell the pivot to move to the target length
-   * 
-   * @param angle - the target angle
+   *
+   * @param angle the target angle
    */
   public void setTargetAngle(double angle) {
     this.io.setTargetAngle(angle);
@@ -40,16 +43,16 @@ public class Pivot extends SubsystemBase {
   }
 
   /**
-   * get the current angle of the pivot
-   * 
-   * @return - the current angle of the pivot
+   * Gets the current angle of the pivot
+   *
+   * @return the current angle of the pivot
    */
   public double getCurrentAngle() {
-    return this.inputs.position;
+    return this.inputs.currentPosition;
   }
-  
+
   /**
-   * resets the PID controller
+   * Resets the PID controller
    */
   public void resetPID() {
     this.io.resetPID();

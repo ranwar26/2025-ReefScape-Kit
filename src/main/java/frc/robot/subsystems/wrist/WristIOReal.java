@@ -15,7 +15,9 @@ import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants.WristConstants;
 import frc.robot.MotorConfigs.WristConfig;
 
-/** Add your docs here. */
+/**
+ * The real implementation for the wrist
+ */
 public class WristIOReal implements WristIO {
 
   private SparkMax m_wristMotor;
@@ -30,18 +32,18 @@ public class WristIOReal implements WristIO {
     this.m_wristMotor = new SparkMax(WristConstants.kMotorID, MotorType.kBrushless);
     this.m_encoder = m_wristMotor.getEncoder();
 
-    this.m_wristMotor.configure(WristConfig.wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.m_wristMotor.configure(WristConfig.wristConfig, ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
 
     this.m_wristPIDController = new PIDController(
-      WristConstants.kRealP,
-      WristConstants.kRealI,
-      WristConstants.kRealD
-    );
+        WristConstants.kRealP,
+        WristConstants.kRealI,
+        WristConstants.kRealD);
   }
 
   @Override
   public void updateInputs(WristIOInputs inputs) {
-    inputs.position = this.m_encoder.getPosition();
+    inputs.currentPosition = this.m_encoder.getPosition();
     inputs.targetPosition = this.targetAngle;
     inputs.errorPosition = Math.abs(this.targetAngle - this.m_encoder.getPosition());
     inputs.velocity = this.m_encoder.getVelocity();

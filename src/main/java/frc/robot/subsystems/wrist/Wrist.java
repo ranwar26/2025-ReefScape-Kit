@@ -8,6 +8,9 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * A class with the IO for the Wrist
+ */
 public class Wrist extends SubsystemBase {
 
   private WristIO io;
@@ -27,29 +30,34 @@ public class Wrist extends SubsystemBase {
   }
 
   /**
-   * Tell the pivot to move to the target length
-   * 
-   * @param angle - the target angle
+   * Tell the wrist to move to the target angle
+   *
+   * @param angle the target angle
    */
   public void setTargetAngle(double angle) {
     this.io.setTargetAngle(angle);
   }
 
+  /**
+   * Gets the target angle of the wrist
+   *
+   * @return the target angle
+   */
   public double getTargetAngle() {
     return this.inputs.targetPosition;
   }
 
   /**
-   * get the current angle of the pivot
-   * 
-   * @return - the current angle
+   * Gets the current angle of the wrist
+   *
+   * @return the current angle
    */
   public double getCurrentAngle() {
-    return this.inputs.position;
+    return this.inputs.currentPosition;
   }
 
   /**
-   * resets the PID controller
+   * Resets the PID controller
    */
   public void resetPID() {
     this.io.resetPID();

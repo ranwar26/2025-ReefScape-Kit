@@ -6,12 +6,14 @@ package frc.robot.subsystems.wrist;
 
 import org.littletonrobotics.junction.AutoLog;
 
-/** Add your docs here. */
+/**
+ * An interface for the wrist IO
+ */
 public interface WristIO {
 
   @AutoLog
   public static class WristIOInputs {
-    public double position = 0.0;
+    public double currentPosition = 0.0;
     public double targetPosition = 0.0;
     public double errorPosition = 0.0;
     public double velocity = 0.0;
@@ -21,20 +23,23 @@ public interface WristIO {
 
   /**
    * Updates the inputs of the wrist subsystem
-   * 
-   * @param inputs - the class to be updated
+   *
+   * @param inputs the class to be updated
    */
   public default void updateInputs(WristIOInputs inputs) {
   }
 
   /**
    * Tell the pivot to move to the target length
-   * 
-   * @param angle - the target angle
+   *
+   * @param angle the target angle
    */
   public default void setTargetAngle(double length) {
   }
 
+  /**
+   * Resets the PID controller
+   */
   public default void resetPID() {
   }
 }
