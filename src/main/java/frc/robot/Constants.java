@@ -197,6 +197,10 @@ public class VisionConstants {
     public static final double kSimI = 0.0;
     public static final double kSimD = 0.0;
 
+    // These are the voltages of the motors to overcome gravity to reduce sliding
+    public static final double kRealG = 0.14;
+    public static final double kSimG = 0.0; // TODO: test sim value
+
     // Target angle in degrees converted to radians
     public static final double kHomeAngle = Math.toRadians(40.0);
 
@@ -235,7 +239,7 @@ public class VisionConstants {
     public static final double kSimD = 0.0;
 
     // These are the voltages of the motors to overcome gravity to reduce sliding
-    public static final double kRealG = 0.1; //TODO: Test this value
+    public static final double kRealG = 0.4;
     public static final double kSimG = 2.45;
 
     // Target length in meters
@@ -243,7 +247,7 @@ public class VisionConstants {
 
     public static final double kLevel1Length = 0.659;
     public static final double kLevel2Length = 0.849;
-    public static final double kLevel3Length = 1.169;
+    public static final double kLevel3Length = 1.179;
     public static final double kLevel4Length = 1.959;
     public static final double kPastStage2 = 1.5;
     public static final double kCoralStationLength = 0.689;
@@ -272,6 +276,10 @@ public class VisionConstants {
     public static final double kSimP = 0.6;
     public static final double kSimI = 0.0;
     public static final double kSimD = 0.0;
+
+    // These are the voltages of the motors to overcome gravity to reduce sliding
+    public static final double kRealG = 0.13;
+    public static final double kSimG = 0.0; //TODO: Test this
 
     // Target angle in degrees converted to radians
     public static final double kHomeAngle = Math.toRadians(0.0);

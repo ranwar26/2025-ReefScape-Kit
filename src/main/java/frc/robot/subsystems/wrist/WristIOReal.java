@@ -54,6 +54,7 @@ public class WristIOReal implements WristIO {
     this.targetAngle = angle;
     double speed = this.m_wristPIDController.calculate(getCurrentAngle(), angle);
     double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
+    volts += WristConstants.kRealG;
 
     this.m_wristMotor.setVoltage(volts);
   }

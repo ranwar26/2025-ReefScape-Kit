@@ -17,14 +17,11 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -224,7 +221,7 @@ public class RobotContainer {
 				() -> MathUtil.applyDeadband(-controller.getRightX(), OIConstants.kDriveDeadband)));
 
 		// Default command for each subsystem
-		intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
+		intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> -0.1));
 
 		wrist.setDefaultCommand(WristCommands.wristToHome(wrist, false));
 
@@ -260,6 +257,8 @@ public class RobotContainer {
 	 */
 	private void configureButtonBindings() {
 
+		controller.axisGreaterThan(2, 0.1).whileTrue(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
+
 		// Point all wheel towards the center of the robot.
 		controller.x().whileTrue(Commands.run(drive::stopWithX, drive));
 
@@ -289,8 +288,8 @@ public class RobotContainer {
 		controller.b().onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL3));
 		controller.y().onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL4));
 
-		controller.leftBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive, true, null, false));
-		controller.rightBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive, false, null, false));
+		controller.leftBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive, true, null, true));
+		controller.rightBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive, false, null, true));
 
 		controller.povDown().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT, null,true));
 		controller.povDownLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_LEFT,null,true));
@@ -300,15 +299,6 @@ public class RobotContainer {
 		controller.povUp().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK, null,true));
 		controller.povUpLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_LEFT, null,true));
 		controller.povUpRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_RIGHT, null,true));
-
-		controller.back().onTrue(AutoDriveCommands.pathFindToPose(
-			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(13.5, 6.5, new Rotation2d(Math.PI)) : new Pose2d(4.0, 1.5, new Rotation2d()),
-		PathConstraints.unlimitedConstraints(12.0), 4.0)
-
-		.andThen(AutoDriveCommands.pathFindToPose(
-			() -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? new Pose2d(16.0, 4.0, new Rotation2d(Math.PI)) : new Pose2d(1.5, 4.0, new Rotation2d()),
-		PathConstraints.unlimitedConstraints(12.0), 0))
-		);
 
 		// Used to stop any path finding happing
 		controller.leftStick().onTrue(Commands.runOnce(() -> {}, drive));

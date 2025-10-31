@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.elevator;
 
+import static frc.robot.util.SparkUtil.tryUntilOk;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -32,11 +34,23 @@ public class ElevatorIOReal implements ElevatorIO {
         this.m_leftMotor = new SparkMax(ElevatorConstants.kLeftMotorID, MotorType.kBrushless);
         this.m_rightMotor = new SparkMax(ElevatorConstants.kRightMotorID, MotorType.kBrushless);
 
-        this.m_rightEncoder = this.m_rightMotor.getEncoder();
-        this.m_rightEncoder.setPosition(ElevatorConstants.kHomeLength);
+        tryUntilOk(
+            m_leftMotor,
+            5,
+            () -> this.m_leftMotor.configure(ElevatorConfig.leftElevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
+        );
+        tryUntilOk(
+            m_rightMotor,
+            5,
+            () -> this.m_rightMotor.configure(ElevatorConfig.rightElevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
+        );
 
-        this.m_leftMotor.configure(ElevatorConfig.leftElevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        this.m_rightMotor.configure(ElevatorConfig.rightElevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        this.m_rightEncoder = this.m_rightMotor.getEncoder();
+        tryUntilOk(
+            m_rightMotor,
+            5,
+            () -> this.m_rightEncoder.setPosition(ElevatorConstants.kHomeLength)
+        );
 
         this.m_elevatorPIDController = new PIDController(
             ElevatorConstants.kRealP,
@@ -49,7 +63,7 @@ public class ElevatorIOReal implements ElevatorIO {
     public void updateInputs(ElevatorIOInputs inputs) {
         inputs.position = this.m_rightEncoder.getPosition();
         inputs.targetPosition = this.targetLength;
-        inputs.targetPosition = Math.abs(this.targetLength - this.m_rightEncoder.getPosition());
+        inputs.errorPosition = Math.abs(this.targetLength - this.m_rightEncoder.getPosition());
         inputs.velocity = this.m_rightEncoder.getVelocity();
         inputs.appliedVolts = this.m_rightMotor.getAppliedOutput() * this.m_rightMotor.getBusVoltage();
         inputs.currentAmps = this.m_rightMotor.getOutputCurrent();
