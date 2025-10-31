@@ -221,7 +221,7 @@ public class RobotContainer {
 				() -> MathUtil.applyDeadband(-controller.getRightX(), OIConstants.kDriveDeadband)));
 
 		// Default command for each subsystem
-		intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> -0.1));
+		intake.setDefaultCommand(IntakeCommands.intakeRun(intake, () -> -0.25));
 
 		wrist.setDefaultCommand(WristCommands.wristToHome(wrist, false));
 
@@ -236,8 +236,8 @@ public class RobotContainer {
 
 		// Starts the arm mechanism for sim and comp matches
 		DynamicAutoCommands.setupDynamicAuto(drive, pivot, elevator, wrist, intake);
-		StateLoggingCommands.mechanismRunCurrent(pivot, elevator, wrist, intake).ignoringDisable(true)
-			.alongWith(StateLoggingCommands.mechanismRunTarget(pivot, elevator, wrist, intake).ignoringDisable(true))
+		StateLoggingCommands.mechanismRunCurrent(pivot, elevator, wrist, intake)
+			.alongWith(StateLoggingCommands.mechanismRunTarget(pivot, elevator, wrist, intake))
 				.withName("mechanismCommands").schedule();
 
 		PathfindingCommand.warmupCommand()
