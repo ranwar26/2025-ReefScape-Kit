@@ -29,7 +29,7 @@ public class IntakeIOReal implements IntakeIO {
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.position = this.m_encoder.getPosition();
+    inputs.position = this.m_encoder.getPosition() % (2.0 * Math.PI);
     inputs.velocity = this.m_encoder.getVelocity();
     inputs.appliedVolts =
         this.m_intakeMotor.getAppliedOutput() * this.m_intakeMotor.getBusVoltage();

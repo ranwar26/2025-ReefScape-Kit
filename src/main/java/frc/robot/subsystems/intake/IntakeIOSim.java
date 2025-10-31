@@ -28,7 +28,7 @@ public class IntakeIOSim implements IntakeIO {
     this.m_intakeMotor.setInputVoltage(appliedVolts);
     this.m_intakeMotor.update(0.02);
 
-    inputs.position = this.m_intakeMotor.getAngularPositionRad();
+    inputs.position = this.m_intakeMotor.getAngularPositionRad() % (2.0 * Math.PI);
     inputs.velocity = this.m_intakeMotor.getAngularVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = this.m_intakeMotor.getCurrentDrawAmps();
