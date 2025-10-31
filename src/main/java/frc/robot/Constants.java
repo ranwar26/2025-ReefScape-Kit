@@ -123,7 +123,7 @@ public final class Constants {
     public static final double turnPIDMaxInput = 2 * Math.PI; // Radians
 
     // PathPlanner configuration
-    public static final double robotMassKg = 50.219;
+    public static final double robotMassKg = 50.219; // TODO: update based on robot mass
     public static final double robotMOI = 4.859;
     public static final double wheelCOF = 1.190;
     public static final RobotConfig ppConfig = new RobotConfig(
@@ -131,7 +131,7 @@ public final class Constants {
         robotMOI,
         new ModuleConfig(
             wheelRadiusMeters,
-            maxSpeedMetersPerSec - 0.8,
+            maxSpeedMetersPerSec,
             wheelCOF,
             driveGearbox.withReduction(driveMotorReduction),
             driveMotorCurrentLimit,
