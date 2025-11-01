@@ -95,11 +95,11 @@ public class RobotContainer {
 	private final XboxController buttonBox = new XboxController(1);
 
 	private final JoystickButton level2Place = new JoystickButton(this.buttonBox, 4);
-  private final JoystickButton level3Place = new JoystickButton(this.buttonBox, 5);
-  private final JoystickButton level4Place = new JoystickButton(this.buttonBox, 6);
-  private final JoystickButton coralStationGrab = new JoystickButton(this.buttonBox, 3);
-  private final JoystickButton higherAlgaeRemove = new JoystickButton(this.buttonBox, 2);
-  private final JoystickButton lowerAlgaeRemove = new JoystickButton(this.buttonBox, 1);
+	private final JoystickButton level3Place = new JoystickButton(this.buttonBox, 5);
+	private final JoystickButton level4Place = new JoystickButton(this.buttonBox, 6);
+	private final JoystickButton coralStationGrab = new JoystickButton(this.buttonBox, 3);
+	private final JoystickButton higherAlgaeRemove = new JoystickButton(this.buttonBox, 2);
+	private final JoystickButton lowerAlgaeRemove = new JoystickButton(this.buttonBox, 1);
 	private final JoystickButton cageStow = new JoystickButton(this.buttonBox, 7);
 
 	// Dashboard inputs
@@ -123,9 +123,9 @@ public class RobotContainer {
 						new ModuleIOSpark(3));
 
 				vision = new Vision(
-					drive::addVisionMeasurement,
-					new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-					new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+						drive::addVisionMeasurement,
+						new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+						new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
 
 				pivot = new Pivot(new PivotIOReal());
 				elevator = new Elevator(new ElevatorIOReal());
@@ -137,14 +137,17 @@ public class RobotContainer {
 			case SIM:
 				// Sim robot, instantiate physics sim IO implementations
 				drive = new Drive(
-						new GyroIO() {},
+						new GyroIO() {
+						},
 						new ModuleIOSim(),
 						new ModuleIOSim(),
 						new ModuleIOSim(),
 						new ModuleIOSim());
 				vision = new Vision(drive::addVisionMeasurement,
-				new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
-				new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
+						new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0,
+								drive::getPose),
+						new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1,
+								drive::getPose));
 
 				pivot = new Pivot(new PivotIOSim());
 				elevator = new Elevator(new ElevatorIOSim());
@@ -156,19 +159,30 @@ public class RobotContainer {
 			default:
 				// Replayed robot, disable IO implementations
 				drive = new Drive(
-						new GyroIO() {},
-						new ModuleIO() {},
-						new ModuleIO() {},
-						new ModuleIO() {},
-						new ModuleIO() {});
+						new GyroIO() {
+						},
+						new ModuleIO() {
+						},
+						new ModuleIO() {
+						},
+						new ModuleIO() {
+						},
+						new ModuleIO() {
+						});
 				vision = new Vision(drive::addVisionMeasurement,
-				new VisionIO() {},
-				new VisionIO() {});
+						new VisionIO() {
+						},
+						new VisionIO() {
+						});
 
-				pivot = new Pivot(new PivotIO() {});
-				elevator = new Elevator(new ElevatorIO() {});
-				wrist = new Wrist(new WristIO() {});
-				intake = new Intake(new IntakeIO() {});
+				pivot = new Pivot(new PivotIO() {
+				});
+				elevator = new Elevator(new ElevatorIO() {
+				});
+				wrist = new Wrist(new WristIO() {
+				});
+				intake = new Intake(new IntakeIO() {
+				});
 
 				break;
 		}
@@ -232,13 +246,13 @@ public class RobotContainer {
 		// Starts the arm mechanism for sim and comp matches
 		DynamicAutoCommands.setupDynamicAuto(drive, pivot, elevator, wrist, intake);
 		StateLoggingCommands.mechanismRunCurrent(pivot, elevator, wrist, intake)
-			.alongWith(StateLoggingCommands.mechanismRunTarget(pivot, elevator, wrist, intake))
+				.alongWith(StateLoggingCommands.mechanismRunTarget(pivot, elevator, wrist, intake))
 				.withName("mechanismCommands").schedule(); // Combined to avoid an extra command being logged
 
 		PathfindingCommand.warmupCommand()
-			.andThen(Commands.runOnce(() -> Elastic.sendNotification(
-				new Elastic.Notification(Elastic.Notification.NotificationLevel.INFO, "All Systems Go!", "All Warmups, Bindings, Logging, and Sim Commands have been setup!")
-				)))
+				.andThen(Commands.runOnce(() -> Elastic.sendNotification(
+						new Elastic.Notification(Elastic.Notification.NotificationLevel.INFO, "All Systems Go!",
+								"All Warmups, Bindings, Logging, and Sim Commands have been setup!"))))
 				.ignoringDisable(true).withName("WarmupCommand").schedule();
 	}
 
@@ -253,7 +267,8 @@ public class RobotContainer {
 	private void configureButtonBindings() {
 
 		// Allows the the default command to pull in.
-		controller.axisGreaterThan(2, 0.1).whileTrue(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
+		controller.axisGreaterThan(2, 0.1)
+				.whileTrue(IntakeCommands.intakeRun(intake, () -> controller.getLeftTriggerAxis()));
 
 		// Point all wheel towards the center of the robot.
 		controller.x().whileTrue(Commands.run(drive::stopWithX, drive).withName("stopWithX"));
@@ -262,146 +277,139 @@ public class RobotContainer {
 				() -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
 				drive).ignoringDisable(true));
 
-		// These are on the button box, so consider changing (or keeping them for testing).
+		// These are on the button box, so consider changing (or keeping them for
+		// testing).
 		controller.a().whileTrue(
-			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
-			.andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL))
-			.andThen(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL)
-			.alongWith(ControllerCommands.setRumble(controller, 0.2, 0.2)))
-				.withName("level2UpAndHoldWithRumble"));
+				ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
+						.andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2,
+								ArmSystem.ALL))
+						.andThen(ArmControlCommands
+								.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL)
+								.alongWith(ControllerCommands.setRumble(controller, 0.2, 0.2)))
+						.withName("level2UpAndHoldWithRumble"));
 		controller.b().whileTrue(
-			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
-			.andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL))
-			.andThen(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL)
-			.alongWith(ControllerCommands.setRumble(controller, 0.2, 0.2)))
-				.withName("level3UpAndHoldWithRumble"));
+				ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
+						.andThen(ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3,
+								ArmSystem.ALL))
+						.andThen(ArmControlCommands
+								.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL)
+								.alongWith(ControllerCommands.setRumble(controller, 0.2, 0.2)))
+						.withName("level3UpAndHoldWithRumble"));
 		controller.y().whileTrue(
-			ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
-			.andThen(ArmControlCommands.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
-			.alongWith(ControllerCommands.setRumble(controller, 0.2, 0.2)))
-				.withName("level4UpAndHoldWithRumble"));
+				ArmControlCommands.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
+						.andThen(ArmControlCommands
+								.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
+								.alongWith(ControllerCommands.setRumble(controller, 0.2, 0.2)))
+						.withName("level4UpAndHoldWithRumble"));
 
 		controller.a().onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL2));
 		controller.b().onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL3));
 		controller.y().onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL4));
 
-		controller.leftBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive, true, null, true));
-		controller.rightBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive, false, null, true));
+		controller.leftBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive,
+				true, null, true));
+		controller.rightBumper().onTrue(AutoDriveCommands.pathFindToCoralStation(drive,
+				false, null, true));
 
 		controller.povDown().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT, null, true));
-		controller.povDownLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_LEFT,null, true));
-		// controller.povLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_LEFT, null, true));
-		controller.povDownRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_RIGHT, null, true));
-		// controller.povRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_RIGHT, null, true));
-		controller.povUp().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK, null, true));
-		controller.povUpLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_LEFT, null, true));
-		controller.povUpRight().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.BACK_RIGHT, null, true));
+		controller.povDownLeft().onTrue(AutoDriveCommands.pathFindToReef(drive, ReefSide.FRONT_LEFT, null, true));
+		controller.povDownRight().onTrue(AutoDriveCommands.pathFindToReef(drive,
+				ReefSide.FRONT_RIGHT, null, true));
+		controller.povUp().onTrue(AutoDriveCommands.pathFindToReef(drive,
+				ReefSide.BACK, null, true));
+		controller.povUpLeft().onTrue(AutoDriveCommands.pathFindToReef(drive,
+				ReefSide.BACK_LEFT, null, true));
+		controller.povUpRight().onTrue(AutoDriveCommands.pathFindToReef(drive,
+				ReefSide.BACK_RIGHT, null, true));
 
 		// Used to stop any path finding happing
-		controller.leftStick().onTrue(Commands.runOnce(() -> {}, drive));
+		controller.leftStick()
+				.onTrue(Commands.runOnce(() -> {
+				}, drive));
 
 		// ########## Button Box ##########
 
 		level2Place.whileTrue(
-			ArmControlCommands
-			.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
-			.andThen(ArmControlCommands
-				.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL)
-			)
-			.andThen(ArmControlCommands
-				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL)
-				.alongWith(ControllerCommands
-					.setRumble(controller, 0.2, 0.2)
-				)
-			)
-			.withName("level2UpAndHoldWithRumble")
-		);
+				ArmControlCommands
+						.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
+						.andThen(ArmControlCommands
+								.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL))
+						.andThen(ArmControlCommands
+								.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL2, ArmSystem.ALL)
+								.alongWith(ControllerCommands
+										.setRumble(controller, 0.2, 0.2)))
+						.withName("level2UpAndHoldWithRumble"));
 
 		level3Place.whileTrue(
-			ArmControlCommands
-			.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
-			.andThen(ArmControlCommands
-				.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL)
-			)
-			.andThen(ArmControlCommands
-				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL)
-				.alongWith(ControllerCommands
-					.setRumble(controller, 0.2, 0.2)
-				)
-			)
-			.withName("level3UpAndHoldWithRumble"));
+				ArmControlCommands
+						.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
+						.andThen(ArmControlCommands
+								.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL))
+						.andThen(ArmControlCommands
+								.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL3, ArmSystem.ALL)
+								.alongWith(ControllerCommands
+										.setRumble(controller, 0.2, 0.2)))
+						.withName("level3UpAndHoldWithRumble"));
 
 		level4Place.whileTrue(
-			ArmControlCommands
-			.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
-			.andThen(ArmControlCommands
-				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
-				.alongWith(ControllerCommands
-					.setRumble(controller, 0.2, 0.2)
-				)
-			)
-			.withName("level4UpAndHoldWithRumble")
-		);
+				ArmControlCommands
+						.armUpCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
+						.andThen(ArmControlCommands
+								.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LEVEL4, ArmSystem.ALL)
+								.alongWith(ControllerCommands
+										.setRumble(controller, 0.2, 0.2)))
+						.withName("level4UpAndHoldWithRumble"));
 
 		level2Place.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL2));
 		level3Place.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL3));
 		level4Place.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LEVEL4));
 
 		coralStationGrab.whileTrue(
-			ArmControlCommands
-			.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
-			.andThen(ArmControlCommands
-				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
-				.alongWith(IntakeCommands
-					.intakeRun(intake, () -> -1.0)
-				)
-			)
-			.withName("CoralStationGrab")
-		);
+				ArmControlCommands
+						.armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+						.andThen(ArmControlCommands
+								.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+								.alongWith(IntakeCommands
+										.intakeRun(intake, () -> -1.0)))
+						.withName("CoralStationGrab"));
 
 		coralStationGrab.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION));
 
 		cageStow.toggleOnTrue(
-			ArmControlCommands
-			.armUpCommand(pivot, elevator, wrist, ArmPosition.CAGE, ArmSystem.ALL)
-			.repeatedly()
-		);
+				ArmControlCommands
+						.armUpCommand(pivot, elevator, wrist, ArmPosition.CAGE, ArmSystem.ALL)
+						.repeatedly());
 
 		cageStow.toggleOnFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.CAGE));
 
 		lowerAlgaeRemove.whileTrue(
-			ArmControlCommands
-			.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
-			.andThen(ArmControlCommands
-				.armUpCommand(pivot, elevator, wrist, ArmPosition.LOWER_ALGAE_REMOVE, ArmSystem.ALL)
-			)
-			.andThen(ArmControlCommands
-				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LOWER_ALGAE_REMOVE, ArmSystem.ALL)
-				.alongWith(IntakeCommands
-					.intakeRun(intake, () -> 1.0)
-				)
-			)
-			.withName("LowerAlgaeRemove")
-		);
+				ArmControlCommands
+						.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
+						.andThen(ArmControlCommands
+								.armUpCommand(pivot, elevator, wrist, ArmPosition.LOWER_ALGAE_REMOVE, ArmSystem.ALL))
+						.andThen(ArmControlCommands
+								.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.LOWER_ALGAE_REMOVE, ArmSystem.ALL)
+								.alongWith(IntakeCommands
+										.intakeRun(intake, () -> 1.0)))
+						.withName("LowerAlgaeRemove"));
 
-		lowerAlgaeRemove.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LOWER_ALGAE_REMOVE));
+		lowerAlgaeRemove
+				.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.LOWER_ALGAE_REMOVE));
 
 		higherAlgaeRemove.whileTrue(
-			ArmControlCommands
-			.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
-			.andThen(ArmControlCommands
-				.armUpCommand(pivot, elevator, wrist, ArmPosition.HIGHER_ALGAE_REMOVE, ArmSystem.ALL)
-			)
-			.andThen(ArmControlCommands
-				.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HIGHER_ALGAE_REMOVE, ArmSystem.ALL)
-				.alongWith(IntakeCommands
-					.intakeRun(intake, () -> 1.0)
-				)
-			)
-			.withName("HigherAlgaeRemove")
-		);
+				ArmControlCommands
+						.armUpCommand(pivot, elevator, wrist, ArmPosition.PAST_STAGE2, ArmSystem.ALL)
+						.andThen(ArmControlCommands
+								.armUpCommand(pivot, elevator, wrist, ArmPosition.HIGHER_ALGAE_REMOVE, ArmSystem.ALL))
+						.andThen(ArmControlCommands
+								.armHoldAtCommand(pivot, elevator, wrist, ArmPosition.HIGHER_ALGAE_REMOVE,
+										ArmSystem.ALL)
+								.alongWith(IntakeCommands
+										.intakeRun(intake, () -> 1.0)))
+						.withName("HigherAlgaeRemove"));
 
-		higherAlgaeRemove.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.HIGHER_ALGAE_REMOVE));
+		higherAlgaeRemove
+				.onFalse(ArmControlCommands.armDownCommand(pivot, elevator, wrist, ArmPosition.HIGHER_ALGAE_REMOVE));
 	}
 
 	/**
@@ -411,10 +419,10 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 
-		if(this.dynamicAutoCommand == null)
+		if (this.dynamicAutoCommand == null)
 			this.dynamicAutoCommand = DynamicAutoCommands.buildDynamicAuto();
 
-		if(useDynamicAuto.get()) {
+		if (useDynamicAuto.get()) {
 			return this.dynamicAutoCommand;
 		} else {
 			return autoChooser.get();
