@@ -4,13 +4,10 @@
 
 package frc.robot.subsystems.elevator;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-/**
- * A class that holds the IO of the elevator
- */
+/** A class that holds the IO of the elevator */
 public class Elevator extends SubsystemBase {
 
   private ElevatorIO io;
@@ -20,7 +17,6 @@ public class Elevator extends SubsystemBase {
   public Elevator(ElevatorIO io) {
 
     this.io = io;
-
   }
 
   @Override
@@ -56,11 +52,8 @@ public class Elevator extends SubsystemBase {
     return this.inputs.currentPosition;
   }
 
-  /**
-   * Resets the PID controller
-   */
+  /** Resets the PID controller */
   public void resetPID() {
     this.io.resetPID();
   }
-
 }

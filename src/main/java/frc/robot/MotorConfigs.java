@@ -7,7 +7,6 @@ package frc.robot;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -88,15 +87,20 @@ public final class MotorConfigs {
       rightPivotConfig.inverted(true);
 
       // Changes all inputs and outputs from motor rotations to pivot angle in radians
-      double positionConversionFactorRelative = (2.0 * Math.PI) / PivotConstants.motorToPivotAngleRatio;
+      double positionConversionFactorRelative =
+          (2.0 * Math.PI) / PivotConstants.motorToPivotAngleRatio;
       leftPivotConfig.encoder.positionConversionFactor(positionConversionFactorRelative);
       rightPivotConfig.encoder.positionConversionFactor(positionConversionFactorRelative);
-    
+
       rightPivotConfig.absoluteEncoder.inverted(true);
 
-      leftPivotConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(PivotConstants.kMaxCurrentLimit)
+      leftPivotConfig
+          .idleMode(IdleMode.kBrake)
+          .smartCurrentLimit(PivotConstants.kMaxCurrentLimit)
           .voltageCompensation(PivotConstants.kMaxVoltage);
-      rightPivotConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(PivotConstants.kMaxCurrentLimit)
+      rightPivotConfig
+          .idleMode(IdleMode.kBrake)
+          .smartCurrentLimit(PivotConstants.kMaxCurrentLimit)
           .voltageCompensation(PivotConstants.kMaxVoltage);
     }
   }
@@ -117,9 +121,13 @@ public final class MotorConfigs {
       leftElevatorConfig.encoder.positionConversionFactor(positionConversionFactor);
       rightElevatorConfig.encoder.positionConversionFactor(positionConversionFactor);
 
-      leftElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstants.kMaxCurrentLimit)
+      leftElevatorConfig
+          .idleMode(IdleMode.kBrake)
+          .smartCurrentLimit(ElevatorConstants.kMaxCurrentLimit)
           .voltageCompensation(ElevatorConstants.kMaxVoltage);
-      rightElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstants.kMaxCurrentLimit)
+      rightElevatorConfig
+          .idleMode(IdleMode.kBrake)
+          .smartCurrentLimit(ElevatorConstants.kMaxCurrentLimit)
           .voltageCompensation(ElevatorConstants.kMaxVoltage);
     }
   }
@@ -135,7 +143,9 @@ public final class MotorConfigs {
 
       wristConfig.encoder.positionConversionFactor(positionConversionFactorRelative);
 
-      wristConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(WristConstants.kMaxCurrentLimit)
+      wristConfig
+          .idleMode(IdleMode.kBrake)
+          .smartCurrentLimit(WristConstants.kMaxCurrentLimit)
           .voltageCompensation(WristConstants.kMaxVoltage);
     }
   }
@@ -146,7 +156,9 @@ public final class MotorConfigs {
     static {
       intakeConfig.inverted(false);
 
-      intakeConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(IntakeConstants.kMaxCurrentLimit)
+      intakeConfig
+          .idleMode(IdleMode.kBrake)
+          .smartCurrentLimit(IntakeConstants.kMaxCurrentLimit)
           .voltageCompensation(IntakeConstants.kMaxVoltage);
     }
   }

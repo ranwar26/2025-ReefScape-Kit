@@ -4,14 +4,11 @@
 
 package frc.robot.subsystems.intake;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
-/**
- * A class that hold the IO of the intake
- */
+/** A class that hold the IO of the intake */
 public class Intake extends SubsystemBase {
 
   private IntakeIO io;
@@ -48,8 +45,8 @@ public class Intake extends SubsystemBase {
   }
 
   /**
-   * Gets the current angle of the intake
-   * (Not very useful, but useful for see if the intake is moving)
+   * Gets the current angle of the intake (Not very useful, but useful for see if the intake is
+   * moving)
    *
    * @return the current angle of the intake
    */

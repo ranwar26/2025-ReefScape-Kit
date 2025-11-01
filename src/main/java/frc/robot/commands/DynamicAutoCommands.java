@@ -4,10 +4,7 @@
 
 package frc.robot.commands;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -26,45 +23,49 @@ import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.Notification;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * A class containing the building logic and dashboard choosers for the dynamic
- * auto. A type of auto that is build at the start of the match to alow for
- * adapting around other robots
+ * A class containing the building logic and dashboard choosers for the dynamic auto. A type of auto
+ * that is build at the start of the match to alow for adapting around other robots
  */
 public class DynamicAutoCommands {
 
   public static final String networkKeyPrefix = "Dynamic Auto/";
 
-  public static final PathConstraints constraints = new PathConstraints(DriveConstants.maxSpeedMetersPerSec,
-      DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxAngularSpeed, DriveConstants.maxAngularSpeed);
+  public static final PathConstraints constraints =
+      new PathConstraints(
+          DriveConstants.maxSpeedMetersPerSec,
+          DriveConstants.maxSpeedMetersPerSec,
+          DriveConstants.maxAngularSpeed,
+          DriveConstants.maxAngularSpeed);
 
-  private static LoggedDashboardChooser<Pose2d> startingPose = new LoggedDashboardChooser<>(
-      networkKeyPrefix + "Starting Pose");
+  private static LoggedDashboardChooser<Pose2d> startingPose =
+      new LoggedDashboardChooser<>(networkKeyPrefix + "Starting Pose");
 
-  private static LoggedDashboardChooser<ReefSide> firstReefSide = new LoggedDashboardChooser<>(
-      networkKeyPrefix + "First Reef Side");
-  private static LoggedDashboardChooser<ArmPosition> firstReefLevel = new LoggedDashboardChooser<>(
-      networkKeyPrefix + "First Reef Level");
-  private static LoggedDashboardChooser<Boolean> firstCoralStation = new LoggedDashboardChooser<>(
-      networkKeyPrefix + "First Coral Station");
+  private static LoggedDashboardChooser<ReefSide> firstReefSide =
+      new LoggedDashboardChooser<>(networkKeyPrefix + "First Reef Side");
+  private static LoggedDashboardChooser<ArmPosition> firstReefLevel =
+      new LoggedDashboardChooser<>(networkKeyPrefix + "First Reef Level");
+  private static LoggedDashboardChooser<Boolean> firstCoralStation =
+      new LoggedDashboardChooser<>(networkKeyPrefix + "First Coral Station");
 
-  private static LoggedDashboardChooser<ReefSide> secondReefSide = new LoggedDashboardChooser<>(
-      networkKeyPrefix + "Second Reef Side");
-  private static LoggedDashboardChooser<ArmPosition> secondReefLevel = new LoggedDashboardChooser<>(
-      networkKeyPrefix + "Second Reef Level");
-  private static LoggedDashboardChooser<Boolean> secondCoralStation = new LoggedDashboardChooser<>(
-      networkKeyPrefix + "Second Coral Station");
+  private static LoggedDashboardChooser<ReefSide> secondReefSide =
+      new LoggedDashboardChooser<>(networkKeyPrefix + "Second Reef Side");
+  private static LoggedDashboardChooser<ArmPosition> secondReefLevel =
+      new LoggedDashboardChooser<>(networkKeyPrefix + "Second Reef Level");
+  private static LoggedDashboardChooser<Boolean> secondCoralStation =
+      new LoggedDashboardChooser<>(networkKeyPrefix + "Second Coral Station");
 
-  private static LoggedDashboardChooser<ReefSide> thirdReefSide = new LoggedDashboardChooser<>(
-      networkKeyPrefix + "Third Reef Side");
-  private static LoggedDashboardChooser<ArmPosition> thirdReefLevel = new LoggedDashboardChooser<>(
-      networkKeyPrefix + "Third Reef Level");
-  private static LoggedDashboardChooser<Boolean> thirdCoralStation = new LoggedDashboardChooser<>(
-      networkKeyPrefix + "Third Coral Station");
+  private static LoggedDashboardChooser<ReefSide> thirdReefSide =
+      new LoggedDashboardChooser<>(networkKeyPrefix + "Third Reef Side");
+  private static LoggedDashboardChooser<ArmPosition> thirdReefLevel =
+      new LoggedDashboardChooser<>(networkKeyPrefix + "Third Reef Level");
+  private static LoggedDashboardChooser<Boolean> thirdCoralStation =
+      new LoggedDashboardChooser<>(networkKeyPrefix + "Third Coral Station");
 
-  private static LoggedDashboardChooser<Integer> endAfterCycle = new LoggedDashboardChooser<>(
-      networkKeyPrefix + "End after cycle");
+  private static LoggedDashboardChooser<Integer> endAfterCycle =
+      new LoggedDashboardChooser<>(networkKeyPrefix + "End after cycle");
 
   private static Drive drive;
   private static Pivot pivot;
@@ -75,13 +76,14 @@ public class DynamicAutoCommands {
   /**
    * Sets up the subsystem and dashboard choosers for the Dynamic Auto system
    *
-   * @param drive    the drive subsystem
-   * @param pivot    the pivot subsystem
+   * @param drive the drive subsystem
+   * @param pivot the pivot subsystem
    * @param elevator the elevator subsystem
-   * @param wrist    the wrist subsystem
-   * @param intake   the intake subsystem
+   * @param wrist the wrist subsystem
+   * @param intake the intake subsystem
    */
-  public static void setupDynamicAuto(Drive drive, Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
+  public static void setupDynamicAuto(
+      Drive drive, Pivot pivot, Elevator elevator, Wrist wrist, Intake intake) {
 
     DynamicAutoCommands.drive = drive;
     DynamicAutoCommands.pivot = pivot;
@@ -90,13 +92,12 @@ public class DynamicAutoCommands {
     DynamicAutoCommands.intake = intake;
 
     chooserSetup();
-
   }
 
   /**
-   * Assembles the dashboard chooser's data into a command with arm and drive
-   * control. NOTE: calling this method a second time will work, but there is no
-   * plan to fix this, as an auto command should only be call once.
+   * Assembles the dashboard chooser's data into a command with arm and drive control. NOTE: calling
+   * this method a second time will work, but there is no plan to fix this, as an auto command
+   * should only be call once.
    *
    * @return The command with this given logic.
    */
@@ -109,52 +110,59 @@ public class DynamicAutoCommands {
     int totalCycles = endAfterCycle.get();
 
     // Sets the starting pose of the robot
-    primaryCommandGroup.addCommands(Commands.runOnce(
-        () -> {
-          drive.resetOdometry(startingPose.get());
-        }));
+    primaryCommandGroup.addCommands(
+        Commands.runOnce(
+            () -> {
+              drive.resetOdometry(startingPose.get());
+            }));
 
     // builds each cycle
-    primaryCommandGroup
-        .addCommands(getCycle(firstReefSide.get(), firstReefLevel.get(), firstCoralStation.get(), totalCycles));
+    primaryCommandGroup.addCommands(
+        getCycle(firstReefSide.get(), firstReefLevel.get(), firstCoralStation.get(), totalCycles));
     totalCycles--;
     primaryCommandGroup.addCommands(
-        getCycle(secondReefSide.get(), secondReefLevel.get(), secondCoralStation.get(), totalCycles));
+        getCycle(
+            secondReefSide.get(), secondReefLevel.get(), secondCoralStation.get(), totalCycles));
     totalCycles--;
-    primaryCommandGroup
-        .addCommands(getCycle(thirdReefSide.get(), thirdReefLevel.get(), thirdCoralStation.get(), totalCycles));
+    primaryCommandGroup.addCommands(
+        getCycle(thirdReefSide.get(), thirdReefLevel.get(), thirdCoralStation.get(), totalCycles));
     totalCycles--;
 
     // Appends an arm down command to the command
     return primaryCommandGroup
-        .andThen(ArmControlCommands
-            .armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
-            .withTimeout(0.0)
-            .andThen(ArmControlCommands
-                .armDownCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION)))
+        .andThen(
+            ArmControlCommands.armHoldAtCommand(
+                    pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+                .withTimeout(0.0)
+                .andThen(
+                    ArmControlCommands.armDownCommand(
+                        pivot, elevator, wrist, ArmPosition.CORAL_STATION)))
         .withName("dynamicAuto");
   }
 
   /**
-   * Converters the given reef side, reef level, and coral station of a cycle into
-   * a command which contains the auto drive, arm control, and intake movements.
+   * Converters the given reef side, reef level, and coral station of a cycle into a command which
+   * contains the auto drive, arm control, and intake movements.
    *
-   * @param reefSide     the target reef side
-   * @param reefLevel    the target reef level
+   * @param reefSide the target reef side
+   * @param reefLevel the target reef level
    * @param coralStation the target coral station (true = left)
-   * @param cyclesLeft   How many more cycle are need.
+   * @param cyclesLeft How many more cycle are need.
    * @return The command with the given logic
    */
-  private static Command getCycle(ReefSide reefSide, ArmPosition reefLevel, Boolean coralStation, int cyclesLeft) {
+  private static Command getCycle(
+      ReefSide reefSide, ArmPosition reefLevel, Boolean coralStation, int cyclesLeft) {
 
     // If no cycles are left, return an empty command
-    if (cyclesLeft <= 0)
-      return Commands.none();
+    if (cyclesLeft <= 0) return Commands.none();
 
     // Some data way missing, tell at the drivers, then skip the cycle.
     if (reefSide == null || reefLevel == null || coralStation == null) {
-      Elastic.sendNotification(new Notification(Notification.NotificationLevel.ERROR, "AUTO CYCLE FAIL",
-          "A dynamic auto cycle part was set as null"));
+      Elastic.sendNotification(
+          new Notification(
+              Notification.NotificationLevel.ERROR,
+              "AUTO CYCLE FAIL",
+              "A dynamic auto cycle part was set as null"));
       return Commands.none();
     }
 
@@ -162,62 +170,60 @@ public class DynamicAutoCommands {
 
     // Moves to the chosen reef side
     primaryCommandGroup.addCommands(
-        AutoDriveCommands
-            .pathFindToReef(drive, reefSide, constraints, false)
-            .deadlineFor(ArmControlCommands
-                .armUpCommand(pivot, elevator, wrist, ArmPosition.STAND_BY, ArmSystem.ALL)
-                .repeatedly()
-                .deadlineFor(IntakeCommands
-                    .intakeRun(intake, () -> 0.0))));
+        AutoDriveCommands.pathFindToReef(drive, reefSide, constraints, false)
+            .deadlineFor(
+                ArmControlCommands.armUpCommand(
+                        pivot, elevator, wrist, ArmPosition.STAND_BY, ArmSystem.ALL)
+                    .repeatedly()
+                    .deadlineFor(IntakeCommands.intakeRun(intake, () -> 0.0))));
 
     // Scores on the chosen reef level
     primaryCommandGroup.addCommands(
-        ArmControlCommands
-            .armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL)
-            .deadlineFor(AutoDriveCommands
-                .pathFindToReef(drive, reefSide, constraints, true))
-            .andThen(IntakeCommands
-                .intakeRun(intake, () -> 1.0)
-                .withTimeout(0.5)
-                .deadlineFor(ArmControlCommands
-                    .armHoldAtCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL)
-                    .alongWith(AutoDriveCommands
-                        .pathFindToReef(drive, reefSide, constraints, true)))));
+        ArmControlCommands.armUpCommand(pivot, elevator, wrist, reefLevel, ArmSystem.ALL)
+            .deadlineFor(AutoDriveCommands.pathFindToReef(drive, reefSide, constraints, true))
+            .andThen(
+                IntakeCommands.intakeRun(intake, () -> 1.0)
+                    .withTimeout(0.5)
+                    .deadlineFor(
+                        ArmControlCommands.armHoldAtCommand(
+                                pivot, elevator, wrist, reefLevel, ArmSystem.ALL)
+                            .alongWith(
+                                AutoDriveCommands.pathFindToReef(
+                                    drive, reefSide, constraints, true)))));
 
     // Moves to the chosen coral station
     primaryCommandGroup.addCommands(
         AutoDriveCommands.pathFindToCoralStation(drive, coralStation, constraints, false)
-            .deadlineFor(IntakeCommands
-                .intakeRun(intake, () -> 0.0)
-                .alongWith(ArmControlCommands
-                    .armDownCommand(pivot, elevator, wrist, reefLevel)
-                    .until(() -> wrist.getCurrentAngle() - Math.PI / 2.0 < 0.0)
-                    .andThen(ArmControlCommands
-                        .armUpCommand(pivot, elevator, wrist, ArmPosition.STAND_BY,
-                            ArmSystem.ALL)
-                        .repeatedly()))));
+            .deadlineFor(
+                IntakeCommands.intakeRun(intake, () -> 0.0)
+                    .alongWith(
+                        ArmControlCommands.armDownCommand(pivot, elevator, wrist, reefLevel)
+                            .until(() -> wrist.getCurrentAngle() - Math.PI / 2.0 < 0.0)
+                            .andThen(
+                                ArmControlCommands.armUpCommand(
+                                        pivot, elevator, wrist, ArmPosition.STAND_BY, ArmSystem.ALL)
+                                    .repeatedly()))));
 
     // Grabs coral out of the station
     primaryCommandGroup.addCommands(
-        ArmControlCommands
-            .armUpCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
-            .deadlineFor(AutoDriveCommands
-                .pathFindToCoralStation(drive, coralStation, constraints, true))
-            .andThen(IntakeCommands
-                .intakeRun(intake, () -> -1.0)
-                .withTimeout(2.0)
-                .deadlineFor(ArmControlCommands
-                    .armHoldAtCommand(pivot, elevator, wrist, ArmPosition.CORAL_STATION,
-                        ArmSystem.ALL)
-                    .alongWith(AutoDriveCommands
-                        .pathFindToCoralStation(drive, coralStation, constraints, true)))));
+        ArmControlCommands.armUpCommand(
+                pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+            .deadlineFor(
+                AutoDriveCommands.pathFindToCoralStation(drive, coralStation, constraints, true))
+            .andThen(
+                IntakeCommands.intakeRun(intake, () -> -1.0)
+                    .withTimeout(2.0)
+                    .deadlineFor(
+                        ArmControlCommands.armHoldAtCommand(
+                                pivot, elevator, wrist, ArmPosition.CORAL_STATION, ArmSystem.ALL)
+                            .alongWith(
+                                AutoDriveCommands.pathFindToCoralStation(
+                                    drive, coralStation, constraints, true)))));
 
     return primaryCommandGroup;
   }
 
-  /**
-   * Adds all the dashboard choosers and their default, selectable options
-   */
+  /** Adds all the dashboard choosers and their default, selectable options */
   public static void chooserSetup() {
 
     // ############ STARTING POSE ############
@@ -288,51 +294,71 @@ public class DynamicAutoCommands {
     endAfterCycle.addOption("Two", 2);
     endAfterCycle.addOption("One", 1);
     endAfterCycle.addOption("Zero", 0);
-
   }
 
   public static class FieldPoses {
 
     /** Blue side */
-    public static final Pose2d leftWallCage_BlueSide = new Pose2d(7.1, 7.3, new Rotation2d(Math.PI));
-    public static final Pose2d leftCenterCage_BlueSide = new Pose2d(7.1, 6.2, new Rotation2d(Math.PI));
-    public static final Pose2d leftPostCage_BlueSide = new Pose2d(7.1, 5.1, new Rotation2d(Math.PI));
+    public static final Pose2d leftWallCage_BlueSide =
+        new Pose2d(7.1, 7.3, new Rotation2d(Math.PI));
+
+    public static final Pose2d leftCenterCage_BlueSide =
+        new Pose2d(7.1, 6.2, new Rotation2d(Math.PI));
+    public static final Pose2d leftPostCage_BlueSide =
+        new Pose2d(7.1, 5.1, new Rotation2d(Math.PI));
     public static final Pose2d center_BlueSide = new Pose2d(7.1, 4.0, new Rotation2d(Math.PI));
-    public static final Pose2d rightWallCage_BlueSide = new Pose2d(7.1, 0.8, new Rotation2d(Math.PI));
-    public static final Pose2d rightCenterCage_BlueSide = new Pose2d(7.1, 1.9, new Rotation2d(Math.PI));
-    public static final Pose2d rightPostCage_BlueSide = new Pose2d(7.1, 3.0, new Rotation2d(Math.PI));
+    public static final Pose2d rightWallCage_BlueSide =
+        new Pose2d(7.1, 0.8, new Rotation2d(Math.PI));
+    public static final Pose2d rightCenterCage_BlueSide =
+        new Pose2d(7.1, 1.9, new Rotation2d(Math.PI));
+    public static final Pose2d rightPostCage_BlueSide =
+        new Pose2d(7.1, 3.0, new Rotation2d(Math.PI));
 
     /** Red Side */
-    public static final Pose2d leftWallCage_RedSide = new Pose2d(10.4, 0.8, new Rotation2d(Math.PI));
-    public static final Pose2d leftCenterCage_RedSide = new Pose2d(10.4, 1.9, new Rotation2d(Math.PI));
-    public static final Pose2d leftPostCage_RedSide = new Pose2d(10.4, 3.0, new Rotation2d(Math.PI));
+    public static final Pose2d leftWallCage_RedSide =
+        new Pose2d(10.4, 0.8, new Rotation2d(Math.PI));
+
+    public static final Pose2d leftCenterCage_RedSide =
+        new Pose2d(10.4, 1.9, new Rotation2d(Math.PI));
+    public static final Pose2d leftPostCage_RedSide =
+        new Pose2d(10.4, 3.0, new Rotation2d(Math.PI));
     public static final Pose2d center_RedSide = new Pose2d(10.4, 4.0, new Rotation2d(Math.PI));
-    public static final Pose2d rightWallCage_RedSide = new Pose2d(10.4, 7.3, new Rotation2d(Math.PI));
-    public static final Pose2d rightCenterCage_RedSide = new Pose2d(10.4, 6.2, new Rotation2d(Math.PI));
-    public static final Pose2d rightPostCage_RedSide = new Pose2d(10.4, 5.1, new Rotation2d(Math.PI));
+    public static final Pose2d rightWallCage_RedSide =
+        new Pose2d(10.4, 7.3, new Rotation2d(Math.PI));
+    public static final Pose2d rightCenterCage_RedSide =
+        new Pose2d(10.4, 6.2, new Rotation2d(Math.PI));
+    public static final Pose2d rightPostCage_RedSide =
+        new Pose2d(10.4, 5.1, new Rotation2d(Math.PI));
 
     /** Our team side */
-    public static final Pose2d leftWallCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-        ? leftWallCage_BlueSide
-        : leftWallCage_RedSide;
-    public static final Pose2d leftCenterCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-        ? leftCenterCage_BlueSide
-        : leftCenterCage_RedSide;
-    public static final Pose2d leftPostCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-        ? leftPostCage_BlueSide
-        : leftPostCage_RedSide;
-    public static final Pose2d center = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-        ? center_BlueSide
-        : center_RedSide;
-    public static final Pose2d rightWallCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-        ? rightWallCage_BlueSide
-        : rightWallCage_RedSide;
-    public static final Pose2d rightCenterCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-        ? rightCenterCage_BlueSide
-        : rightCenterCage_RedSide;
-    public static final Pose2d rightPostCage = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-        ? rightPostCage_BlueSide
-        : rightPostCage_RedSide;
-  }
+    public static final Pose2d leftWallCage =
+        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+            ? leftWallCage_BlueSide
+            : leftWallCage_RedSide;
 
+    public static final Pose2d leftCenterCage =
+        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+            ? leftCenterCage_BlueSide
+            : leftCenterCage_RedSide;
+    public static final Pose2d leftPostCage =
+        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+            ? leftPostCage_BlueSide
+            : leftPostCage_RedSide;
+    public static final Pose2d center =
+        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+            ? center_BlueSide
+            : center_RedSide;
+    public static final Pose2d rightWallCage =
+        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+            ? rightWallCage_BlueSide
+            : rightWallCage_RedSide;
+    public static final Pose2d rightCenterCage =
+        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+            ? rightCenterCage_BlueSide
+            : rightCenterCage_RedSide;
+    public static final Pose2d rightPostCage =
+        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+            ? rightPostCage_BlueSide
+            : rightPostCage_RedSide;
+  }
 }

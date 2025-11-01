@@ -6,9 +6,7 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 
-/**
- * An interface for the elevator IO
- */
+/** An interface for the elevator IO */
 public interface ElevatorIO {
 
   @AutoLog
@@ -20,7 +18,6 @@ public interface ElevatorIO {
     public double velocity = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
-
   }
 
   /**
@@ -28,21 +25,15 @@ public interface ElevatorIO {
    *
    * @param inputs the class to be updated
    */
-  public default void updateInputs(ElevatorIOInputs inputs) {
-  }
+  public default void updateInputs(ElevatorIOInputs inputs) {}
 
   /**
    * Sets the target value for the elevator to move to
    *
    * @param length the target length
    */
-  public default void setTargetLength(double length) {
-  }
+  public default void setTargetLength(double length) {}
 
-  /**
-   * Resets the PID controller
-   */
-  public default void resetPID() {
-  }
-
+  /** Resets the PID controller */
+  public default void resetPID() {}
 }

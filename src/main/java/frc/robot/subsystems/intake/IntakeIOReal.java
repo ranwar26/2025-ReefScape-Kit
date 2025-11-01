@@ -11,13 +11,10 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.MotorConfigs.IntakeConfig;
 
-/**
- * The real implementation of the intake
- */
+/** The real implementation of the intake */
 public class IntakeIOReal implements IntakeIO {
 
   private SparkMax m_intakeMotor;
@@ -31,15 +28,19 @@ public class IntakeIOReal implements IntakeIO {
     tryUntilOk(
         m_intakeMotor,
         5,
-        () -> this.m_intakeMotor.configure(IntakeConfig.intakeConfig, ResetMode.kResetSafeParameters,
-            PersistMode.kPersistParameters));
+        () ->
+            this.m_intakeMotor.configure(
+                IntakeConfig.intakeConfig,
+                ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters));
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     inputs.position = this.m_encoder.getPosition() % (2.0 * Math.PI);
     inputs.velocity = this.m_encoder.getVelocity();
-    inputs.appliedVolts = this.m_intakeMotor.getAppliedOutput() * this.m_intakeMotor.getBusVoltage();
+    inputs.appliedVolts =
+        this.m_intakeMotor.getAppliedOutput() * this.m_intakeMotor.getBusVoltage();
     inputs.currentAmps = this.m_intakeMotor.getOutputCurrent();
   }
 
@@ -47,5 +48,4 @@ public class IntakeIOReal implements IntakeIO {
   public void setIntakeVolts(double volts) {
     this.m_intakeMotor.setVoltage(volts);
   }
-
 }

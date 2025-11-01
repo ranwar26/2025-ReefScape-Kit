@@ -15,7 +15,6 @@ package frc.robot.util;
 
 import com.revrobotics.REVLibError;
 import com.revrobotics.spark.SparkBase;
-
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
@@ -60,5 +59,4 @@ public class SparkUtil {
       }
     }
   }
-
 }

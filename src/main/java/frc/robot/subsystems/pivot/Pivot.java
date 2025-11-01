@@ -4,13 +4,10 @@
 
 package frc.robot.subsystems.pivot;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-/**
- * A class that hold the IO of the pivot
- */
+/** A class that hold the IO of the pivot */
 public class Pivot extends SubsystemBase {
 
   private PivotIO io;
@@ -20,7 +17,6 @@ public class Pivot extends SubsystemBase {
   public Pivot(PivotIO io) {
 
     this.io = io;
-
   }
 
   @Override
@@ -51,9 +47,7 @@ public class Pivot extends SubsystemBase {
     return this.inputs.currentPosition;
   }
 
-  /**
-   * Resets the PID controller
-   */
+  /** Resets the PID controller */
   public void resetPID() {
     this.io.resetPID();
   }

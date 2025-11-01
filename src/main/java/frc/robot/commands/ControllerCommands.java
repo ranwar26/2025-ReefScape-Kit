@@ -10,32 +10,32 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-/**
- * A class for controller commands
- */
+/** A class for controller commands */
 public class ControllerCommands {
 
   /**
    * Sets the controllers rumble for a time, then stopping it
    *
-   * @param controller  the controller
+   * @param controller the controller
    * @param rumbleValue the strength of the rumble (0.0-1.0)
-   * @param time        the amount of time (Sec) the command should run
+   * @param time the amount of time (Sec) the command should run
    * @return A command with the given logic
    */
-  public static Command setRumble(CommandXboxController controller, double rumbleValue, double time) {
+  public static Command setRumble(
+      CommandXboxController controller, double rumbleValue, double time) {
     double[] endTime = new double[1];
 
     return new FunctionalCommand(
-        () -> {
-          endTime[0] = DriverStation.getMatchTime() - time;
-        },
-        () -> {
-          controller.setRumble(RumbleType.kBothRumble, rumbleValue);
-        },
-        interrupted -> {
-          controller.setRumble(RumbleType.kBothRumble, 0.0);
-        },
-        () -> DriverStation.getMatchTime() < endTime[0]).withName("setRumble");
+            () -> {
+              endTime[0] = DriverStation.getMatchTime() - time;
+            },
+            () -> {
+              controller.setRumble(RumbleType.kBothRumble, rumbleValue);
+            },
+            interrupted -> {
+              controller.setRumble(RumbleType.kBothRumble, 0.0);
+            },
+            () -> DriverStation.getMatchTime() < endTime[0])
+        .withName("setRumble");
   }
 }

@@ -4,40 +4,42 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.pivot.Pivot;
+import java.util.function.DoubleSupplier;
 
-/**
- * A class containing pivot commands
- */
+/** A class containing pivot commands */
 public class PivotCommands {
 
   /**
    * Gives the pivot subsystem a target angle
    *
-   * @param pivot             the pivot subsystem
-   * @param targetAngle       the angle to achieve
+   * @param pivot the pivot subsystem
+   * @param targetAngle the angle to achieve
    * @param allowEndCondition whether the end condition is used
    * @return Command with the given logic
    */
-  public static Command pivotToTarget(Pivot pivot, DoubleSupplier targetAngle, boolean allowEndCondition) {
+  public static Command pivotToTarget(
+      Pivot pivot, DoubleSupplier targetAngle, boolean allowEndCondition) {
 
-    Command returnCommand = Commands.runEnd(
-        () -> {
-          pivot.setTargetAngle(targetAngle.getAsDouble());
-        },
-        () -> {
-          pivot.setTargetAngle(pivot.getCurrentAngle());
-        },
-        pivot)
-        .until(allowEndCondition
-            ? () -> Math.abs(pivot.getCurrentAngle() - targetAngle.getAsDouble()) < PivotConstants.kAngleErrorAllowed
-            : () -> false)
-        .withName("pivotToTarget");
+    Command returnCommand =
+        Commands.runEnd(
+                () -> {
+                  pivot.setTargetAngle(targetAngle.getAsDouble());
+                },
+                () -> {
+                  pivot.setTargetAngle(pivot.getCurrentAngle());
+                },
+                pivot)
+            .until(
+                allowEndCondition
+                    ? () ->
+                        Math.abs(pivot.getCurrentAngle() - targetAngle.getAsDouble())
+                            < PivotConstants.kAngleErrorAllowed
+                    : () -> false)
+            .withName("pivotToTarget");
 
     return returnCommand;
   }
@@ -45,8 +47,8 @@ public class PivotCommands {
   /**
    * Gives the pivot subsystem a target angle
    *
-   * @param pivot             the pivot subsystem
-   * @param targetAngle       the angle to achieve
+   * @param pivot the pivot subsystem
+   * @param targetAngle the angle to achieve
    * @param allowEndCondition whether the end condition is used
    * @return Command with the given logic
    */
@@ -61,7 +63,8 @@ public class PivotCommands {
    * @return Command with the given logic
    */
   public static Command pivotToHome(Pivot pivot, boolean allowEndCondition) {
-    return pivotToTarget(pivot, PivotConstants.kHomeAngle, allowEndCondition).withName("pivotToHome");
+    return pivotToTarget(pivot, PivotConstants.kHomeAngle, allowEndCondition)
+        .withName("pivotToHome");
   }
 
   /**

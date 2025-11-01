@@ -9,15 +9,12 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants.WristConstants;
 import frc.robot.MotorConfigs.WristConfig;
 
-/**
- * The real implementation for the wrist
- */
+/** The real implementation for the wrist */
 public class WristIOReal implements WristIO {
 
   private SparkMax m_wristMotor;
@@ -32,13 +29,11 @@ public class WristIOReal implements WristIO {
     this.m_wristMotor = new SparkMax(WristConstants.kMotorID, MotorType.kBrushless);
     this.m_encoder = m_wristMotor.getEncoder();
 
-    this.m_wristMotor.configure(WristConfig.wristConfig, ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
+    this.m_wristMotor.configure(
+        WristConfig.wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    this.m_wristPIDController = new PIDController(
-        WristConstants.kRealP,
-        WristConstants.kRealI,
-        WristConstants.kRealD);
+    this.m_wristPIDController =
+        new PIDController(WristConstants.kRealP, WristConstants.kRealI, WristConstants.kRealD);
   }
 
   @Override
@@ -65,5 +60,4 @@ public class WristIOReal implements WristIO {
   public void resetPID() {
     this.m_wristPIDController.reset();
   }
-
 }

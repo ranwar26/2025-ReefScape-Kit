@@ -11,15 +11,12 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.MotorConfigs.ElevatorConfig;
 
-/**
- * The real implementation of the elevator
- */
+/** The real implementation of the elevator */
 public class ElevatorIOReal implements ElevatorIO {
 
   private SparkMax m_leftMotor;
@@ -39,24 +36,27 @@ public class ElevatorIOReal implements ElevatorIO {
     tryUntilOk(
         m_leftMotor,
         5,
-        () -> this.m_leftMotor.configure(ElevatorConfig.leftElevatorConfig, ResetMode.kResetSafeParameters,
-            PersistMode.kPersistParameters));
+        () ->
+            this.m_leftMotor.configure(
+                ElevatorConfig.leftElevatorConfig,
+                ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters));
     tryUntilOk(
         m_rightMotor,
         5,
-        () -> this.m_rightMotor.configure(ElevatorConfig.rightElevatorConfig, ResetMode.kResetSafeParameters,
-            PersistMode.kPersistParameters));
+        () ->
+            this.m_rightMotor.configure(
+                ElevatorConfig.rightElevatorConfig,
+                ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters));
 
     this.m_rightEncoder = this.m_rightMotor.getEncoder();
     tryUntilOk(
-        m_rightMotor,
-        5,
-        () -> this.m_rightEncoder.setPosition(ElevatorConstants.kHomeLength));
+        m_rightMotor, 5, () -> this.m_rightEncoder.setPosition(ElevatorConstants.kHomeLength));
 
-    this.m_elevatorPIDController = new PIDController(
-        ElevatorConstants.kRealP,
-        ElevatorConstants.kRealI,
-        ElevatorConstants.kRealD);
+    this.m_elevatorPIDController =
+        new PIDController(
+            ElevatorConstants.kRealP, ElevatorConstants.kRealI, ElevatorConstants.kRealD);
   }
 
   @Override
@@ -72,7 +72,8 @@ public class ElevatorIOReal implements ElevatorIO {
   @Override
   public void setTargetLength(double length) {
     this.targetLength = length;
-    double speed = this.m_elevatorPIDController.calculate(this.m_rightEncoder.getPosition(), length);
+    double speed =
+        this.m_elevatorPIDController.calculate(this.m_rightEncoder.getPosition(), length);
     double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
 
     volts += ElevatorConstants.kRealG;
@@ -85,5 +86,4 @@ public class ElevatorIOReal implements ElevatorIO {
   public void resetPID() {
     this.m_elevatorPIDController.reset();
   }
-
 }

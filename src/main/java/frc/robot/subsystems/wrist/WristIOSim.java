@@ -10,9 +10,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants.WristConstants;
 
-/**
- * The sim implementation of the wrist
- */
+/** The sim implementation of the wrist */
 public class WristIOSim implements WristIO {
 
   private DCMotorSim m_wristMotor;
@@ -30,12 +28,8 @@ public class WristIOSim implements WristIO {
                 WristConstants.motorGearbox, 0.0882126, WristConstants.motorToWheelRatio),
             WristConstants.motorGearbox);
 
-    this.m_wristPIDController = new PIDController(
-      WristConstants.kSimP,
-      WristConstants.kSimI,
-      WristConstants.kSimD
-    );
-
+    this.m_wristPIDController =
+        new PIDController(WristConstants.kSimP, WristConstants.kSimI, WristConstants.kSimD);
   }
 
   @Override
@@ -44,7 +38,9 @@ public class WristIOSim implements WristIO {
     this.m_wristMotor.update(0.02);
 
     // Adds hard stops
-    this.m_wristMotor.setAngle(MathUtil.clamp(this.m_wristMotor.getAngularPositionRad(), Math.toRadians(0.0), Math.toRadians(200.0)));
+    this.m_wristMotor.setAngle(
+        MathUtil.clamp(
+            this.m_wristMotor.getAngularPositionRad(), Math.toRadians(0.0), Math.toRadians(200.0)));
 
     inputs.currentPosition = this.m_wristMotor.getAngularPositionRad();
     inputs.targetPosition = this.targetAngle;
@@ -52,13 +48,13 @@ public class WristIOSim implements WristIO {
     inputs.velocity = this.m_wristMotor.getAngularVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = this.m_wristMotor.getCurrentDrawAmps();
-
   }
 
   @Override
   public void setTargetAngle(double angle) {
     this.targetAngle = angle;
-    double speed = this.m_wristPIDController.calculate(this.m_wristMotor.getAngularPositionRad(), angle);
+    double speed =
+        this.m_wristPIDController.calculate(this.m_wristMotor.getAngularPositionRad(), angle);
     double volts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
 
     this.appliedVolts = volts;
@@ -68,5 +64,4 @@ public class WristIOSim implements WristIO {
   public void resetPID() {
     this.m_wristPIDController.reset();
   }
-
 }

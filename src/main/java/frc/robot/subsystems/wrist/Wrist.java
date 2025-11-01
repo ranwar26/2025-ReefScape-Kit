@@ -4,13 +4,10 @@
 
 package frc.robot.subsystems.wrist;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-/**
- * A class with the IO for the Wrist
- */
+/** A class with the IO for the Wrist */
 public class Wrist extends SubsystemBase {
 
   private WristIO io;
@@ -20,7 +17,6 @@ public class Wrist extends SubsystemBase {
   public Wrist(WristIO io) {
 
     this.io = io;
-
   }
 
   @Override
@@ -56,9 +52,7 @@ public class Wrist extends SubsystemBase {
     return this.inputs.currentPosition;
   }
 
-  /**
-   * Resets the PID controller
-   */
+  /** Resets the PID controller */
   public void resetPID() {
     this.io.resetPID();
   }

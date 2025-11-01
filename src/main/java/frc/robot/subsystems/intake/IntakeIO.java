@@ -6,9 +6,7 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.AutoLog;
 
-/**
- * An interface for the intake IO
- */
+/** An interface for the intake IO */
 public interface IntakeIO {
 
   @AutoLog
@@ -24,15 +22,12 @@ public interface IntakeIO {
    *
    * @param inputs the class to be updated
    */
-  public default void updateInputs(IntakeIOInputs inputs) {
-  }
+  public default void updateInputs(IntakeIOInputs inputs) {}
 
   /**
    * Sets the motors at the given voltage
    *
    * @param volts the number of volt
    */
-  public default void setIntakeVolts(double volts) {
-  }
-
+  public default void setIntakeVolts(double volts) {}
 }

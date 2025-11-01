@@ -10,9 +10,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants.ElevatorConstants;
 
-/**
- * The sim implementation of the elevator
- */
+/** The sim implementation of the elevator */
 public class ElevatorIOSim implements ElevatorIO {
 
   private ElevatorSim elevatorSim;
@@ -24,20 +22,20 @@ public class ElevatorIOSim implements ElevatorIO {
 
   public ElevatorIOSim() {
 
-    this.elevatorSim = new ElevatorSim(
-        DCMotor.getNEO(2),
-        ElevatorConstants.motorToDrumRatio,
-        13.0,
-        0.06,
-        0.659,
-        2.0,
-        true,
-        0.659);
+    this.elevatorSim =
+        new ElevatorSim(
+            DCMotor.getNEO(2),
+            ElevatorConstants.motorToDrumRatio,
+            13.0,
+            0.06,
+            0.659,
+            2.0,
+            true,
+            0.659);
 
-    this.m_elevatorPIDController = new PIDController(
-        ElevatorConstants.kSimP,
-        ElevatorConstants.kSimI,
-        ElevatorConstants.kSimD);
+    this.m_elevatorPIDController =
+        new PIDController(
+            ElevatorConstants.kSimP, ElevatorConstants.kSimI, ElevatorConstants.kSimD);
   }
 
   @Override
@@ -52,21 +50,19 @@ public class ElevatorIOSim implements ElevatorIO {
     inputs.velocity = this.elevatorSim.getVelocityMetersPerSecond();
     inputs.appliedVolts = this.appliedVolts;
     inputs.currentAmps = this.elevatorSim.getCurrentDrawAmps();
-
   }
 
   @Override
   public void setTargetLength(double length) {
     this.targetLength = length;
-    double speed = this.m_elevatorPIDController.calculate(this.elevatorSim.getPositionMeters() - length);
+    double speed =
+        this.m_elevatorPIDController.calculate(this.elevatorSim.getPositionMeters() - length);
     this.appliedVolts = 12.0 * MathUtil.clamp(speed, -1.0, 1.0);
     this.appliedVolts += ElevatorConstants.kSimG;
-
   }
 
   @Override
   public void resetPID() {
     this.m_elevatorPIDController.reset();
   }
-
 }
