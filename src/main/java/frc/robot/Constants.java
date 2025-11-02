@@ -15,6 +15,7 @@ package frc.robot;
 
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -101,8 +102,8 @@ public final class Constants {
     public static final double driveKv = 0.10592;
     public static final double driveSimP = 0.05;
     public static final double driveSimD = 0.0;
-    public static final double driveSimKs = 0.0;
-    public static final double driveSimKv = 0.0789;
+    public static final double driveSimKs = 0.02285;
+    public static final double driveSimKv = 0.10081;
 
     // Turn motor configuration
     public static final boolean turnInverted = false;
